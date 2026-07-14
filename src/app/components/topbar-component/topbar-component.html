@@ -1,0 +1,63 @@
+<header class="sticky top-0 dark-bg light-bg flex items-center border-b-2">
+
+    <div class="w-12 px-3"></div>
+
+    <div class="justify-between flex w-full px-1 py-1">
+        <div class="flex space-x-2 border-2 rounded-lg px-2 border-gray-500">
+            <button class="px-1 items-center justify-center" (click)="font_settings_services.changeSize(true)">
+                <ng-icon name="plus" class="items-center"></ng-icon>
+            </button>
+
+            <input 
+                type="text" 
+                class="w-5 dark-bg light-bg" 
+                [value]="font_settings_services.font_size()"
+                (change)="font_settings_services.changeSizeNumber(+$event.target.value)"
+                >
+
+            <button class="px-1" (click)="font_settings_services.changeSize(false)">
+                <ng-icon name="minus"></ng-icon>
+            </button>
+        </div>
+
+        <div class="inline">
+            <p class="inline">book ></p>
+            <p class="inline"> cap ></p>
+            <p class="inline"> vers</p>
+        </div>
+
+        <!-- Esta x-data se puede trabajar desde ts -->
+        <div class="mr-2 relative z-50" x-data="{open: false}"
+        >
+            <button
+            (click)="toggleButton()">
+                Drop
+            </button>
+            
+            @if (open) {
+                <div 
+                class="absolute right-0 shadow-md mt-2 rounded dark-bg light-bg 
+                ring-1 ring-opacity-5 focus:outline-none w-36"
+                (mouseleave)="closeDropDown()"
+                >
+                    <div class="py-1">
+                        <a href="#ref" 
+                        class="whitespace-nowrap block px-4 py-2 text-sm hover:bg-gray-200 dark:hover:bg-gray-800"
+                        (click)="font_settings_services.changeFontForm()"
+                        >
+                        <!-- Cambiar a: {{font_settings_services.is_inline() ? "Bloque": "Lineal"}} -->
+                         {{change_to()?.option_name}}: {{
+                         font_settings_services.is_inline() 
+                         ? change_to()?.row 
+                         : change_to()?.lineal }}
+                        </a>
+                        <a href="#ref" 
+                        class="whitespace-nowrap block px-4 py-2 text-sm hover:bg-gray-200 dark:hover:bg-gray-800">Lineal</a>
+                    </div>
+                </div>
+            }
+
+        </div>
+    </div>
+
+</header>

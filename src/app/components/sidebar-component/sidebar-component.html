@@ -1,0 +1,97 @@
+<div class="flex h-full overflow-x-visible">
+    <aside class="dark-bg light-bg w-12 h-full flex flex-col box-border dark-bg">
+        <div class="flex flex-col h-full text-center text-3xl">
+            <nav class="flex flex-col">
+                <a class="py-3 font-bold hover:dark:bg-gray-500/20 items-center border-r-2"
+                [routerLink]='["/"]'
+                [routerLinkActive]='["top-active"]' 
+                [routerLinkActiveOptions]="{exact: true}"
+                (click)="ancor_handler(0)"
+                > 
+                    <ng-icon name="bible" class=""></ng-icon>
+                </a>
+            
+                <a 
+                class="py-3 font-bold hover:dark:bg-gray-500/20 border-r-2"
+                [routerLink]='["/notes"]'
+                [routerLinkActive]='["active"]' 
+                [routerLinkActiveOptions]="{exact: true}"
+                (click)="ancor_handler(1)"
+                > 
+                    <ng-icon name="notes" class=""></ng-icon>
+                </a>
+                
+                <a href="" class="py-3 font-bold hover:dark:bg-gray-500/20 border-r-2"
+                [routerLink]='["/settings"]'
+                [routerLinkActive]='["active"]' 
+                [routerLinkActiveOptions]="{exact: true}"
+                > 
+                    <ng-icon name="settings" class=""></ng-icon>
+                </a>
+            </nav>
+
+            <div class="h-full border-r-2"></div>
+
+            <div class="pb-1 border-r-2">
+                <button 
+                class="text-center w-full"
+                (click)="this.theme_services.changeTheme()"
+                >
+                <ng-icon 
+                [name] = "this.theme_services.theme() ? 'dark' : 'light'" 
+                class=""></ng-icon> 
+            </button>
+            </div>
+        </div>
+    </aside>
+
+    @if (settings_services.extended_sidebar_open()) {
+        <!-- Para navegar -->
+        <div 
+        class="flex"
+        [style.width.rem]="settings_services.sidebar_extended_size()"
+        >
+            <tree-folder-component 
+            class="w-full"
+            [folders]="root_folder()"
+            [floor]="1"
+            />
+
+            <div 
+            (mousedown)="settings_services.enabled_resizing($event)"
+            class="resize-border"
+            >
+                <div>
+
+                </div>
+            </div>
+        </div>
+    }
+
+    @if(folder_services.is_show()){
+        <folder-options-component />
+    }
+</div>
+
+<style>
+    .resize-border{
+       @apply bg-transparent flex justify-center;
+       width: 0.30rem;
+       margin-left: -0.15rem;
+
+       div {
+           @apply bg-gray-200;
+           width: 0.125rem;
+       }
+    }
+
+    .resize-border:hover {
+        @apply bg-blue-500 cursor-col-resize;
+
+        div {
+            @apply bg-blue-500; 
+        }
+    }
+</style>
+
+

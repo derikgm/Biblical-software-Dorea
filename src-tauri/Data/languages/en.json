@@ -1,0 +1,13 @@
+{
+    "change_to" : {
+        "option_name":"Change to",
+        "row":"row",
+        "lineal": "lineal"
+    },
+    "folder": {
+        "create_new_folder": "Create new folder",
+        "create_new_note": "Create new note",
+        "change_name": "Change name",
+        "delete": "Delete"
+    }
+}

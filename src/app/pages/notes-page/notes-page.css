@@ -1,0 +1,25 @@
+:host {
+  display: block;
+  width: 100%; /*OJO: esto tiene mas peso que el w-full, por eso a veces no funciona   */
+}
+
+.add-note {
+  @apply rounded-full border-black border-2 flex justify-center p-2 w-full bg-white text-xl
+  dark:bg-gray-800 dark:text-white dark:border-white cursor-pointer
+}
+
+.add-note:hover{
+    @apply text-blue-400 border-blue-400
+}
+
+.note{
+  @apply border-2 text-center grid rounded-md cursor-pointer;
+}
+
+.note:hover{
+  @apply border-blue-400;
+
+  h2 {
+    @apply border-blue-400;
+  }
+}

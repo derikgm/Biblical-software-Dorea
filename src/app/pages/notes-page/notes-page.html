@@ -1,0 +1,50 @@
+<div class="flex flex-col">
+
+    <div class="text-center mb-4 sticky top-0 flex w-full ">
+        <span  
+        class="add-note">
+            <ng-icon name="plus" class=""></ng-icon>
+        </span>
+    </div>
+
+    <div class="flex flex-1">
+        <div class="grid grid-cols-2 gap-4 w-full md:grid-cols-3 lg:grid-cols-4">
+
+        @for (note of notes_services.notes; track $index) {
+            <div class="note" (click)="openDialog($index)">
+                <h2 class="font-medium border-b-2 rounded-md max-h-6 whitespace-nowrap overflow-ellipsis overflow-hidden
+                px-2"
+                [title]="note.title"
+                >
+                    {{note.title}}
+                </h2>
+                <p class="inline px-2">{{
+                    note.text.substring(0, 200)
+                }}
+                @if (note.text.length > 200) {
+                    <span class="inline text-gray-400">...</span>
+                }
+                </p>
+
+                <div class="text-right relative m-1 pt-5">
+                    <div class="border rounded absolute right-0 bottom-0 px-2 
+                    text-red-500/30 border-red-500/30 hover:text-white hover:bg-red-500 
+                    dark:text-red-300/50 dark:border-red-300/50 dark:hover:text-white dark:hover:border-red-300"
+                    (click)="this.notes_services.deleteNote($index); openDialog(-1);"
+                >
+                    <ng-icon name="delete"/>
+                 </div>
+                </div>
+            </div>
+        }
+
+        </div>
+    </div>
+
+</div>
+
+@if (open_dialog()) {
+    <note-component 
+    [note]="notes_services.notes[note_selected()]" 
+    (close_dialog)="openDialog($event)"/>
+}

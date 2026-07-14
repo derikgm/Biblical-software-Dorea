@@ -1,0 +1,36 @@
+import { Component, computed, inject, signal, } from '@angular/core';
+import { provideIcons, NgIcon } from '@ng-icons/core';
+import { heroMinus, heroPlus } from "@ng-icons/heroicons/outline"
+import { FontSettingsServices } from '../../services/font_settings-services';
+import { LanguageServices } from '../../services/language-services.ts';
+import { LanguageSettings } from '../../interfaces/language-interface';
+
+@Component({
+  selector: 'topbar-component',
+  imports: [NgIcon],
+  templateUrl: './topbar-component.html',
+  styleUrl: './topbar-component.css',
+  providers: [
+    provideIcons({
+      plus: heroPlus,
+      minus: heroMinus
+    })
+  ]
+})
+export class TopbarComponent {
+  open = false;
+  font_settings_services = inject(FontSettingsServices);
+  lang = inject(LanguageServices);
+
+  change_to = signal(this.lang.data()?.change_to);
+
+  toggleButton() {
+    this.open = !this.open;
+  }
+
+  closeDropDown(){
+    this.open = false;
+  }
+
+}
+

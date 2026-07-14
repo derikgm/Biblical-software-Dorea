@@ -1,0 +1,31 @@
+<div class="w-full dark:bg-gray-800 dark:text-white h-full">
+    @if(this.folders()?.folder_name != "root"){
+        <p 
+        class="cursor-default w-full hover:bg-gray-200 dark:hover:bg-gray-700"
+        (contextmenu)="show_options($event)"
+        [style.padding-left.rem]="floor() * 0.25"
+        >
+            <span class="cursor-pointer" (click)="open_folder()">
+                <ng-icon [name]="this.is_open() ? 'open' : 'close'"/>
+                {{this.folders()?.folder_name}}
+            </span>
+
+        </p>
+        }
+
+    @if (this.is_open()) {
+
+        @for (folder of this.folders()?.folders; track $index) {
+            <tree-folder-component class="w-full" [folders]="folder" [floor]="floor() + 1"/>
+        }
+
+        @for (file of this.folders()?.files; track $index) {
+        <p 
+        (contextmenu)="show_options($event, $index)"
+        [style.padding-left.rem]="floor() * 1"
+        class="cursor-pointer w-full hover:bg-gray-200 dark:hover:bg-gray-700">
+            {{file}}
+        </p>
+        }
+    }
+</div>

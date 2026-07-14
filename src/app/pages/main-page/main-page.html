@@ -1,0 +1,44 @@
+
+<div 
+class="" 
+(mouseup)="showMarker($event)"
+(mouseup)="fixSelection()"
+>
+
+    @if (isMakerOpen()) {
+        <marker-component 
+        [xPosition]="xPosition()"
+        [yPosition]="yPosition()"
+        (colorMark)="handlerSelected($event)"
+        />
+    }
+
+    <p class="my-2" #texto>texto</p>
+
+    <div class="">
+        @for (texto of parraf; track $index) {
+
+            @if(this.headers.get($index)){
+                <h1 
+                class="font-bold text-center my-2"
+                [style.fontSize.px]="fontSettingsServices.font_size() * 1.5"
+                >{{this.headers.get($index)}}</h1>
+            }
+
+            <p 
+            #versiculo 
+            [style.fontSize.px]="fontSettingsServices.font_size()"
+            [class.inline]="fontSettingsServices.is_inline()"
+            >
+                <sup class="font-bold z-0">
+                    {{$index + 1}}
+                </sup>
+                <span class="flex-1">
+                    {{texto}}
+                </span> 
+            </p>
+        }
+    </div>
+
+    
+</div>
