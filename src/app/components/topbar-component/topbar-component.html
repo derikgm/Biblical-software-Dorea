@@ -21,9 +21,7 @@
         </div>
 
         <div class="inline">
-            <p class="inline">book ></p>
-            <p class="inline"> cap ></p>
-            <p class="inline"> vers</p>
+            <p class="inline">{{bible_services.current_book()?.name}}</p>
         </div>
 
         <!-- Esta x-data se puede trabajar desde ts -->
@@ -31,7 +29,7 @@
         >
             <button
             (click)="toggleButton()">
-                Drop
+                Options
             </button>
             
             @if (open) {

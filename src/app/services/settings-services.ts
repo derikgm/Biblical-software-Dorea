@@ -9,7 +9,7 @@ export class SettingsServices {
   sidebar_extended_size_init = 0;
   movement_capture_function = (e: MouseEvent) => {};
 
-  extended_sidebar_open = signal<boolean>(true);
+  extended_sidebar_open = signal<boolean>(true); //TODO: change later
   sidebar_extended_size = signal<number>(13);
   extended_sidebar_rezising = signal<boolean>(false)
 

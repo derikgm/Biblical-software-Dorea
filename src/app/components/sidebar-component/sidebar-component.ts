@@ -14,11 +14,12 @@ import { Folder } from '../../interfaces/tree_folder-interfaces';
 import { FolderOptionsComponent } from "../folder_options-component/folder_options-component";
 import { FolderServices } from '../../services/folder-services';
 import { SettingsServices } from '../../services/settings-services';
+import { VerseNavigationComponent } from "../verse_navigation-component/verse_navigation-component";
 
 
 @Component({
   selector: 'sidebar-component',
-  imports: [NgIconComponent, RouterLink, RouterLinkActive, TreeFolderComponent, FolderOptionsComponent],
+  imports: [NgIconComponent, RouterLink, RouterLinkActive, TreeFolderComponent, FolderOptionsComponent, VerseNavigationComponent],
   templateUrl: './sidebar-component.html',
   styleUrl: './sidebar-component.css',
   providers: [
@@ -37,9 +38,8 @@ export class SidebarComponent {
   folder_services = inject(FolderServices);
   settings_services = inject(SettingsServices);
 
-  current_path = signal<current_path_enum>(current_path_enum.NOTES);
+  current_path = signal<current_path_enum>(current_path_enum.BIBLE);
   root_folder = signal<Folder>(folder_test);
-
 
   ancor_handler(anchor: number){
     if(anchor == this.current_path())
@@ -47,7 +47,6 @@ export class SidebarComponent {
 
     this.current_path.set(anchor)
   }
-
 
 }
 

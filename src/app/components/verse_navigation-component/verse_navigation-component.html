@@ -1,0 +1,39 @@
+
+<div class="">
+    
+    @for (book of bible_services.bible()?.books; track $index) {
+        <div class="">
+
+            <p 
+            (click)="open_caps($index, $event)"
+            class="py-1 px-2 cursor-pointer text-center 
+            hover:bg-gray-200 dark:hover:bg-gray-700" 
+            [class.border-b]="show_chaps() != $index"
+            >
+                {{book.name}}
+            </p>
+
+            @if (show_chaps() == $index) {
+
+                <div class="m-2 grid grid-cols-[repeat(auto-fill,minmax(2rem,1fr))] gap-1">
+                    @for(cap of book.chapters; track $index){
+                        <a 
+                        [href]="`#${book.nr}-${cap.chapter}`"
+                        class="flex items-center justify-center aspect-square cursor-pointer text-white 
+                        bg-green-600 hover:bg-green-400 dark:bg-green-800 dark:hover:bg-green-600
+                        dark:border-gray-500 dark:border"
+                        (click)="bible_services.move_to_chapter(book.nr, $index + 1)"
+                        >
+                        {{cap.chapter}}
+                        
+                        </a>
+                    }
+                </div>
+            }
+
+            <div></div>
+
+        </div>
+    }
+
+</div>

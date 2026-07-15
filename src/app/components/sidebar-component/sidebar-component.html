@@ -2,9 +2,9 @@
     <aside class="dark-bg light-bg w-12 h-full flex flex-col box-border dark-bg">
         <div class="flex flex-col h-full text-center text-3xl">
             <nav class="flex flex-col">
-                <a class="py-3 font-bold hover:dark:bg-gray-500/20 items-center border-r-2"
+                <a 
                 [routerLink]='["/"]'
-                [routerLinkActive]='["top-active"]' 
+                [routerLinkActive]='["active"]' 
                 [routerLinkActiveOptions]="{exact: true}"
                 (click)="ancor_handler(0)"
                 > 
@@ -12,7 +12,6 @@
                 </a>
             
                 <a 
-                class="py-3 font-bold hover:dark:bg-gray-500/20 border-r-2"
                 [routerLink]='["/notes"]'
                 [routerLinkActive]='["active"]' 
                 [routerLinkActiveOptions]="{exact: true}"
@@ -21,7 +20,7 @@
                     <ng-icon name="notes" class=""></ng-icon>
                 </a>
                 
-                <a href="" class="py-3 font-bold hover:dark:bg-gray-500/20 border-r-2"
+                <a 
                 [routerLink]='["/settings"]'
                 [routerLinkActive]='["active"]' 
                 [routerLinkActiveOptions]="{exact: true}"
@@ -48,14 +47,23 @@
     @if (settings_services.extended_sidebar_open()) {
         <!-- Para navegar -->
         <div 
-        class="flex"
+        class="flex bg-white dark:bg-gray-800 dark:text-white"
         [style.width.rem]="settings_services.sidebar_extended_size()"
         >
-            <tree-folder-component 
-            class="w-full"
-            [folders]="root_folder()"
-            [floor]="1"
-            />
+
+            @if (current_path() == 0) {
+                <verse-navigation-component 
+                class="w-full overflow-y-auto scrollbar-hidden"
+                />
+            }   
+
+            @if (current_path() == 1) {
+                <tree-folder-component 
+                class="w-full"
+                [folders]="root_folder()"
+                [floor]="1"
+                />
+            }
 
             <div 
             (mousedown)="settings_services.enabled_resizing($event)"
@@ -91,6 +99,18 @@
         div {
             @apply bg-blue-500; 
         }
+    }
+
+    .active {
+    @apply text-blue-400 border-l-2 border-l-blue-400 
+    }
+
+    .top-active {
+    @apply text-blue-400 bg-white dark:bg-gray-800 rounded-l-lg border-r-0 border-b-2
+    }
+
+    a {
+        @apply py-3 font-bold hover:dark:bg-gray-500/20 border-r-2 border-l-transparent border-l-2;
     }
 </style>
 

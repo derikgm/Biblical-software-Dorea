@@ -3,7 +3,7 @@ import { provideIcons, NgIcon } from '@ng-icons/core';
 import { heroMinus, heroPlus } from "@ng-icons/heroicons/outline"
 import { FontSettingsServices } from '../../services/font_settings-services';
 import { LanguageServices } from '../../services/language-services.ts';
-import { LanguageSettings } from '../../interfaces/language-interface';
+import { BibleServices } from '../../services/bible-services';
 
 @Component({
   selector: 'topbar-component',
@@ -19,8 +19,10 @@ import { LanguageSettings } from '../../interfaces/language-interface';
 })
 export class TopbarComponent {
   open = false;
+
   font_settings_services = inject(FontSettingsServices);
   lang = inject(LanguageServices);
+  bible_services = inject(BibleServices);
 
   change_to = signal(this.lang.data()?.change_to);
 

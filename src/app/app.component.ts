@@ -1,11 +1,10 @@
 import { Component, HostListener, inject, signal } from "@angular/core";
 import { RouterOutlet } from "@angular/router";
-import { invoke } from "@tauri-apps/api/core";
 import { SidebarComponent } from "./components/sidebar-component/sidebar-component";
 import { TopbarComponent } from "./components/topbar-component/topbar-component";
 import { LanguageServices } from "./services/language-services.ts";
-import { LanguageSettings } from "./interfaces/language-interface";
 import { SettingsServices } from "./services/settings-services";
+import { BibleServices } from "./services/bible-services";
 
 @Component({
   selector: "app-root",
@@ -21,6 +20,7 @@ export class AppComponent {
   
   language_services = inject(LanguageServices);
   settings_services = inject(SettingsServices);
+  bible_services = inject(BibleServices);
 
   constructor(){
     this.language_services.init().then(()=>{
@@ -28,6 +28,12 @@ export class AppComponent {
     }).catch((e)=>{
       console.log("Algo salio mal", e);
     });
+
+    this.bible_services.init().then(()=>{
+      console.log("Todo en orden");
+    }).catch((e)=>{
+      console.log("Error obteniendo biblia", e);
+    })
   }
 
   @HostListener('mouseup')

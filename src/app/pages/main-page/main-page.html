@@ -16,27 +16,32 @@ class=""
     <p class="my-2" #texto>texto</p>
 
     <div class="">
-        @for (texto of parraf; track $index) {
-
-            @if(this.headers.get($index)){
+        <!-- @for (chapter of this.bible_services.chapters_showed(); track trackByFn($index, chapter)) {
+            <div appVisible (visible)="load_another_chapter(chapter?.chapter)"
+                #chap_header
+            > -->
+            @for (chapter of this.bible_services.current_book()?.chapters; track $index) {
                 <h1 
+                [id]="`${this.bible_services.current_book()?.nr}-${chapter.chapter}`"
+                #chap_header
                 class="font-bold text-center my-2"
                 [style.fontSize.px]="fontSettingsServices.font_size() * 1.5"
-                >{{this.headers.get($index)}}</h1>
-            }
+                >{{chapter?.name}}</h1>
 
-            <p 
-            #versiculo 
-            [style.fontSize.px]="fontSettingsServices.font_size()"
-            [class.inline]="fontSettingsServices.is_inline()"
-            >
-                <sup class="font-bold z-0">
-                    {{$index + 1}}
-                </sup>
-                <span class="flex-1">
-                    {{texto}}
-                </span> 
-            </p>
+            @for (verse of chapter?.verses; track $index) {
+                <p 
+                #versiculo 
+                [style.fontSize.px]="fontSettingsServices.font_size()"
+                [class.inline]="fontSettingsServices.is_inline()"
+                >
+                    <sup class="font-bold z-0">
+                        {{$index + 1}}
+                    </sup>
+                    <span class="flex-1">
+                        {{verse.text}}
+                    </span> 
+                </p>
+            }
         }
     </div>
 
