@@ -1,8 +1,9 @@
 import { Component, inject, input, output, signal } from '@angular/core';
-import { Folder } from '../../interfaces/tree_folder-interfaces';
+import { Folder, Note } from '../../interfaces/tree_folder-interfaces';
 import { FolderServices } from '../../services/folder-services';
 import { provideIcons, NgIcon } from '@ng-icons/core';
-import { heroChevronRight, heroChevronDown } from '@ng-icons/heroicons/outline';
+import { heroChevronRight, heroChevronDown, heroDocumentText } from '@ng-icons/heroicons/outline';
+import { NotesServices } from '../../services/notes-services';
 
 @Component({
   selector: 'tree-folder-component',
@@ -12,7 +13,8 @@ import { heroChevronRight, heroChevronDown } from '@ng-icons/heroicons/outline';
   providers: [
     provideIcons({
       close: heroChevronRight,
-      open: heroChevronDown
+      open: heroChevronDown,
+      txt: heroDocumentText
     })
   ]
 })
@@ -23,13 +25,18 @@ export class TreeFolderComponent {
   is_open = signal<boolean>(this.folders()?.open ?? true);
 
   folder_services = inject(FolderServices);
+  notes_services = inject(NotesServices);
+
+  open_file(note: Note){
+    this.notes_services.open_file(`${this.folders()?.dir}/${note.title}.${note.extension}`, note.title)
+  }
 
   open_folder(){
     this.is_open.set(!this.is_open());
   }
 
   add_new_file(){
-    this.folders()?.files?.push("file01");
+    // this.folders()?.files?.push("file01");
     this.folders()?.files?.sort();
   }
 
@@ -37,15 +44,15 @@ export class TreeFolderComponent {
     this.folders()?.folders?.push({
       folder_name: "example",
       open: true,
+      dir: '',
+      folders: [],
+      files: []
     });
     this.folders()?.folders?.sort();
   }
 
   show_options(event: MouseEvent, index: number = -1){
     event.preventDefault();
-
-    console.log(index);
-    
     this.folder_services.show_folder_option(event.x, event.y, this.folders(), index);
   }
 }

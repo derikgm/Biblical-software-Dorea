@@ -1,7 +1,8 @@
 use std::path::Path;
 
 pub const BIBLIES_PATH: &str = "./Data/biblies";
-pub const NOTES_PATH: &str = "./Data/notes";
+// pub const NOTES_PATH: &str = "./Data/notes";
+pub const NOTES_PATH: &str = "../../Data/notes";
 pub const LANGUAGES_PATH: &str = "./Data/languages";
 
 pub fn verify_and_create_data_directory(){

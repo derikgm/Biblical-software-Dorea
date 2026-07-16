@@ -2,7 +2,7 @@ import { Component, computed, inject, signal, } from '@angular/core';
 import { provideIcons, NgIcon } from '@ng-icons/core';
 import { heroMinus, heroPlus } from "@ng-icons/heroicons/outline"
 import { FontSettingsServices } from '../../services/font_settings-services';
-import { LanguageServices } from '../../services/language-services.ts';
+import { LanguageServices } from '../../services/language-services';
 import { BibleServices } from '../../services/bible-services';
 
 @Component({

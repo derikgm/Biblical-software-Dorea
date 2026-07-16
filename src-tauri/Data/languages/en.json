@@ -9,5 +9,8 @@
         "create_new_note": "Create new note",
         "change_name": "Change name",
         "delete": "Delete"
+    },
+    "notes": {
+        "file_empty": "This file is empty"
     }
 }

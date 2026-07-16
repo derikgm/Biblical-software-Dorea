@@ -27,6 +27,7 @@ pub fn save_language_settings(language_settings: LanguageSettings) -> Result<(),
 pub struct LanguageSettings {
     change_to: ChangeToOptions,
     folder: FolderOptions,
+    notes: NoteOptions,
 }
 
 #[derive(Deserialize, Serialize, Debug)]
@@ -42,4 +43,9 @@ pub struct FolderOptions {
     create_new_note: String,
     change_name: String,
     delete: String,
+}
+
+#[derive(Deserialize, Serialize, Debug)]
+pub struct NoteOptions {
+    file_empty: String,
 }

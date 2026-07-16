@@ -39,7 +39,6 @@ export class SidebarComponent {
   settings_services = inject(SettingsServices);
 
   current_path = signal<current_path_enum>(current_path_enum.BIBLE);
-  root_folder = signal<Folder>(folder_test);
 
   ancor_handler(anchor: number){
     if(anchor == this.current_path())
@@ -54,23 +53,3 @@ export enum current_path_enum {
   BIBLE,
   NOTES,
 }
-
-let folder_test: Folder = 
-  {
-    folder_name: "root",
-    folders: [
-      {
-        folder_name:"another_files",
-        files: ['file02', 'file03']
-      },
-      {
-        folder_name: "assets",
-        files: ['asset01', 'asset02'],
-        folders: [{
-          folder_name: "photos",
-          files: ["photo01"]
-        }]
-      }
-    ],
-    files: ["file1"],
-  }

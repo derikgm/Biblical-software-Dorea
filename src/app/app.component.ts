@@ -2,13 +2,15 @@ import { Component, HostListener, inject, signal } from "@angular/core";
 import { RouterOutlet } from "@angular/router";
 import { SidebarComponent } from "./components/sidebar-component/sidebar-component";
 import { TopbarComponent } from "./components/topbar-component/topbar-component";
-import { LanguageServices } from "./services/language-services.ts";
+import { LanguageServices } from "./services/language-services";
 import { SettingsServices } from "./services/settings-services";
 import { BibleServices } from "./services/bible-services";
+import { FolderServices } from "./services/folder-services";
+import { SpinComponent } from "./components/spin-component/spin-component";
 
 @Component({
   selector: "app-root",
-  imports: [RouterOutlet, SidebarComponent, TopbarComponent,],
+  imports: [RouterOutlet, SidebarComponent, TopbarComponent, SpinComponent],
   templateUrl: "./app.component.html",
   styleUrl: "./app.component.css",
 })
@@ -21,6 +23,7 @@ export class AppComponent {
   language_services = inject(LanguageServices);
   settings_services = inject(SettingsServices);
   bible_services = inject(BibleServices);
+  folder_services = inject(FolderServices);
 
   constructor(){
     this.language_services.init().then(()=>{
@@ -30,10 +33,13 @@ export class AppComponent {
     });
 
     this.bible_services.init().then(()=>{
+      this.loading.set(false);
       console.log("Todo en orden");
     }).catch((e)=>{
       console.log("Error obteniendo biblia", e);
     })
+
+    this.folder_services.init();
   }
 
   @HostListener('mouseup')

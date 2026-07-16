@@ -1,4 +1,4 @@
-<div class="w-full dark:bg-gray-800 dark:text-white h-full">
+<div class="w-full h-full dark:bg-gray-800 dark:text-white overflow-y-scroll scrollbar-hidden">
     @if(this.folders()?.folder_name != "root"){
         <p 
         class="cursor-default w-full hover:bg-gray-200 dark:hover:bg-gray-700"
@@ -21,10 +21,14 @@
 
         @for (file of this.folders()?.files; track $index) {
         <p 
+        (click)="open_file(file)"
         (contextmenu)="show_options($event, $index)"
         [style.padding-left.rem]="floor() * 1"
         class="cursor-pointer w-full hover:bg-gray-200 dark:hover:bg-gray-700">
-            {{file}}
+            <span class="text-blue-600 dark:text-blue-400">
+                <ng-icon name="txt" />
+            </span>
+            {{file.title}}
         </p>
         }
     }

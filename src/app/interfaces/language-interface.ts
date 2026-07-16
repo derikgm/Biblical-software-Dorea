@@ -10,4 +10,7 @@ export interface LanguageSettings {
         change_name: string,
         delete: string,
     }
+    notes: {
+        file_empty: string
+    }
 }
