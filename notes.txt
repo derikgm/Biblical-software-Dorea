@@ -1,0 +1,6 @@
+hubo un error que me dio a la hora de hacer update sobre los archivos
+
+resulta que yo le pasaba new_dir, el backend esperaba new_dir, pero tauri
+por defecto combierte en la trasicion de backend y frontend a camel Case:
+
+newDir

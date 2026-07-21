@@ -70,7 +70,7 @@
             class="resize-border"
             >
                 <div>
-
+                    <div></div>
                 </div>
             </div>
         </div>
@@ -82,8 +82,8 @@
 </div>
 
 <style>
-    .resize-border{
-       @apply bg-transparent flex justify-center;
+    /* .resize-border{
+       @apply bg-transparent flex justify-center ;
        width: 0.30rem;
        margin-left: -0.15rem;
 
@@ -98,6 +98,31 @@
 
         div {
             @apply bg-blue-500; 
+        }
+    } */
+
+        .resize-border{
+        @apply flex justify-center bg-transparent;
+        div {
+            @apply bg-transparent flex justify-center;
+            width: 0.30rem;
+            margin-left: -0.15rem;
+
+            div {
+                @apply bg-gray-200;
+                width: 0.125rem;
+            }
+        }
+    }
+
+    .resize-border:hover {
+        display: flex;
+        div {
+                    @apply bg-blue-500 cursor-col-resize;
+
+        div {
+            @apply bg-blue-500; 
+        }
         }
     }
 

@@ -11,20 +11,22 @@
     >
     <!-- (mouseleave)="this.folder_services.close_folder_option()" -->
 
-        <p class="hover:dark:bg-gray-700 cursor-pointer py-2 px-2 rounded-t-lg"
-        >
+        <p class="hover:dark:bg-gray-700 cursor-pointer py-2 px-2 rounded-t-lg hover:bg-gray-300"
+        (click)="create_new_folder()">
             {{folder_lang?.create_new_folder}}
         </p>
-        <p class="hover:dark:bg-gray-700 cursor-pointer py-2 px-2"
-        (click)="create_note()"
+        <p class="hover:dark:bg-gray-700 cursor-pointer py-2 px-2 hover:bg-gray-300"
+        (click)="create_new_note()"
         >
             {{folder_lang?.create_new_note}}
         </p>
-        <p class="hover:dark:bg-gray-700 cursor-pointer py-2 px-2"
+        <p class="hover:dark:bg-gray-700 cursor-pointer py-2 px-2 hover:bg-gray-300"
+        (click)="rename_file_or_folder()"
         >
             {{folder_lang?.change_name}}
         </p>
-        <p class="hover:dark:bg-gray-700 cursor-pointer py-2 px-2 rounded-b-lg"
+        <p class="hover:dark:bg-gray-700 cursor-pointer py-2 px-2 rounded-b-lg hover:bg-gray-300"
+        (click)="delete_file_or_folder()"
         >
             {{folder_lang?.delete}}
         </p>

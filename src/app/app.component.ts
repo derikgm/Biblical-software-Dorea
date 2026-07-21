@@ -1,4 +1,4 @@
-import { Component, HostListener, inject, signal } from "@angular/core";
+import { AfterViewInit, Component, HostListener, inject, signal } from "@angular/core";
 import { RouterOutlet } from "@angular/router";
 import { SidebarComponent } from "./components/sidebar-component/sidebar-component";
 import { TopbarComponent } from "./components/topbar-component/topbar-component";
@@ -14,10 +14,7 @@ import { SpinComponent } from "./components/spin-component/spin-component";
   templateUrl: "./app.component.html",
   styleUrl: "./app.component.css",
 })
-export class AppComponent {
-  greetingMessage = "";
-  activo = true;
-
+export class AppComponent implements AfterViewInit{
   loading = signal<boolean> (true);
   
   language_services = inject(LanguageServices);
@@ -25,21 +22,12 @@ export class AppComponent {
   bible_services = inject(BibleServices);
   folder_services = inject(FolderServices);
 
-  constructor(){
-    this.language_services.init().then(()=>{
-      this.loading.set(false);
-    }).catch((e)=>{
-      console.log("Algo salio mal", e);
-    });
+  async ngAfterViewInit() {
+    await this.language_services.init();
+    await this.bible_services.init();
+    await this.folder_services.init();
 
-    this.bible_services.init().then(()=>{
-      this.loading.set(false);
-      console.log("Todo en orden");
-    }).catch((e)=>{
-      console.log("Error obteniendo biblia", e);
-    })
-
-    this.folder_services.init();
+    this.loading.set(false);
   }
 
   @HostListener('mouseup')

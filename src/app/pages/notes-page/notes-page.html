@@ -9,8 +9,9 @@
         <input type="text" #header
         class="font-bold text-xl mb-1 text-cyan-700 outline outline-0 w-full
          dark:bg-gray-800 dark:text-cyan-300 " 
-        (keypress)="jump_to_textarea($event)"
-        [value]="notes_services.current_header()" />
+        (keydown)="jump_to_textarea($event)"
+        (change)="update_title($event)"
+        [value]="folder_services.current_note().title" />
     </div>
 
     <textarea 
@@ -18,7 +19,7 @@
     class="w-full h-full flex text-black dark:bg-gray-800 scrollbar-hidden resize-none 
     outline outline-0 dark:text-white"
     (input)="text_area_handler()"
-    [value]="notes_services.current_content()"
+    [value]="folder_services.current_content()"
     [placeholder]="lang.data()?.notes?.file_empty"
     >
 

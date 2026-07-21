@@ -1,5 +1,5 @@
 
-<div class="">
+<div class="select-none">
     
     @for (book of bible_services.bible()?.books; track $index) {
         <div class="">
@@ -24,8 +24,7 @@
                         dark:border-gray-500 dark:border"
                         (click)="bible_services.move_to_chapter(book.nr, $index + 1)"
                         >
-                        {{cap.chapter}}
-                        
+                            {{cap.chapter}}
                         </a>
                     }
                 </div>

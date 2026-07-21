@@ -11,10 +11,10 @@ export class SettingsServices {
 
   extended_sidebar_open = signal<boolean>(true); //TODO: change later
   sidebar_extended_size = signal<number>(13);
-  extended_sidebar_rezising = signal<boolean>(false)
+  enabled_extended_sidebar_rezising = signal<boolean>(false)
 
   enabled_resizing(e: MouseEvent){
-      this.extended_sidebar_rezising.set(true);
+      this.enabled_extended_sidebar_rezising.set(true);
       this.click_position_init = e.x;
       this.sidebar_extended_size_init = this.sidebar_extended_size();
   

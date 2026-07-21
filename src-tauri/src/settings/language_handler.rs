@@ -18,11 +18,6 @@ pub fn get_language() -> Result<LanguageSettings, String>{
     Ok(language)
 }
 
-#[tauri::command]
-pub fn save_language_settings(language_settings: LanguageSettings) -> Result<(), String> {
-  Ok(())
-}
-
 #[derive(Deserialize, Serialize, Debug)]
 pub struct LanguageSettings {
     change_to: ChangeToOptions,
