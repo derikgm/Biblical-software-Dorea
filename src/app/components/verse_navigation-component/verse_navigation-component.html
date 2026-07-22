@@ -16,15 +16,17 @@
             @if (show_chaps() == $index) {
 
                 <div class="m-2 grid grid-cols-[repeat(auto-fill,minmax(2rem,1fr))] gap-1">
-                    @for(cap of book.chapters; track $index){
+                    @for(chap of book.chapters; track $index){
                         <a 
-                        [href]="`#${book.nr}-${cap.chapter}`"
-                        class="flex items-center justify-center aspect-square cursor-pointer text-white 
-                        bg-green-600 hover:bg-green-400 dark:bg-green-800 dark:hover:bg-green-600
-                        dark:border-gray-500 dark:border"
+                        [href]="`#${book.nr}-${chap.chapter}`"
+                        class="flex items-center justify-center aspect-square cursor-pointer text-black 
+                        border-2 hover:bg-green-400 dark:text-white
+                        dark:hover:bg-green-600 dark:border-gray-500 dark:border"
                         (click)="bible_services.move_to_chapter(book.nr, $index + 1)"
+                        [class.bg-green-600]="establish_current_chap(chap)"
+                        [class.text-white]="establish_current_chap(chap)"
                         >
-                            {{cap.chapter}}
+                            {{chap.chapter}}
                         </a>
                     }
                 </div>

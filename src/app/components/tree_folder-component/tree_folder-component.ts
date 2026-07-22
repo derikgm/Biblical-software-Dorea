@@ -66,7 +66,6 @@ export class TreeFolderComponent {
     if(event.key == "Enter"){
       this.folder_services.update_name_from_sidebar(el.value, is_dir)
     } 
-    
   }
 
 }

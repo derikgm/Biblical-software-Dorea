@@ -8,6 +8,7 @@ use crate::notes::notes_handler::{create_new_note, save_note, get_notes_folders,
     get_note, update_file_name, create_new_folder, delete_note};
 use crate::helpers::directory_handler::{verify_and_create_data_directory};
 use crate::settings::language_handler::{get_language};
+use crate::settings::settings_handler::{get_settings, save_settings};
 
 
 #[cfg_attr(mobile, tauri::mobile_entry_point)]
@@ -23,6 +24,8 @@ pub fn run() {
             update_file_name,
             save_note,
             delete_note,
+            get_settings,
+            save_settings,
             get_language,
             get_notes_folders,
             get_note,

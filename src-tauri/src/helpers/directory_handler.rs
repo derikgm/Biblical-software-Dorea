@@ -1,9 +1,10 @@
 use std::path::Path;
 
 pub const BIBLIES_PATH: &str = "./Data/biblies";
-// pub const NOTES_PATH: &str = "./Data/notes";
+// pub const NOTES_PATH: &str = "./Data/notes"; TODO: change this
 pub const NOTES_PATH: &str = "../../Data/notes";
 pub const LANGUAGES_PATH: &str = "./Data/languages";
+pub const SETTINGS_PATH: &str = "./Data/settings";
 
 pub fn verify_and_create_data_directory(){
 
@@ -21,5 +22,9 @@ pub fn verify_and_create_data_directory(){
 
     if !Path::new(LANGUAGES_PATH).exists() {
         let _ = std::fs::create_dir(LANGUAGES_PATH);
+    }
+
+    if !Path::new(SETTINGS_PATH).exists() {
+        let _ = std::fs::create_dir(SETTINGS_PATH);
     }
 }

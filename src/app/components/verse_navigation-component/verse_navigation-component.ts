@@ -1,5 +1,6 @@
 import { Component, inject, signal } from '@angular/core';
 import { BibleServices } from '../../services/bible-services';
+import { Chapter } from '../../interfaces/bible-interface';
 
 
 @Component({
@@ -12,6 +13,8 @@ export class VerseNavigationComponent {
   show_chaps = signal<number>(-1);
 
   bible_services = inject(BibleServices);
+
+  cont = signal(0);
 
   open_caps(book: number, event: MouseEvent){
     this.show_chaps.set(
@@ -26,7 +29,10 @@ export class VerseNavigationComponent {
       behavior: 'smooth',
       block: 'center'
     });
-    
+  }
+
+  establish_current_chap(chap: Chapter){
+    return chap == this.bible_services.current_book()?.chapters[this.bible_services.current_chapter() - 1];
   }
 
 }

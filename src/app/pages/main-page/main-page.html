@@ -1,6 +1,6 @@
 
 <div 
-class="" 
+class="flex flex-row" 
 (mouseup)="showMarker($event)"
 (mouseup)="fixSelection()"
 >
@@ -12,38 +12,42 @@ class=""
         (colorMark)="handlerSelected($event)"
         />
     }
-
-    <p class="my-2" #texto>texto</p>
-
-    <div class="">
-        <!-- @for (chapter of this.bible_services.chapters_showed(); track trackByFn($index, chapter)) {
-            <div appVisible (visible)="load_another_chapter(chapter?.chapter)"
-                #chap_header
-            > -->
-            @for (chapter of this.bible_services.current_book()?.chapters; track $index) {
-                <h1 
-                [id]="`${this.bible_services.current_book()?.nr}-${chapter.chapter}`"
-                #chap_header
-                class="font-bold text-center my-2"
-                [style.fontSize.px]="fontSettingsServices.font_size() * 1.5"
-                >{{chapter?.name}}</h1>
-
-            @for (verse of chapter?.verses; track $index) {
-                <p 
-                #versiculo 
-                [style.fontSize.px]="fontSettingsServices.font_size()"
-                [class.inline]="fontSettingsServices.is_inline()"
-                >
-                    <sup class="font-bold z-0">
-                        {{$index + 1}}
-                    </sup>
-                    <span class="flex-1">
-                        {{verse.text}}
-                    </span> 
-                </p>
-            }
-        }
-    </div>
-
     
+    <div class="flex flex-col" #text_option>
+        <bible-option-component 
+        [text_option]="text_option"
+        />
+
+        <div>
+            @for (chapter of this.bible_services.current_book()?.chapters; track $index) {
+               <div class="" elementVisible 
+               (visible)="handler_chapter_visibility($index + 1, true)"
+               (notVisible)="handler_chapter_visibility($index + 1, false)">
+
+                   <h1 
+                    [id]="`${this.bible_services.current_book()?.nr}-${chapter.chapter}`"
+                    #chap_header
+                    class="font-bold text-center my-2"
+                    [style.fontSize.px]="fontSettingsServices.font_size() * 1.5"
+                    >{{chapter?.name}}</h1>
+    
+                @for (verse of chapter?.verses; track $index) {
+                    <p 
+                    #versiculo 
+                    [style.fontSize.px]="fontSettingsServices.font_size()"
+                    [class.inline]="fontSettingsServices.is_inline()"
+                    >
+                        <sup class="font-bold z-0">
+                            {{$index + 1}}
+                        </sup>
+                        <span class="flex-1">
+                            {{verse.text}}
+                        </span> 
+                    </p>
+            }
+            </div>
+        }
+        </div>
+
+    </div>
 </div>

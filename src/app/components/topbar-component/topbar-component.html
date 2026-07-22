@@ -21,39 +21,27 @@
         </div>
 
         <div class="inline">
-            <p class="inline">{{bible_services.current_book()?.name}}</p>
+            <p class="inline">{{bible_services.current_book()?.name}} {{bible_services.current_chapter()}}</p>
         </div>
 
-        <!-- Esta x-data se puede trabajar desde ts -->
-        <div class="mr-2 relative z-50" x-data="{open: false}"
+        <div class="flex flex-row items-center justify-center"
         >
-            <button
-            (click)="toggleButton()">
-                Options
-            </button>
-            
-            @if (open) {
-                <div 
-                class="absolute right-0 shadow-md mt-2 rounded dark-bg light-bg 
-                ring-1 ring-opacity-5 focus:outline-none w-36"
-                (mouseleave)="closeDropDown()"
+            <div class="bg-white rounded-lg border-2 w-full flex 
+            dark:bg-slate-800 border-gray-500">
+                <input type="text" 
+                class="px-2 border-r-2 rounded-l-lg outline outline-none 
+                dark:bg-slate-800 border-gray-500"
+                (change)="search_in_bible()"
                 >
-                    <div class="py-1">
-                        <a href="#ref" 
-                        class="whitespace-nowrap block px-4 py-2 text-sm hover:bg-gray-200 dark:hover:bg-gray-800"
-                        (click)="font_settings_services.changeFontForm()"
-                        >
-                        <!-- Cambiar a: {{font_settings_services.is_inline() ? "Bloque": "Lineal"}} -->
-                         {{change_to()?.option_name}}: {{
-                         font_settings_services.is_inline() 
-                         ? change_to()?.row 
-                         : change_to()?.lineal }}
-                        </a>
-                        <a href="#ref" 
-                        class="whitespace-nowrap block px-4 py-2 text-sm hover:bg-gray-200 dark:hover:bg-gray-800">Lineal</a>
-                    </div>
+
+                <div class="hover:text-blue-500 rounded-r-lg cursor-pointer hover:bg-blue-50
+                dark:hover:bg-gray-700 dark:hover:text-blue-400"
+                (click)="search_in_bible()">
+                    <ng-icon 
+                    name="search" 
+                    class="mx-2"/>
                 </div>
-            }
+            </div>
 
         </div>
     </div>

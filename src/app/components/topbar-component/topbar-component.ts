@@ -1,6 +1,6 @@
 import { Component, computed, inject, signal, } from '@angular/core';
 import { provideIcons, NgIcon } from '@ng-icons/core';
-import { heroMinus, heroPlus } from "@ng-icons/heroicons/outline"
+import { heroMagnifyingGlass, heroMinus, heroPlus } from "@ng-icons/heroicons/outline"
 import { FontSettingsServices } from '../../services/font_settings-services';
 import { LanguageServices } from '../../services/language-services';
 import { BibleServices } from '../../services/bible-services';
@@ -13,7 +13,8 @@ import { BibleServices } from '../../services/bible-services';
   providers: [
     provideIcons({
       plus: heroPlus,
-      minus: heroMinus
+      minus: heroMinus,
+      search: heroMagnifyingGlass
     })
   ]
 })
@@ -34,5 +35,8 @@ export class TopbarComponent {
     this.open = false;
   }
 
+  search_in_bible(){
+    console.log("echo");
+  }
 }
 

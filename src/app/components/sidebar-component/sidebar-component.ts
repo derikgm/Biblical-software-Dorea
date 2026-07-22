@@ -13,7 +13,7 @@ import { TreeFolderComponent } from "../tree_folder-component/tree_folder-compon
 import { Folder } from '../../interfaces/tree_folder-interfaces';
 import { FolderOptionsComponent } from "../folder_options-component/folder_options-component";
 import { FolderServices } from '../../services/folder-services';
-import { SettingsServices } from '../../services/settings-services';
+import { SettingsServices } from '../../services/sidebar_settings-services';
 import { VerseNavigationComponent } from "../verse_navigation-component/verse_navigation-component";
 
 

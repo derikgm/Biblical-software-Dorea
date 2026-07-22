@@ -2,7 +2,7 @@
 import { Directive, ElementRef, EventEmitter, Output, OnInit, OnDestroy } from '@angular/core';
 
 @Directive({
-  selector: '[appVisible]',
+  selector: '[elementVisible]',
 })
 export class VisibleDirective implements OnInit, OnDestroy {
   @Output() visible = new EventEmitter<HTMLElement>();
