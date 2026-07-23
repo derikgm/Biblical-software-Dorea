@@ -1,4 +1,4 @@
-import { Component, computed, inject, signal, } from '@angular/core';
+import { Component, ElementRef, inject, signal, ViewChild, } from '@angular/core';
 import { provideIcons, NgIcon } from '@ng-icons/core';
 import { heroMagnifyingGlass, heroMinus, heroPlus } from "@ng-icons/heroicons/outline"
 import { FontSettingsServices } from '../../services/font_settings-services';
@@ -19,7 +19,7 @@ import { BibleServices } from '../../services/bible-services';
   ]
 })
 export class TopbarComponent {
-  open = false;
+  @ViewChild("search_input") search_input!: ElementRef<HTMLInputElement>;
 
   font_settings_services = inject(FontSettingsServices);
   lang = inject(LanguageServices);
@@ -27,16 +27,8 @@ export class TopbarComponent {
 
   change_to = signal(this.lang.data()?.change_to);
 
-  toggleButton() {
-    this.open = !this.open;
-  }
-
-  closeDropDown(){
-    this.open = false;
-  }
-
-  search_in_bible(){
-    console.log("echo");
+  async search_in_bible(){
+    await this.bible_services.search_in_bible(this.search_input.nativeElement.value as string);
   }
 }
 

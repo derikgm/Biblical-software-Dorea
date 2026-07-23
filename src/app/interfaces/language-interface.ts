@@ -12,5 +12,6 @@ export interface LanguageSettings {
     }
     notes: {
         file_empty: string
-    }
+    },
+    close: string,
 }

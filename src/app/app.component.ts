@@ -9,10 +9,11 @@ import { FolderServices } from "./services/folder-services";
 import { SpinComponent } from "./components/spin-component/spin-component";
 import { GlobalSettingsServices } from "./services/global_settings-services.ts";
 import { FontSettingsServices } from "./services/font_settings-services";
+import { SearchResultComponent } from "./components/search_result-component/search_result-component";
 
 @Component({
   selector: "app-root",
-  imports: [RouterOutlet, SidebarComponent, TopbarComponent, SpinComponent],
+  imports: [RouterOutlet, SidebarComponent, TopbarComponent, SpinComponent, SearchResultComponent],
   templateUrl: "./app.component.html",
   styleUrl: "./app.component.css",
 })

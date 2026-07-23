@@ -18,12 +18,13 @@
       <div class="flex-1 overflow-y-auto dark:bg-gray-800 dark:border-black/0
        dark:text-white px-4 xl:px-16 w-full scrollbar-hidden">
         <router-outlet />
+
+        @if (bible_services.open_search_result()) {
+          <search-result-component />
+        }
       </div>
 
-      <!-- <div class="sticky flex flex-col right-0 items-center justify-center pr-2">
-        <a href="#" class="border"> Row </a>
-        <a href="#" class="border"> Lineal </a>
-    </div> -->
+
     </div>
   </div>
 

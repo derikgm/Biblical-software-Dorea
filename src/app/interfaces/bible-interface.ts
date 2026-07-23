@@ -22,20 +22,27 @@ export interface Bible {
 }
 
 export interface Book {
-  nr: number;           // número del libro
+  nr: number;
   name: string;
   chapters: Chapter[];
 }
 
 export interface Chapter {
-  chapter: number;      // número de capítulo
-  name: string;         // ej. "Génesis 1"
+  chapter: number;      
+  name: string;         
   verses: Verse[];
 }
 
 export interface Verse {
-  chapter: number;      // número de capítulo (redundante pero está en el JSON)
-  verse: number;        // número de versículo
-  name: string;         // ej. "Génesis 1:1"
+  chapter: number;     
+  verse: number;       
+  name: string;        
   text: string;
+}
+
+export interface IndexedVerse {
+    book_number: number,
+    chapter_number: number,
+    verse_number: number,
+    verse_string: string,
 }

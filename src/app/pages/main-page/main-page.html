@@ -33,6 +33,7 @@ class="flex flex-row"
     
                 @for (verse of chapter?.verses; track $index) {
                     <p 
+                    [id]="`${this.bible_services.current_book()?.nr}-${chapter.chapter}-${verse.verse}`"
                     #versiculo 
                     [style.fontSize.px]="fontSettingsServices.font_size()"
                     [class.inline]="fontSettingsServices.is_inline()"

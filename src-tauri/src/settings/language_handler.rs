@@ -23,6 +23,7 @@ pub struct LanguageSettings {
     change_to: ChangeToOptions,
     folder: FolderOptions,
     notes: NoteOptions,
+    close: String
 }
 
 #[derive(Deserialize, Serialize, Debug)]
