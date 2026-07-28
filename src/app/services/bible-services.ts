@@ -9,7 +9,7 @@ export class BibleServices {
   bible = signal<Bible | undefined> (undefined);
   current_chapter = signal<number>(1);
   current_book = signal<Book | undefined> (undefined);
-  open_search_result = signal<boolean> (true);
+  open_search_result = signal<boolean> (false);
   string_to_search = signal<string []> ([]);
   verses_searched = signal<IndexedVerse []> ([]);
 
@@ -25,7 +25,6 @@ export class BibleServices {
   }
 
   async search_in_bible(search: string){
-  const start = new Date(); // 👈 Marca el inicio
 
   const result: IndexedVerse[] = await invoke("search_in_bible", {search});
   const words_in_search = search.split(" ");
@@ -33,14 +32,8 @@ export class BibleServices {
   this.string_to_search.set(words_in_search);
   this.verses_searched.set(result);
 
-  const end = new Date(); // 👈 Marca el final
+  this.open_search_result.set(true);
 
-  // ✅ FORMA CORRECTA de calcular la diferencia
-  const elapsedMs = end.getTime() - start.getTime(); // Milisegundos
-  const elapsedSeconds = elapsedMs / 1000; // Segundos
-
-  console.log(`⏱️ Búsqueda completada en: ${elapsedMs}ms (${elapsedSeconds.toFixed(3)}s)`);
-    
   }
 
   async get_bible(){

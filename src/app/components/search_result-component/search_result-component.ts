@@ -5,6 +5,7 @@ import { DomSanitizer, SafeHtml } from '@angular/platform-browser';
 import { NgIcon, provideIcons } from '@ng-icons/core';
 import { heroArrowTopRightOnSquare, heroClipboard, heroClipboardDocument, heroClipboardDocumentList, heroXMark } from '@ng-icons/heroicons/outline';
 import { coolDoubleQuotesR, coolSingleQuotesR } from "@ng-icons/coolicons"
+import { GlobalSettingsServices } from '../../services/global_settings-services.ts';
 
 @Component({
   selector: 'search-result-component',
@@ -21,7 +22,7 @@ import { coolDoubleQuotesR, coolSingleQuotesR } from "@ng-icons/coolicons"
     })
   ],
   template: `
-  <div class="w-full h-full sticky bg-black/15 bottom-0 left-0 z-50 flex justify-center 
+  <div class="w-full h-full sticky bg-black/15 tpo-0 left-0 z-50 flex justify-center 
   items-center">
     <div class="w-5/6 h-5/6 bg-white rounded border shadow flex flex-col">
 
@@ -33,7 +34,9 @@ import { coolDoubleQuotesR, coolSingleQuotesR } from "@ng-icons/coolicons"
           }
         </div>
 
-        <div class="w-6 flex rounded-r-sm items-center justify-center 
+        <div 
+        (click)="close_search_results()"
+        class="w-6 flex rounded-r-sm items-center justify-center 
         hover:bg-red-500 hover:text-white cursor-pointer">
           <ng-icon name="close" class="text-xl "/>
         </div>
@@ -103,6 +106,17 @@ import { coolDoubleQuotesR, coolSingleQuotesR } from "@ng-icons/coolicons"
                   />
                 </div>
 
+                <div
+                (click)="copy_quote($index)" 
+                class="border-2 flex p-0.5 rounded hover:bg-blue-50 hover:text-blue-500 
+                dark:border-gray-400 dark:hover:bg-gray-300 dark:hover:text-blue-600">
+                  <ng-icon 
+                  name="quote" 
+                  class="cursor-pointer text-xl"
+                  
+                  />
+                </div>
+
                 <div class="border-2 flex p-0.5 rounded hover:bg-blue-50 hover:text-blue-500 
                 dark:border-gray-400 dark:hover:bg-gray-300 dark:hover:text-blue-600">
                    <ng-icon 
@@ -128,7 +142,8 @@ import { coolDoubleQuotesR, coolSingleQuotesR } from "@ng-icons/coolicons"
       </div>
 
       <div class="w-full flex flex-row-reverse light-bg dark-bg border-t rounded-b py-0.5">
-        <button class="bg-blue-500 text-white px-2 rounded dark:bg-blue-800">
+        <button class="bg-blue-500 text-white px-2 rounded dark:bg-blue-800"
+        (click)="close_search_results()">
           {{lang.data()?.close}}
         </button>
       </div>
@@ -137,7 +152,7 @@ import { coolDoubleQuotesR, coolSingleQuotesR } from "@ng-icons/coolicons"
 
   <style>
     :host {
-      @apply w-full h-full z-50;
+      @apply w-full h-full z-50 sticky top-0 left-0 flex;
     }
     .disabled {
       @apply text-gray-300 cursor-default dark:border-gray-800 dark:text-gray-500;
@@ -242,8 +257,9 @@ export class SearchResultComponent implements AfterViewInit{
 
   async copy_quote (verse: number) {
     let text_to_clipboard = "(";
+
     if(verse != -1){
-      await navigator.clipboard.writeText(this.get_quote(verse));
+      await navigator.clipboard.writeText("(" + this.get_quote(verse) + ")");
       return
     }
 
@@ -272,5 +288,8 @@ export class SearchResultComponent implements AfterViewInit{
     return this.sanitizer.bypassSecurityTrustHtml(html);
   }
 
+  close_search_results(){
+    this.bible_services.open_search_result.set(false);
+  }
 
 }

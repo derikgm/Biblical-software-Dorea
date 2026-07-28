@@ -4,6 +4,7 @@ import { heroMagnifyingGlass, heroMinus, heroPlus } from "@ng-icons/heroicons/ou
 import { FontSettingsServices } from '../../services/font_settings-services';
 import { LanguageServices } from '../../services/language-services';
 import { BibleServices } from '../../services/bible-services';
+import { GlobalSettingsServices } from '../../services/global_settings-services.ts';
 
 @Component({
   selector: 'topbar-component',
@@ -24,11 +25,17 @@ export class TopbarComponent {
   font_settings_services = inject(FontSettingsServices);
   lang = inject(LanguageServices);
   bible_services = inject(BibleServices);
+  global_settings_services = inject(GlobalSettingsServices);
 
   change_to = signal(this.lang.data()?.change_to);
 
   async search_in_bible(){
-    await this.bible_services.search_in_bible(this.search_input.nativeElement.value as string);
+    this.global_settings_services.is_loading.set(true)
+    const value = this.search_input.nativeElement.value as string;
+    this.search_input.nativeElement.value = "";
+    
+    await this.bible_services.search_in_bible(value);
+    this.global_settings_services.is_loading.set(false)
   }
 }
 

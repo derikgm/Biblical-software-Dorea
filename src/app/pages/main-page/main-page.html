@@ -19,7 +19,7 @@ class="flex flex-row"
         />
 
         <div>
-            @for (chapter of this.bible_services.current_book()?.chapters; track $index) {
+            @for (chapter of current_book()?.chapters; track $index) {
                <div class="" elementVisible 
                (visible)="handler_chapter_visibility($index + 1, true)"
                (notVisible)="handler_chapter_visibility($index + 1, false)">

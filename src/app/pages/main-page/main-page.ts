@@ -1,4 +1,4 @@
-import { AfterViewInit, ChangeDetectionStrategy, Component, computed, ElementRef, EventEmitter, HostListener, 
+import { afterEveryRender, afterNextRender, afterRenderEffect, AfterViewInit, ChangeDetectionStrategy, Component, computed, effect, ElementRef, EventEmitter, HostListener, 
   inject, Output, QueryList, signal, ViewChild, ViewChildren } from '@angular/core';
 import { FontSettingsServices } from '../../services/font_settings-services';
 import { MarkerComponent } from '../../components/marker-component/marker-component';
@@ -22,7 +22,6 @@ import { BibleOptionComponent } from "../../components/bible_option-component/bi
   ],
   templateUrl: './main-page.html',
   styleUrl: './main-page.css',
-  // changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class MainPage implements AfterViewInit{
   @ViewChild('text_option') text_option!: ElementRef<HTMLDivElement>;
@@ -41,18 +40,24 @@ export class MainPage implements AfterViewInit{
   xPosition = signal<number>(0);
   yPosition = signal<number>(0);
 
+  current_book = computed(() => {
+    this.focus_jumped_chapter();
+    return this.bible_services.current_book();
+  })
+
   ngAfterViewInit(): void {
     document.addEventListener('click', ()=>{
       this.isMakerOpen.set(!document.getSelection()?.isCollapsed);
     })
+  }
 
-    this.chap_headers.changes.subscribe(()=>{
+  focus_jumped_chapter(){
+    setTimeout(() => {
       this.chap_headers.get(this.bible_services.current_chapter() - 1)
       ?.nativeElement.scrollIntoView(true);
       this.visibility_range = [];
       this.visibility_range.push(this.bible_services.current_chapter());
-    }) 
-
+    }, 0)
   }
 
   handler_chapter_visibility(chapter: number, visible: boolean) {

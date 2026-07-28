@@ -4,7 +4,9 @@ import { ChangeDetectionStrategy, Component } from '@angular/core';
   selector: 'spin-component',
   imports: [],
   template: `
-    <div class="w-full h-full justify-center text-center flex items-center align-middle"> 
+    <div class="w-full h-full justify-center text-center flex items-center align-middle
+    bg-black/20 sticky"> 
+      
       <svg class="w-12 h-12 text-gray-300 animate-spin" viewBox="0 0 64 64" fill="none"
       xmlns="http://www.w3.org/2000/svg" width="24" height="24">
       <path

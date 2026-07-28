@@ -1,33 +1,31 @@
-<main class="h-screen flex flex-col"
->
-<!-- [class.select-none]="this.settings_services.enabled_extended_sidebar_rezising()" -->
-
- @if (loading()) {
-
-  <spin-component class="h-full"/>
-
-  } @else {
-   <div class="flex flex-col h-full">
-
-    <topbar-component class="sticky top-0 z-10"/>
-    
-    <div class="flex flex-row flex-1 overflow-hidden">
-      <sidebar-component class="sticky top-0 h-full overflow-y-visible"/>
-
+<main class="h-screen flex flex-col">
+  <!-- @if (global_settings_services.is_loading()) {
+    <spin-component class="h-full"/>
+  } @else { -->
+    <div class="flex flex-col h-full">
+      <topbar-component class="sticky top-0 z-10"/>
       
-      <div class="flex-1 overflow-y-auto dark:bg-gray-800 dark:border-black/0
-       dark:text-white px-4 xl:px-16 w-full scrollbar-hidden">
-        <router-outlet />
+      <div class="flex flex-row flex-1 overflow-hidden">
+        <sidebar-component class="sticky top-0 h-full overflow-y-visible"/>
+        
+        <div class="flex-1 relative overflow-hidden">
+          
+          <div class="overflow-y-auto dark:bg-gray-800 dark:border-black/0 dark:text-white w-full h-full scrollbar-hidden">
+            <div class="px-4 xl:px-16">
+              <router-outlet />
+            </div>
+          </div>
+          
+          @if (bible_services.open_search_result()) {
+            <search-result-component class="absolute inset-0 z-50"/>
+          }
 
-        @if (bible_services.open_search_result()) {
-          <search-result-component />
-        }
+          @if (global_settings_services.is_loading()) {
+            <spin-component class="absolute inset-0 z-50"/>
+          }
+        </div>
       </div>
-
-
     </div>
-  </div>
 
- }
-
+  <!-- } -->
 </main>

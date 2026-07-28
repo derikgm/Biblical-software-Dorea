@@ -1,4 +1,4 @@
-import { Injectable } from '@angular/core';
+import { Injectable, signal } from '@angular/core';
 import { invoke } from '@tauri-apps/api/core';
 
 @Injectable({
@@ -10,7 +10,7 @@ export class GlobalSettingsServices {
     bible_form_lineal: false
   };
 
-
+  is_loading = signal(true);
 
   async init(){
     this.settings = await invoke('get_settings');

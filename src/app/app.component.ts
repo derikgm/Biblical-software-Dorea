@@ -18,8 +18,6 @@ import { SearchResultComponent } from "./components/search_result-component/sear
   styleUrl: "./app.component.css",
 })
 export class AppComponent implements AfterViewInit{
-  loading = signal<boolean> (true);
-  
   language_services = inject(LanguageServices);
   settings_services = inject(SettingsServices);
   bible_services = inject(BibleServices);
@@ -35,7 +33,10 @@ export class AppComponent implements AfterViewInit{
     
     this.font_settings_services.init();
 
-    this.loading.set(false);
+    this.global_settings_services.is_loading.set(false);
+
+    console.log(this.global_settings_services.is_loading());
+    
   }
 
   @HostListener('mouseup')
