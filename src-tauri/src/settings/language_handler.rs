@@ -3,13 +3,12 @@ use std::fs;
 
 use serde::{Deserialize, Serialize};
 
-use crate::helpers::directory_handler::{LANGUAGES_PATH, verify_and_create_data_directory};
+use crate::helpers::directory_handler::{get_language_path};
 
 #[tauri::command]
 pub fn get_language() -> Result<LanguageSettings, String>{
-    verify_and_create_data_directory();
 
-    let langauge_file_string = fs::read_to_string(format!("{}/{}", LANGUAGES_PATH, "en.json"))
+    let langauge_file_string = fs::read_to_string(format!("{}/{}", get_language_path(), "en.json"))
     .map_err(|e| format!("Ocurrio un error de lectura de lenguages: {e}"))?;
 
     let language: LanguageSettings = serde_json::from_str(&langauge_file_string)
@@ -23,7 +22,8 @@ pub struct LanguageSettings {
     change_to: ChangeToOptions,
     folder: FolderOptions,
     notes: NoteOptions,
-    close: String
+    close: String,
+    bible_empty: String,
 }
 
 #[derive(Deserialize, Serialize, Debug)]

@@ -10,7 +10,13 @@ export class LanguageServices {
   current_language = signal<string>("en");
 
   async init(){
-    const v: LanguageSettings = await invoke('get_language', {});
-    this.data.set(v);
+    
+    await invoke('get_language', {})
+    .then((v) => {
+      this.data.set(v as unknown as LanguageSettings)
+    })
+    .catch((e) => {
+      console.log(e);
+    });
   }
 }

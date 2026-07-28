@@ -14,4 +14,5 @@ export interface LanguageSettings {
         file_empty: string
     },
     close: string,
+    bible_empty: string,
 }

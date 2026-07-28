@@ -20,6 +20,8 @@
         >
             {{folder_lang?.create_new_note}}
         </p>
+
+        @if (!is_from_extended_sidebar()) {
         <p class="hover:dark:bg-gray-700 cursor-pointer py-2 px-2 hover:bg-gray-300"
         (click)="rename_file_or_folder()"
         >
@@ -30,6 +32,7 @@
         >
             {{folder_lang?.delete}}
         </p>
+        }
 
     </div>
 

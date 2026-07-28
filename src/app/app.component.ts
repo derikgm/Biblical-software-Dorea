@@ -10,10 +10,11 @@ import { SpinComponent } from "./components/spin-component/spin-component";
 import { GlobalSettingsServices } from "./services/global_settings-services.ts";
 import { FontSettingsServices } from "./services/font_settings-services";
 import { SearchResultComponent } from "./components/search_result-component/search_result-component";
+import { SettingsPage } from "./pages/settings-page/settings-page";
 
 @Component({
   selector: "app-root",
-  imports: [RouterOutlet, SidebarComponent, TopbarComponent, SpinComponent, SearchResultComponent],
+  imports: [RouterOutlet, SidebarComponent, TopbarComponent, SpinComponent, SearchResultComponent, SettingsPage],
   templateUrl: "./app.component.html",
   styleUrl: "./app.component.css",
 })

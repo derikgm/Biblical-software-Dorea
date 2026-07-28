@@ -1,5 +1,6 @@
 <div class="w-full h-full dark:bg-gray-800 dark:text-white overflow-y-scroll 
-scrollbar-hidden select-none text-nowrap">
+scrollbar-hidden select-none text-nowrap"
+(contextmenu)="show_options_from_extended_sidebar($event)">
     @if(this.folders()?.folder_name != "root"){
 
         @if (this.folders() == folder_services.folder_to_rename()) {
@@ -14,7 +15,7 @@ scrollbar-hidden select-none text-nowrap">
         } @else {
             <p 
             class="cursor-default w-full hover:bg-gray-200 dark:hover:bg-gray-700"
-            (contextmenu)="show_options($event)"
+            (contextmenu)="$event.stopPropagation(); show_options($event);"
             [style.padding-left.rem]="floor() * 0.5"
             >
                 <span class="cursor-pointer" (click)="open_folder()">
@@ -34,7 +35,7 @@ scrollbar-hidden select-none text-nowrap">
         @for (file of this.folders()?.files; track $index) {
         <div
         (click)="open_file(file)"
-        (contextmenu)="show_options($event, $index)"
+        (contextmenu)="show_options($event, $index); $event.stopPropagation()"
         [style.padding-left.rem]="floor() * 0.75"
         [class.file-selected]="folder_services.current_note() == file"
         class="cursor-pointer w-full hover:bg-gray-200 dark:hover:bg-gray-700 flex"

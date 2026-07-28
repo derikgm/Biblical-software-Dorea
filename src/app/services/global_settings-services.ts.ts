@@ -7,16 +7,18 @@ import { invoke } from '@tauri-apps/api/core';
 export class GlobalSettingsServices {
   settings: Settings = {
     font_size: 0,
-    bible_form_lineal: false
+    bible_form_lineal: false,
+    current_book: 1,
+    current_chapter: 1,
   };
 
-  is_loading = signal(true);
+  is_loading = signal(false);
 
   async init(){
     this.settings = await invoke('get_settings');
   }
 
-  save_settings(){
+  async save_settings(){
     invoke("save_settings", {settings: this.settings})
     .then(()=>{console.log("Guardado");})
   }
@@ -26,9 +28,14 @@ export class GlobalSettingsServices {
     this.save_settings();
   }
 
-}
+  async save_current_chapter(book: number, chapter: number ){
+    console.log(book, chapter);
+  }
 
+}
 export interface Settings {
     font_size: number,
     bible_form_lineal: boolean, 
+    current_book: number,
+    current_chapter: number,
 }

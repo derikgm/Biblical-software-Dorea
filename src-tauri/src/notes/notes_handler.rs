@@ -3,8 +3,7 @@ use std::fs::File;
 use std::path::PathBuf;
 use serde::{Deserialize, Serialize};
 
-use crate::helpers::directory_handler::NOTES_PATH;
-use crate::helpers::directory_handler::verify_and_create_data_directory;
+use crate::helpers::directory_handler::get_note_path;
 
 #[tauri::command]
 pub fn save_note (dir: &str, content: &str) -> Result<bool, String> {
@@ -26,8 +25,6 @@ pub fn update_file_name (dir: &str, new_dir: &str) -> Result<bool, String> {
 
 #[tauri::command]
 pub fn create_new_note (dir: &str) -> Result<Note, String>{
-    verify_and_create_data_directory();
-
     let extension = String::from("txt");
     let mut note: Note = Note { title: "note_1".to_string(), extension };
     let mut files: Vec<String> = Vec::new();
@@ -73,8 +70,6 @@ pub fn create_new_note (dir: &str) -> Result<Note, String>{
 
 #[tauri::command]
 pub fn create_new_folder (dir: &str) -> Result<String, String>{
-    verify_and_create_data_directory();
-
     let mut new_folder: String = String::from("new folder");
     let mut folders: Vec<String> = Vec::new();
 
@@ -141,12 +136,11 @@ pub fn delete_note (dir: &str, is_dir: bool) -> Result<bool, String> {
 
 #[tauri::command]
 pub fn get_notes_folders() -> Result<Folder, String>{
-    verify_and_create_data_directory();
 
     let mut root_files: Vec<Note> = Vec::from([]); 
     let mut root_folders: Vec<Folder> = Vec::from([]); 
 
-    let iterator = fs::read_dir(NOTES_PATH)
+    let iterator = fs::read_dir(get_note_path())
     .map_err(|e| format!("Error la leer los datos: {e}"))?;
 
     for entry in iterator {
@@ -175,7 +169,7 @@ pub fn get_notes_folders() -> Result<Folder, String>{
     }
 
     Ok(Folder { 
-        dir: String::from(NOTES_PATH),
+        dir: String::from(get_note_path()),
         folder_name: String::from("root"), 
         open: false, 
         folders: root_folders, 

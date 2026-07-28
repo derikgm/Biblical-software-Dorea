@@ -24,6 +24,7 @@
                 [routerLink]='["/settings"]'
                 [routerLinkActive]='["active"]' 
                 [routerLinkActiveOptions]="{exact: true}"
+                (click)="ancor_handler(-1)"
                 > 
                     <ng-icon name="settings" class=""></ng-icon>
                 </a>
@@ -76,7 +77,7 @@
         </div>
     }
 
-    @if(folder_services.is_show()){
+    @if(folder_services.show_file_and_folder_options()){
         <folder-options-component />
     }
 </div>

@@ -44,6 +44,9 @@ export class SidebarComponent {
     if(anchor == this.current_path())
       this.settings_services.extended_sidebar_open.update(v => !v);
 
+    if(anchor == -1)
+      this.settings_services.extended_sidebar_open.set(false);
+    
     this.current_path.set(anchor)
   }
 

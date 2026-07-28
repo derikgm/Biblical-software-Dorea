@@ -7,7 +7,7 @@ import { invoke } from '@tauri-apps/api/core';
 })
 export class BibleServices {
   bible = signal<Bible | undefined> (undefined);
-  current_chapter = signal<number>(1);
+  current_chapter = signal<number>(0);
   current_book = signal<Book | undefined> (undefined);
   open_search_result = signal<boolean> (false);
   string_to_search = signal<string []> ([]);
@@ -15,8 +15,11 @@ export class BibleServices {
 
   async init() {
     await this.get_bible();
-    this.current_book.set(this.bible()?.books[42]);
-    this.current_chapter.set(3);
+
+    if(this.bible()){
+      this.current_book.set(this.bible()?.books[42]);
+      this.current_chapter.set(3);
+    }
   }
 
   move_to_chapter(book_number: number, verse_number: number){
@@ -37,7 +40,13 @@ export class BibleServices {
   }
 
   async get_bible(){
-    const bible: Bible = await invoke("get_all_bible", {});
-    this.bible.set(bible);
+    await invoke("get_all_bible", {})
+    .then((bible) => {
+      this.bible.set(bible as unknown as Bible);
+    })
+    .catch((e) => {
+      console.log(e);
+    });
+    
   }
 }

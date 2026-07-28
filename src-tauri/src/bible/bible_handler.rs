@@ -5,13 +5,11 @@ use std::collections::HashMap;
 use std::fs::{self};
 use std::sync::Mutex;
 
-use crate::{helpers::directory_handler::BIBLIES_PATH, verify_and_create_data_directory};
+use crate::{helpers::directory_handler::get_bible_path, verify_and_create_data_directory};
 
 #[tauri::command]
 pub fn get_all_bible(state: tauri::State<IndexedBible>) -> Result<Bible, String> {
-    verify_and_create_data_directory();
-
-    let bible_str = fs::read_to_string(format!("{}/{}", BIBLIES_PATH, "valera.json"))
+    let bible_str = fs::read_to_string(format!("{}/{}", get_bible_path(), "valera.json"))
         .map_err(|e| format!("Error al leer la biblia: {e}"))?;
 
     let bible: Bible = serde_json::from_str(&bible_str)
@@ -24,7 +22,7 @@ pub fn get_all_bible(state: tauri::State<IndexedBible>) -> Result<Bible, String>
 }
 
 fn index_the_bible(bible: &Bible, state: &tauri::State<IndexedBible>) -> Result<(), String> {
-    let path = format!("{}/indexed/valera_indexed.json", BIBLIES_PATH);
+    let path = format!("{}/indexed/valera_indexed.json", get_bible_path());
 
     // Verificar si el archivo indexado ya existe
     if Path::new(&path).exists() {

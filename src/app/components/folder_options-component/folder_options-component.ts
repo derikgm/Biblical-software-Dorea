@@ -12,6 +12,8 @@ export class FolderOptionsComponent {
   folder_services = inject(FolderServices);
   folder_lang = inject(LanguageServices).data()?.folder;
 
+  is_from_extended_sidebar = this.folder_services.is_from_extended_sidebar;
+
   create_new_note(){
     this.folder_services.create_new_note()
   }

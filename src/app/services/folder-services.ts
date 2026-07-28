@@ -8,7 +8,8 @@ import { invoke } from '@tauri-apps/api/core';
 export class FolderServices {
 
   // Folder signals
-  is_show = signal<boolean>(false);
+  show_file_and_folder_options = signal<boolean>(false);
+  is_from_extended_sidebar = signal<boolean>(false);
   x_position = signal<number>(0);
   y_position = signal<number>(0);
   folder_selected = signal<Folder | null>(null);
@@ -34,15 +35,24 @@ export class FolderServices {
   }
 
   show_folder_option (x: number = 0, y: number = 0, folder_selected: Folder | undefined, index: number){
-    this.is_show.set(true);
+    this.show_file_and_folder_options.set(true);
     this.x_position.set(x)
     this.y_position.set(y)
     this.folder_selected.set(folder_selected ?? null);
     this.file.set( (folder_selected?.files && index != -1) ? folder_selected.files[index] : null)
   }
 
+  show_folder_option_from_extended_sidebar(x: number = 0, y: number = 0){
+    this.show_file_and_folder_options.set(true);
+    this.is_from_extended_sidebar.set(true);
+    this.x_position.set(x)
+    this.y_position.set(y)
+    this.folder_selected.set(this.folder_root() ?? null);
+  }
+
   close_folder_option (){
-    this.is_show.set(false)
+    this.show_file_and_folder_options.set(false)
+    this.is_from_extended_sidebar.set(false);
     this.folder_selected.set(null);
     this.file.set(null)
   }
@@ -109,7 +119,7 @@ export class FolderServices {
       this.folder_to_rename.set(this.folder_selected());  
     }
 
-    this.is_show.set(false)
+    this.show_file_and_folder_options.set(false)
   }
   
   finish_to_rename(){

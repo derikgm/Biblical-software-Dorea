@@ -13,5 +13,6 @@
     "notes": {
         "file_empty": "This file is empty"
     },
-    "close": "close"
+    "close": "close",
+    "bible_empty": "There is no Bible available; please download one from the options panel."
 }

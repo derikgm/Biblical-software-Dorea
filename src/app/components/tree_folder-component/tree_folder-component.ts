@@ -28,11 +28,6 @@ export class TreeFolderComponent {
 
   @ViewChild("rename_input") rename_input!: ElementRef<HTMLInputElement>;
 
-
-  constructor(private cdr: ChangeDetectorRef){
-    
-  }
-
   is_open = signal<boolean>(this.folders()?.open ?? true);
 
   folder_services = inject(FolderServices);
@@ -48,6 +43,11 @@ export class TreeFolderComponent {
   show_options(event: MouseEvent, index: number = -1){
     event.preventDefault();
     this.folder_services.show_folder_option(event.x, event.y, this.folders(), index);
+  }
+  
+  show_options_from_extended_sidebar(event: MouseEvent){
+    event.preventDefault();
+    this.folder_services.show_folder_option_from_extended_sidebar(event.x, event.y);
   }
 
   finish_to_rename(){

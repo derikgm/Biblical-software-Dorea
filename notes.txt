@@ -4,3 +4,8 @@ resulta que yo le pasaba new_dir, el backend esperaba new_dir, pero tauri
 por defecto combierte en la trasicion de backend y frontend a camel Case:
 
 newDir
+
+
+¿Qué hace exactamente .setup()?
+Es un método que se encadena a tauri::Builder::default() y recibe una función "callback" (una "closure" en Rust) que se ejecuta en ese momento específico de la preparación. Es la forma que tiene Tauri de darte un punto de entrada para ejecutar tu propio código de inicialización .
+Por eso, la función de setup recibe un parámetro crucial: app. A través de app, puedes obtener una referencia a app_handle, que es como el "control remoto" de tu aplicación . Desde ahí, puedes hacer muchas cosas, como acceder a las ventanas, gestionar el estado de la app, o, como en tu caso, acceder a las rutas del sistema de archivos para crear directorios.

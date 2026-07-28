@@ -21,7 +21,9 @@
         </div>
 
         <div class="inline">
-            <p class="inline">{{bible_services.current_book()?.name}} {{bible_services.current_chapter()}}</p>
+            @if(bible_services.current_book()) {
+                <p class="inline">{{bible_services.current_book()?.name}} {{bible_services.current_chapter()}}</p>
+            }
         </div>
 
         <div class="flex flex-row items-center justify-center"

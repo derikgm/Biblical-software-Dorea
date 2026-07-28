@@ -8,6 +8,8 @@ import { VisibleDirective } from "../../directives/visible-directive";
 import { NgIcon, provideIcons } from '@ng-icons/core';
 import { heroBars3, heroBars3CenterLeft, heroEquals, heroPause } from '@ng-icons/heroicons/outline';
 import { BibleOptionComponent } from "../../components/bible_option-component/bible_option-component";
+import { GlobalSettingsServices } from '../../services/global_settings-services.ts';
+import { LanguageServices } from '../../services/language-services';
 
 @Component({
   selector: 'main-page',
@@ -33,6 +35,8 @@ export class MainPage implements AfterViewInit{
 
   fontSettingsServices = inject(FontSettingsServices);
   bible_services = inject(BibleServices);
+  global_settings_services = inject(GlobalSettingsServices);
+  lang = inject(LanguageServices);
 
   // headers = map_headers;
   isMakerOpen = signal<boolean>(false);
@@ -49,6 +53,10 @@ export class MainPage implements AfterViewInit{
     document.addEventListener('click', ()=>{
       this.isMakerOpen.set(!document.getSelection()?.isCollapsed);
     })
+
+    setTimeout(() => {
+      console.log(this.current_book());
+    }, 0)
   }
 
   focus_jumped_chapter(){
@@ -69,6 +77,10 @@ export class MainPage implements AfterViewInit{
       if(chapter < this.visibility_range[0]){
         this.visibility_range.unshift(chapter);
         this.bible_services.current_chapter.set(chapter);
+        this.global_settings_services.save_current_chapter(
+          this.current_book()?.nr ?? 0,
+          this.visibility_range.shift() ?? 0,
+        );
       }
 
       if(this.visibility_range.at(-1)! < chapter){
