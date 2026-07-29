@@ -14,11 +14,23 @@
             Select bible: 
         </p>
 
-            <select class="cursor-pointer dark:bg-gray-800 border rounded outline outline-none">
-                @for (avible_bible of available_biblies(); track $index) {
-                    <option value="">{{avible_bible}}</option>
-                }
-            </select>
+        <select #select_bible_element
+        class="cursor-pointer dark:bg-gray-800 border rounded outline outline-none"
+        (change)="select_bible($event.target)"
+        >
+
+            @if (!bible_services.bible()) {
+                <option value="">None</option>
+            }
+
+            @for (avible_bible of available_biblies(); track $index) {
+                <option 
+                [value]="avible_bible.abbreviation"
+                >
+                    {{avible_bible.abbreviation}} ({{avible_bible.lang}})
+                </option>
+            }
+        </select>
     </div>
 
     <div class="w-full flex justify-between">
@@ -26,14 +38,17 @@
             Download bible: 
         </p>
 
-            <select class="cursor-pointer dark:bg-gray-800 border rounded outline outline-none">
+            <select 
+            (change)="download_bible($event.target)"
+            class="cursor-pointer dark:bg-gray-800 border rounded outline outline-none">
                 @for (bibles_per_language of bibles_per_language(); track $index) {
                     <optgroup [label]="bibles_per_language[0]" class="text-center">
                         @for (bible of bibles_per_language[1]; track bible.abbreviation) {
                             <option 
                             [title]="bible.translation"
-                            [value]="bible.abbreviation" 
-                            class="text-left cursor-pointer">
+                            [value]="`${bibles_per_language[0]}|${bible.abbreviation}`" 
+                            class="text-left cursor-pointer"
+                            [class.downloaded-bible]="is_downloaded_bible(bible.abbreviation)">
                                 {{ bible.abbreviation }}
                             </option>
                         }
@@ -44,5 +59,7 @@
 </div>
 
 <style>
-
+    .downloaded-bible {
+        @apply text-green-500 border-b border-b-green-500 font-bold
+    }
 </style>

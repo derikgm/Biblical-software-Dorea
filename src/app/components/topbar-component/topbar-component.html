@@ -22,7 +22,9 @@
 
         <div class="inline">
             @if(bible_services.current_book()) {
-                <p class="inline">{{bible_services.current_book()?.name}} {{bible_services.current_chapter()}}</p>
+                <p class="inline">
+                    {{bible_services.current_book()?.name}} {{bible_services.current_chapter()}}
+                </p>
             }
         </div>
 

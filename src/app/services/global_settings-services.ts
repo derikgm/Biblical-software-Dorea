@@ -10,6 +10,7 @@ export class GlobalSettingsServices {
     bible_form_lineal: false,
     current_book: 1,
     current_chapter: 1,
+    current_bible: "",
   };
 
   is_loading = signal(false);
@@ -20,7 +21,6 @@ export class GlobalSettingsServices {
 
   async save_settings(){
     invoke("save_settings", {settings: this.settings})
-    .then(()=>{console.log("Guardado");})
   }
 
   save_font_size(n: number){
@@ -38,4 +38,5 @@ export interface Settings {
     bible_form_lineal: boolean, 
     current_book: number,
     current_chapter: number,
+    current_bible: string,
 }

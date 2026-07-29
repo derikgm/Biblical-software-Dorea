@@ -7,14 +7,14 @@ import { SettingsServices } from "./services/sidebar_settings-services";
 import { BibleServices } from "./services/bible-services";
 import { FolderServices } from "./services/folder-services";
 import { SpinComponent } from "./components/spin-component/spin-component";
-import { GlobalSettingsServices } from "./services/global_settings-services.ts";
+import { GlobalSettingsServices } from "./services/global_settings-services";
 import { FontSettingsServices } from "./services/font_settings-services";
 import { SearchResultComponent } from "./components/search_result-component/search_result-component";
-import { SettingsPage } from "./pages/settings-page/settings-page";
+import { FolderOptionsComponent } from "./components/folder_options-component/folder_options-component";
 
 @Component({
   selector: "app-root",
-  imports: [RouterOutlet, SidebarComponent, TopbarComponent, SpinComponent, SearchResultComponent],
+  imports: [RouterOutlet, SidebarComponent, TopbarComponent, SpinComponent, SearchResultComponent, FolderOptionsComponent],
   templateUrl: "./app.component.html",
   styleUrl: "./app.component.css",
 })
@@ -27,17 +27,16 @@ export class AppComponent implements AfterViewInit{
   font_settings_services = inject(FontSettingsServices);
 
   async ngAfterViewInit() {
+    this.global_settings_services.is_loading.set(true);
+
+    await this.global_settings_services.init();
     await this.language_services.init();
     await this.bible_services.init();
     await this.folder_services.init();
-    await this.global_settings_services.init();
     
     this.font_settings_services.init();
 
     this.global_settings_services.is_loading.set(false);
-
-    console.log(this.global_settings_services.is_loading());
-    
   }
 
   @HostListener('mouseup')

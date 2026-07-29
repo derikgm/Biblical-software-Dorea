@@ -1,7 +1,6 @@
 <div class="fixed bg-transparent w-screen h-screen top-0 left-0 cursor-default z-50"
 (click)="this.folder_services.close_folder_option()"
 >
-    
     <div 
     class="absolute dark-bg light-bg border rounded-lg whitespace-nowrap overflow-visible z-50
     shadow-md"
@@ -9,8 +8,6 @@
     [style.top.px]="this.folder_services.y_position()"
     (click)="$event.stopPropagation()"
     >
-    <!-- (mouseleave)="this.folder_services.close_folder_option()" -->
-
         <p class="hover:dark:bg-gray-700 cursor-pointer py-2 px-2 rounded-t-lg hover:bg-gray-300"
         (click)="create_new_folder()">
             {{folder_lang?.create_new_folder}}

@@ -1,5 +1,5 @@
-import { afterEveryRender, afterNextRender, afterRenderEffect, AfterViewInit, ChangeDetectionStrategy, Component, computed, effect, ElementRef, EventEmitter, HostListener, 
-  inject, Output, QueryList, signal, ViewChild, ViewChildren } from '@angular/core';
+import { AfterViewInit, Component, computed, ElementRef, HostListener, 
+  inject, QueryList, signal, ViewChild, ViewChildren } from '@angular/core';
 import { FontSettingsServices } from '../../services/font_settings-services';
 import { MarkerComponent } from '../../components/marker-component/marker-component';
 import { BibleServices } from '../../services/bible-services';
@@ -8,7 +8,7 @@ import { VisibleDirective } from "../../directives/visible-directive";
 import { NgIcon, provideIcons } from '@ng-icons/core';
 import { heroBars3, heroBars3CenterLeft, heroEquals, heroPause } from '@ng-icons/heroicons/outline';
 import { BibleOptionComponent } from "../../components/bible_option-component/bible_option-component";
-import { GlobalSettingsServices } from '../../services/global_settings-services.ts';
+import { GlobalSettingsServices } from '../../services/global_settings-services';
 import { LanguageServices } from '../../services/language-services';
 
 @Component({
@@ -53,10 +53,6 @@ export class MainPage implements AfterViewInit{
     document.addEventListener('click', ()=>{
       this.isMakerOpen.set(!document.getSelection()?.isCollapsed);
     })
-
-    setTimeout(() => {
-      console.log(this.current_book());
-    }, 0)
   }
 
   focus_jumped_chapter(){

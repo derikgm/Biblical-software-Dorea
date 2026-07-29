@@ -34,4 +34,5 @@ pub struct Settings {
     bible_form_lineal: bool, 
     current_book: u32,
     current_chapter: u32,
+    current_bible: String,
 }

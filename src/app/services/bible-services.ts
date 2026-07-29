@@ -1,6 +1,7 @@
-import { computed, Injectable, signal } from '@angular/core';
+import { computed, inject, Injectable, signal } from '@angular/core';
 import { Bible, Book, Chapter, IndexedVerse } from '../interfaces/bible-interface';
 import { invoke } from '@tauri-apps/api/core';
+import { GlobalSettingsServices } from './global_settings-services';
 
 @Injectable({
   providedIn: 'root',
@@ -13,12 +14,16 @@ export class BibleServices {
   string_to_search = signal<string []> ([]);
   verses_searched = signal<IndexedVerse []> ([]);
 
+  gss = inject(GlobalSettingsServices);
+
   async init() {
-    await this.get_bible();
+    if(this.gss.settings.current_bible == "") return;
+
+    await this.get_bible(this.gss.settings.current_bible);
 
     if(this.bible()){
-      this.current_book.set(this.bible()?.books[42]);
-      this.current_chapter.set(3);
+      this.current_book.set(this.bible()?.books[this.gss.settings.current_book]);
+      this.current_chapter.set(this.gss.settings.current_chapter);
     }
   }
 
@@ -39,14 +44,40 @@ export class BibleServices {
 
   }
 
-  async get_bible(){
-    await invoke("get_all_bible", {})
+  async get_bible(bible_abb: string){
+    await invoke("get_all_bible", {bible: bible_abb})
     .then((bible) => {
+      console.log("Funciona?");
       this.bible.set(bible as unknown as Bible);
     })
     .catch((e) => {
       console.log(e);
     });
-    
   }
+
+  async select_bible(bible_abb: string) {
+    console.log(bible_abb);
+    console.log(this.gss.settings.current_bible);
+
+    if(bible_abb == "") return;
+    if(bible_abb == this.gss.settings.current_bible) return;
+
+    this.gss.is_loading.set(true);
+    await this.get_bible(bible_abb);
+    
+    this.current_book.set(this.bible()?.books[0]);
+    this.current_chapter.set(0);
+    
+    this.gss.settings.current_bible = bible_abb;
+    this.gss.settings.current_book = 0;
+    this.gss.settings.current_chapter = 1;
+    
+    this.current_book.set(this.bible()?.books[0]);
+    this.current_chapter.set(1);
+
+    this.gss.save_settings();    
+
+    this.gss.is_loading.set(false);
+  }
+  
 }

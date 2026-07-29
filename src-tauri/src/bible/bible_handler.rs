@@ -9,8 +9,8 @@ use crate::helpers::directory_handler::get_settings_path;
 use crate::{helpers::directory_handler::get_bible_path};
 
 #[tauri::command]
-pub fn get_all_bible(state: tauri::State<IndexedBible>) -> Result<Bible, String> {
-    let bible_str = fs::read_to_string(format!("{}/{}", get_bible_path(), "valera.json"))
+pub fn get_all_bible(bible: String, state: tauri::State<IndexedBible>) -> Result<Bible, String> {
+    let bible_str = fs::read_to_string(format!("{}/{}.json", get_bible_path(), bible))
         .map_err(|e| format!("Error al leer la biblia: {e}"))?;
 
     let bible: Bible = serde_json::from_str(&bible_str)
@@ -23,7 +23,7 @@ pub fn get_all_bible(state: tauri::State<IndexedBible>) -> Result<Bible, String>
 }
 
 fn index_the_bible(bible: &Bible, state: &tauri::State<IndexedBible>) -> Result<(), String> {
-    let path = format!("{}/indexed/valera_indexed.json", get_bible_path());
+    let path = format!("{}/indexed/{}.json", get_bible_path(), bible.abbreviation);
 
     // Verificar si el archivo indexado ya existe
     if Path::new(&path).exists() {
@@ -102,7 +102,6 @@ fn index_the_bible(bible: &Bible, state: &tauri::State<IndexedBible>) -> Result<
             .map_err(|e| format!("Error guardando la biblia indexada: {e}"))?;
 
 
-        println!("{:?}", indexed_bible);
     }
 
     Ok(())
@@ -232,6 +231,20 @@ pub fn get_available_list_of_bibles () -> Result<Vec<ShortBible>, String>{
     .map_err(|e| format!("Error de conversion de JSON: {e}"))?;
 
     Ok(available_bibles)
+}
+
+#[tauri::command]
+pub fn save_bible (bible: Bible) -> Result<(), String>{
+    let bible_string = serde_json::to_string(&bible)
+    .map_err(|e| format!("Error de parseo json: {e}"))?;
+
+    let _ = fs::write(
+        format!("{}/{}.json", get_bible_path(), bible.abbreviation), 
+        bible_string
+    )
+    .map_err(|e| format!("Error de escritura: {e}"))?;
+
+    Ok(())
 }
 
 #[derive(Debug, Clone, Serialize, Deserialize)]

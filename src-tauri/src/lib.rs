@@ -4,7 +4,7 @@ mod helpers;
 mod settings;
 
 use crate::bible::bible_handler::{get_all_bible, IndexedBible, search_in_bible, get_local_bibles,
-save_available_list_of_bibles, get_available_list_of_bibles};
+save_available_list_of_bibles, get_available_list_of_bibles, save_bible};
 use crate::notes::notes_handler::{create_new_note, save_note, get_notes_folders, 
     get_note, update_file_name, create_new_folder, delete_note};
 use crate::helpers::directory_handler::{verify_and_create_data_directory};
@@ -24,6 +24,7 @@ pub fn run() {
         })
         .invoke_handler(tauri::generate_handler![
             get_all_bible,
+            save_bible,
             save_available_list_of_bibles,
             get_available_list_of_bibles,
             create_new_note,

@@ -5,7 +5,6 @@ import { DomSanitizer, SafeHtml } from '@angular/platform-browser';
 import { NgIcon, provideIcons } from '@ng-icons/core';
 import { heroArrowTopRightOnSquare, heroClipboard, heroClipboardDocument, heroClipboardDocumentList, heroXMark } from '@ng-icons/heroicons/outline';
 import { coolDoubleQuotesR, coolSingleQuotesR } from "@ng-icons/coolicons"
-import { GlobalSettingsServices } from '../../services/global_settings-services.ts';
 
 @Component({
   selector: 'search-result-component',

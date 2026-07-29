@@ -1,6 +1,7 @@
 {
     "font_size": 16,
     "bible_form_lineal": false,
-    "current_book": 1,
-    "current_chapter": 1
+    "current_book": 0,
+    "current_chapter": 1,
+    "current_bible": ""
 }

@@ -4,7 +4,7 @@ import { heroMagnifyingGlass, heroMinus, heroPlus } from "@ng-icons/heroicons/ou
 import { FontSettingsServices } from '../../services/font_settings-services';
 import { LanguageServices } from '../../services/language-services';
 import { BibleServices } from '../../services/bible-services';
-import { GlobalSettingsServices } from '../../services/global_settings-services.ts';
+import { GlobalSettingsServices } from '../../services/global_settings-services';
 
 @Component({
   selector: 'topbar-component',

@@ -25,7 +25,6 @@ pub fn verify_and_create_data_directory(){
     
     if !Path::new(note_path).exists() {
         let _ = std::fs::create_dir(note_path);
-        println!("{:?}", EXAMPLE_NOTE);
         let _ = fs::write(format!("{}/example_note.txt", note_path), EXAMPLE_NOTE);
     }
 
@@ -35,8 +34,16 @@ pub fn verify_and_create_data_directory(){
 
     if !Path::new(settings_path).exists() {
         let _ = std::fs::create_dir(settings_path);
-        let _ = fs::write(format!("{}/settings.json", settings_path), DEFAULT_SETTINGS);
+    } else {
+        let mut setting_file_path = String::from(settings_path);
+        setting_file_path.push_str("/settings.json");
+
+        if !Path::new(&setting_file_path).exists() {
+            let _ = fs::write(format!("{}/settings.json", settings_path), DEFAULT_SETTINGS);
+        }
     }
+
+    
 }
 
 pub fn get_bible_path () -> String {
