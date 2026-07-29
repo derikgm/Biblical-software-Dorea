@@ -3,9 +3,8 @@ mod notes;
 mod helpers;
 mod settings;
 
-use tauri::Manager;
-
-use crate::bible::bible_handler::{get_all_bible, IndexedBible, search_in_bible};
+use crate::bible::bible_handler::{get_all_bible, IndexedBible, search_in_bible, get_local_bibles,
+save_available_list_of_bibles, get_available_list_of_bibles};
 use crate::notes::notes_handler::{create_new_note, save_note, get_notes_folders, 
     get_note, update_file_name, create_new_folder, delete_note};
 use crate::helpers::directory_handler::{verify_and_create_data_directory};
@@ -19,13 +18,16 @@ pub fn run() {
     tauri::Builder::default()
         .plugin(tauri_plugin_opener::init())
         .manage(IndexedBible::default())
-        .setup(|app | {
+        .setup(|_| {
             verify_and_create_data_directory();
             Ok(())
         })
         .invoke_handler(tauri::generate_handler![
             get_all_bible,
+            save_available_list_of_bibles,
+            get_available_list_of_bibles,
             create_new_note,
+            get_local_bibles,
             create_new_folder,
             update_file_name,
             search_in_bible,

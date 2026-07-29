@@ -5,7 +5,8 @@ use std::collections::HashMap;
 use std::fs::{self};
 use std::sync::Mutex;
 
-use crate::{helpers::directory_handler::get_bible_path, verify_and_create_data_directory};
+use crate::helpers::directory_handler::get_settings_path;
+use crate::{helpers::directory_handler::get_bible_path};
 
 #[tauri::command]
 pub fn get_all_bible(state: tauri::State<IndexedBible>) -> Result<Bible, String> {
@@ -184,7 +185,64 @@ fn clean_phrase(phrase: &str) -> String {
         .join(" ")  // Unir con espacios
 }
 
-// Tu estructura IndexedBible debe inicializarse correctamente en el estado de Tauri
+#[tauri::command]
+pub fn get_local_bibles () -> Result<Vec<String>, String> {
+    let mut local_biblies:Vec<String> = Vec::new();
+
+    let biblies_dir_content = fs::read_dir(&get_bible_path())
+    .map_err(|e| format!("Error obteniendo las biblias locales: {e}"))?;
+
+    for file in biblies_dir_content {
+        let file = file
+        .map_err(|e| format!("Error de acceso a archivo: {e}"))?.path();
+
+        if file.is_file() {
+            if let Some(file_name) = file.file_prefix(){
+                if let Some(extension) = file.extension() {
+                    if extension == "json" {
+                        local_biblies.push(file_name.to_str().unwrap().to_string());
+                    }
+                }
+            }
+        }
+    }
+
+    Ok(local_biblies)
+}
+
+#[tauri::command]
+pub fn save_available_list_of_bibles(bibles: Vec<ShortBible>) -> Result<(), String>{
+
+    let available_bibles = serde_json::to_string(&bibles)
+    .map_err(|e| format!("Error de conversion de JSON: {e}"))?;
+
+    let _ = fs::write(format!("{}/available_bibles.json", get_settings_path()), available_bibles)
+    .map_err(|e| format!("Error guardando informacion: {e}"))?;
+
+    Ok(())
+}
+
+#[tauri::command]
+pub fn get_available_list_of_bibles () -> Result<Vec<ShortBible>, String>{
+    
+    let available_bibles_string = fs::read_to_string(format!("{}/available_bibles.json", get_settings_path()))
+    .map_err(|e| format!("Error guardando informacion: {e}"))?;
+
+    let available_bibles: Vec<ShortBible> = serde_json::from_str(&available_bibles_string)
+    .map_err(|e| format!("Error de conversion de JSON: {e}"))?;
+
+    Ok(available_bibles)
+}
+
+#[derive(Debug, Clone, Serialize, Deserialize)]
+pub struct ShortBible {
+    abbreviation: String,
+    translation: String,
+    url: String,
+    lang: String,
+    language: String,
+}
+
 #[derive(Debug, Serialize, Deserialize)]
 pub struct SerialisableIndexedBible {
     pub verses: HashMap<usize, IndexedVerse>,

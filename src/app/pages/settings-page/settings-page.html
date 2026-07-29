@@ -1,5 +1,46 @@
-<div class="w-full">
-    hola
+<div class="w-full h-full pt-2 space-y-4 text-2xl"
+>
+    <button 
+    class="border rounded px-2 bg-blue-400 text-white font-bold
+    hover:bg-blue-500
+    dark:bg-blue-800 dark:border-gray-700 dark:hover:bg-blue-600"
+    (click)="get_avaliable_bibles()"
+    >
+        Get list of available Bibles
+    </button>
+
+    <div class="w-full flex justify-between">
+        <p>
+            Select bible: 
+        </p>
+
+            <select class="cursor-pointer dark:bg-gray-800 border rounded outline outline-none">
+                @for (avible_bible of available_biblies(); track $index) {
+                    <option value="">{{avible_bible}}</option>
+                }
+            </select>
+    </div>
+
+    <div class="w-full flex justify-between">
+        <p>
+            Download bible: 
+        </p>
+
+            <select class="cursor-pointer dark:bg-gray-800 border rounded outline outline-none">
+                @for (bibles_per_language of bibles_per_language(); track $index) {
+                    <optgroup [label]="bibles_per_language[0]" class="text-center">
+                        @for (bible of bibles_per_language[1]; track bible.abbreviation) {
+                            <option 
+                            [title]="bible.translation"
+                            [value]="bible.abbreviation" 
+                            class="text-left cursor-pointer">
+                                {{ bible.abbreviation }}
+                            </option>
+                        }
+                    </optgroup>
+                }
+            </select>
+    </div>
 </div>
 
 <style>

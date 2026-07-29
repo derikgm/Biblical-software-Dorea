@@ -9,3 +9,19 @@ newDir
 ¿Qué hace exactamente .setup()?
 Es un método que se encadena a tauri::Builder::default() y recibe una función "callback" (una "closure" en Rust) que se ejecuta en ese momento específico de la preparación. Es la forma que tiene Tauri de darte un punto de entrada para ejecutar tu propio código de inicialización .
 Por eso, la función de setup recibe un parámetro crucial: app. A través de app, puedes obtener una referencia a app_handle, que es como el "control remoto" de tu aplicación . Desde ahí, puedes hacer muchas cosas, como acceder a las ventanas, gestionar el estado de la app, o, como en tu caso, acceder a las rutas del sistema de archivos para crear directorios.
+
+para agregar las funciones de http necesitas tener agregado al app.config.ts:
+
+import { routes } from "./app.routes";
+import { provideHttpClient, withFetch } from "@angular/common/http"; //esto
+
+export const appConfig: ApplicationConfig = {
+  providers: [
+    provideBrowserGlobalErrorListeners(),
+    provideZoneChangeDetection({ eventCoalescing: true }),
+    provideRouter(routes),
+    provideHttpClient( // con esto
+      withFetch() // y esto por si acaso
+    ),
+  ],
+};

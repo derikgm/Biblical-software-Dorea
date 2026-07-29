@@ -14,7 +14,7 @@ import { SettingsPage } from "./pages/settings-page/settings-page";
 
 @Component({
   selector: "app-root",
-  imports: [RouterOutlet, SidebarComponent, TopbarComponent, SpinComponent, SearchResultComponent, SettingsPage],
+  imports: [RouterOutlet, SidebarComponent, TopbarComponent, SpinComponent, SearchResultComponent],
   templateUrl: "./app.component.html",
   styleUrl: "./app.component.css",
 })

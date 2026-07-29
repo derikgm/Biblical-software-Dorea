@@ -1,4 +1,4 @@
-<div class="flex h-full overflow-x-visible">
+<div class="flex h-full overflow-x-visible z-40">
     <aside class="dark-bg light-bg w-12 h-full flex flex-col box-border dark-bg">
         <div class="flex flex-col h-full text-center text-3xl">
             <nav class="flex flex-col">
@@ -78,7 +78,7 @@
     }
 
     @if(folder_services.show_file_and_folder_options()){
-        <folder-options-component />
+        <folder-options-component class="z-50"/>
     }
 </div>
 
