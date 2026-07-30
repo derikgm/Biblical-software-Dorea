@@ -35,7 +35,7 @@ export class MainPage implements AfterViewInit{
 
   fontSettingsServices = inject(FontSettingsServices);
   bible_services = inject(BibleServices);
-  global_settings_services = inject(GlobalSettingsServices);
+  gss = inject(GlobalSettingsServices);
   lang = inject(LanguageServices);
 
   // headers = map_headers;
@@ -43,39 +43,94 @@ export class MainPage implements AfterViewInit{
   first_init = signal<boolean>(true)
   xPosition = signal<number>(0);
   yPosition = signal<number>(0);
+  
+  scrolling = false;
 
-  current_book = computed(() => {
-    this.focus_jumped_chapter();
-    return this.bible_services.current_book();
-  })
+  current_book = this.bible_services.current_book;
 
   ngAfterViewInit(): void {
     document.addEventListener('click', ()=>{
       this.isMakerOpen.set(!document.getSelection()?.isCollapsed);
+    });
+
+    this.bible_services.select_verse_to_move$.subscribe((verse_id) => {
+      requestAnimationFrame(() => {
+        setTimeout(()=>{
+          this.scrolling = true;
+
+          const verse = this.versiculos.find(el => el.nativeElement.id == verse_id)?.nativeElement!;
+          
+          verse.scrollIntoView(true);
+          verse.classList.add("bg-blue-400")
+
+          const observer = new IntersectionObserver((entries) => {
+            entries.forEach((entrie) => {
+              if(entrie.isIntersecting){
+                console.log(entrie.target);
+                console.log(verse_id);
+
+                this.visibility_range = []
+                this.visibility_range.push(this.bible_services.current_chapter());
+                this.visibility_range.push(this.bible_services.current_chapter() + 1);
+                this.scrolling = false;
+                observer.disconnect();
+              }
+            })
+          });
+
+          observer.observe(verse)
+
+          setTimeout(()=>{verse.classList.remove("bg-blue-400")}, 3000)
+
+        }, 0);
+      })
+    })
+
+    this.bible_services.select_chapter_to_move$.subscribe((chapter_id) => {
+      requestAnimationFrame(() => {
+        setTimeout(()=>{
+          this.scrolling = true;
+
+          const chapter = this.chap_headers.find(el => el.nativeElement.id == chapter_id)?.nativeElement!;
+          chapter.scrollIntoView(true);
+
+          const observer = new IntersectionObserver((entries) => {
+            entries.forEach((entrie) => {
+
+              if(entrie.isIntersecting){
+                console.log(chapter);
+                console.log(chapter_id);
+                this.visibility_range = []
+                this.visibility_range.push(this.bible_services.current_chapter());
+                this.visibility_range.push(this.bible_services.current_chapter() + 1);
+                this.scrolling = false;
+                observer.disconnect();
+              }
+            })
+          }, 
+          // {rootMargin: "-100% 0px 0px 0px", threshold: 0}
+        );
+
+          observer.observe(chapter)
+        }, 0);
+      })
     })
   }
 
-  focus_jumped_chapter(){
-    setTimeout(() => {
-      this.chap_headers.get(this.bible_services.current_chapter() - 1)
-      ?.nativeElement.scrollIntoView(true);
-      this.visibility_range = [];
-      this.visibility_range.push(this.bible_services.current_chapter());
-    }, 0)
-  }
-
   handler_chapter_visibility(chapter: number, visible: boolean) {
-
-    if(visible == false && this.visibility_range.length == 1)
-      return
+    console.log(this.scrolling, this.visibility_range, chapter);
+    
+    if(this.scrolling) return;
+    if(this.visibility_range.length == 0) return;
 
     if(visible){
       if(chapter < this.visibility_range[0]){
         this.visibility_range.unshift(chapter);
         this.bible_services.current_chapter.set(chapter);
-        this.global_settings_services.save_current_chapter(
-          this.current_book()?.nr ?? 0,
-          this.visibility_range.shift() ?? 0,
+
+        this.gss.save_current_chapter(
+          (this.current_book()?.nr ?? 1) - 1,
+          chapter,
         );
       }
 
@@ -83,21 +138,24 @@ export class MainPage implements AfterViewInit{
         this.visibility_range.push(chapter);
       }
 
-    } else {
+    } else if (!visible && this.visibility_range.length > 1) {
       if(chapter <= this.visibility_range[0]){
         this.visibility_range.shift();
         this.bible_services.current_chapter.set(chapter + 1);
+
+        this.gss.save_current_chapter(
+          (this.current_book()?.nr ?? 1) - 1,
+          chapter + 1,
+        );
       }
 
       if(this.visibility_range.at(-1)! < chapter){
         this.visibility_range.pop();
       }
     }
-  }
 
-  trackByFn(index: number, item: Chapter |undefined): any {
-    if(item)
-    return item.chapter;
+    console.log(this.visibility_range);
+    
   }
 
   showMarker(event: MouseEvent){

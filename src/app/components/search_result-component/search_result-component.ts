@@ -5,6 +5,7 @@ import { DomSanitizer, SafeHtml } from '@angular/platform-browser';
 import { NgIcon, provideIcons } from '@ng-icons/core';
 import { heroArrowTopRightOnSquare, heroClipboard, heroClipboardDocument, heroClipboardDocumentList, heroXMark } from '@ng-icons/heroicons/outline';
 import { coolDoubleQuotesR, coolSingleQuotesR } from "@ng-icons/coolicons"
+import { IndexedVerse } from '../../interfaces/bible-interface';
 
 @Component({
   selector: 'search-result-component',
@@ -22,7 +23,7 @@ import { coolDoubleQuotesR, coolSingleQuotesR } from "@ng-icons/coolicons"
   ],
   template: `
   <div class="w-full h-full sticky bg-black/15 tpo-0 left-0 z-50 flex justify-center 
-  items-center">
+  items-center dark:text-white">
     <div class="w-5/6 h-5/6 bg-white rounded border shadow flex flex-col">
 
       <div class="dark-bg light-bg w-full border-b rounded-t flex">
@@ -116,14 +117,16 @@ import { coolDoubleQuotesR, coolSingleQuotesR } from "@ng-icons/coolicons"
                   />
                 </div>
 
-                <div class="border-2 flex p-0.5 rounded hover:bg-blue-50 hover:text-blue-500 
+                <a 
+                (click)="move_to(verse)"
+                class="border-2 flex p-0.5 rounded hover:bg-blue-50 hover:text-blue-500 
                 dark:border-gray-400 dark:hover:bg-gray-300 dark:hover:text-blue-600">
-                   <ng-icon 
-                  name="goto" 
-                  class="cursor-pointer text-xl"
-                  />
-                </div>
-
+                   <!-- <a href="#" class="p-0 m-0 text-nowrap "> -->
+                    <ng-icon 
+                    name="goto" 
+                    class="cursor-pointer text-xl"
+                    />
+                </a>
               </div>
             </div>
 
@@ -165,6 +168,7 @@ import { coolDoubleQuotesR, coolSingleQuotesR } from "@ng-icons/coolicons"
   `,
 })
 export class SearchResultComponent implements AfterViewInit{
+
   @ViewChild("copy_selected") copy_selected!: ElementRef<HTMLDivElement>
   @ViewChild("quote_selected") quote_selected!: ElementRef<HTMLDivElement>
   @ViewChildren("check_box") check_boxes!: QueryList<ElementRef<HTMLInputElement>>
@@ -291,4 +295,8 @@ export class SearchResultComponent implements AfterViewInit{
     this.bible_services.open_search_result.set(false);
   }
 
+  move_to(verse: IndexedVerse){
+    this.close_search_results()
+    this.bible_services.move_to_verse(verse.book_number, verse.chapter_number, verse.verse_number)
+  }
 }

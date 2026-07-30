@@ -2,6 +2,7 @@ import { computed, inject, Injectable, signal } from '@angular/core';
 import { Bible, Book, Chapter, IndexedVerse } from '../interfaces/bible-interface';
 import { invoke } from '@tauri-apps/api/core';
 import { GlobalSettingsServices } from './global_settings-services';
+import { Subject } from 'rxjs';
 
 @Injectable({
   providedIn: 'root',
@@ -14,6 +15,12 @@ export class BibleServices {
   string_to_search = signal<string []> ([]);
   verses_searched = signal<IndexedVerse []> ([]);
 
+  private verse_moved = new Subject<string>();
+  select_verse_to_move$ = this.verse_moved.asObservable();
+
+  private chapter_moved = new Subject<string>();
+  select_chapter_to_move$ = this.chapter_moved.asObservable();
+
   gss = inject(GlobalSettingsServices);
 
   async init() {
@@ -24,12 +31,26 @@ export class BibleServices {
     if(this.bible()){
       this.current_book.set(this.bible()?.books[this.gss.settings.current_book]);
       this.current_chapter.set(this.gss.settings.current_chapter);
+
+      this.chapter_moved.next(`${this.gss.settings.current_book + 1}-${this.gss.settings.current_chapter}`)
     }
   }
 
-  move_to_chapter(book_number: number, verse_number: number){
+  set_current_chapter (book_number: number, chapter_number: number){
     this.current_book.set(this.bible()?.books[book_number - 1]);
-    this.current_chapter.set(verse_number);
+    this.current_chapter.set(chapter_number);
+
+    this.gss.save_current_chapter(book_number - 1, chapter_number);
+  }
+
+  move_to_chapter (book_number: number, chapter_number: number){
+    this.set_current_chapter(book_number, chapter_number);
+    this.chapter_moved.next(`${book_number}-${chapter_number}`)
+  }
+
+  move_to_verse(book_number: number, chapter_number: number, verse_number: number){
+    this.set_current_chapter(book_number, chapter_number);
+    this.verse_moved.next(`${book_number}-${chapter_number}-${verse_number}`);
   }
 
   async search_in_bible(search: string){
@@ -47,7 +68,6 @@ export class BibleServices {
   async get_bible(bible_abb: string){
     await invoke("get_all_bible", {bible: bible_abb})
     .then((bible) => {
-      console.log("Funciona?");
       this.bible.set(bible as unknown as Bible);
     })
     .catch((e) => {

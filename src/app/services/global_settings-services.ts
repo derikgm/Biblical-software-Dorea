@@ -17,6 +17,7 @@ export class GlobalSettingsServices {
 
   async init(){
     this.settings = await invoke('get_settings');
+    console.log(this.settings);
   }
 
   async save_settings(){
@@ -29,7 +30,10 @@ export class GlobalSettingsServices {
   }
 
   async save_current_chapter(book: number, chapter: number ){
-    console.log(book, chapter);
+    this.settings.current_book = book;
+    this.settings.current_chapter = chapter;
+
+    this.save_settings();
   }
 
 }
