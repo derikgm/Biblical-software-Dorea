@@ -45,20 +45,20 @@
         </div>
     </aside>
 
-    @if (settings_services.extended_sidebar_open()) {
+    @if (sidebar_settings_services.extended_sidebar_open()) {
         <!-- Para navegar -->
         <div 
         class="flex bg-white dark:bg-gray-800 dark:text-white"
-        [style.width.rem]="settings_services.sidebar_extended_size()"
+        [style.width.rem]="sidebar_settings_services.sidebar_extended_size()"
         >
 
-            @if (current_path() == 0) {
+            @if (sidebar_settings_services.current_path() == 0) {
                 <verse-navigation-component 
                 class="w-full overflow-y-auto scrollbar-hidden"
                 />
             }   
 
-            @if (current_path() == 1) {
+            @if (sidebar_settings_services.current_path() == 1) {
                 <tree-folder-component 
                 class="w-full h-full"
                 [folders]="folder_services.folder_root()"
@@ -71,7 +71,7 @@
             }
 
             <div 
-            (mousedown)="settings_services.enabled_resizing($event)"
+            (mousedown)="sidebar_settings_services.enabled_resizing($event)"
             class="resize-border"
             >
                 <div>

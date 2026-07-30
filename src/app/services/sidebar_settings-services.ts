@@ -13,6 +13,8 @@ export class SettingsServices {
   sidebar_extended_size = signal<number>(13);
   enabled_extended_sidebar_rezising = signal<boolean>(false)
 
+  current_path = signal<current_path_enum>(current_path_enum.BIBLE);
+  
   enabled_resizing(e: MouseEvent){
       this.enabled_extended_sidebar_rezising.set(true);
       this.click_position_init = e.x;
@@ -30,4 +32,20 @@ export class SettingsServices {
     disable_resizing(){
       document.removeEventListener("mousemove", this.movement_capture_function);
     }
+
+  anchor_handler(anchor: number){
+    
+    if(anchor == this.current_path())
+      this.extended_sidebar_open.update(v => !v);
+
+    if(anchor == -1)
+      this.extended_sidebar_open.set(false);
+    
+    this.current_path.set(anchor)
+  }
+}
+
+export enum current_path_enum {
+  BIBLE,
+  NOTES,
 }

@@ -1,4 +1,4 @@
-import { Component, computed, HostListener, inject, signal, } from '@angular/core';
+import { Component, inject, signal, } from '@angular/core';
 import { NgIconComponent, provideIcons } from '@ng-icons/core';
 import { 
   heroBookOpen,
@@ -10,8 +10,6 @@ import {
 import { ThemeServices } from '../../services/theme-services';
 import { RouterLink, RouterLinkActive } from "@angular/router";
 import { TreeFolderComponent } from "../tree_folder-component/tree_folder-component";
-import { Folder } from '../../interfaces/tree_folder-interfaces';
-import { FolderOptionsComponent } from "../folder_options-component/folder_options-component";
 import { FolderServices } from '../../services/folder-services';
 import { SettingsServices } from '../../services/sidebar_settings-services';
 import { VerseNavigationComponent } from "../verse_navigation-component/verse_navigation-component";
@@ -36,23 +34,9 @@ export class SidebarComponent {
 
   theme_services = inject(ThemeServices);
   folder_services = inject(FolderServices);
-  settings_services = inject(SettingsServices);
-
-  current_path = signal<current_path_enum>(current_path_enum.BIBLE);
+  sidebar_settings_services = inject(SettingsServices);
 
   ancor_handler(anchor: number){
-    if(anchor == this.current_path())
-      this.settings_services.extended_sidebar_open.update(v => !v);
-
-    if(anchor == -1)
-      this.settings_services.extended_sidebar_open.set(false);
-    
-    this.current_path.set(anchor)
+    this.sidebar_settings_services.anchor_handler(anchor);
   }
-
-}
-
-export enum current_path_enum {
-  BIBLE,
-  NOTES,
 }

@@ -14,6 +14,7 @@ export class BibleServices {
   open_search_result = signal<boolean> (false);
   string_to_search = signal<string []> ([]);
   verses_searched = signal<IndexedVerse []> ([]);
+  is_jumped_from_note_page = signal<boolean>(true);
 
   private verse_moved = new Subject<string>();
   select_verse_to_move$ = this.verse_moved.asObservable();

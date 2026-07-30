@@ -6,10 +6,12 @@ import { NgIcon, provideIcons } from '@ng-icons/core';
 import { heroArrowTopRightOnSquare, heroClipboard, heroClipboardDocument, heroClipboardDocumentList, heroXMark } from '@ng-icons/heroicons/outline';
 import { coolDoubleQuotesR, coolSingleQuotesR } from "@ng-icons/coolicons"
 import { IndexedVerse } from '../../interfaces/bible-interface';
+import { RouterLink, RouterLinkActive } from "@angular/router";
+import { SettingsServices } from '../../services/sidebar_settings-services';
 
 @Component({
   selector: 'search-result-component',
-  imports:[NgIcon],
+  imports:[NgIcon, RouterLink],
   providers: [
     provideIcons({
       copy: heroClipboard,
@@ -118,6 +120,7 @@ import { IndexedVerse } from '../../interfaces/bible-interface';
                 </div>
 
                 <a 
+                [routerLink]='["/"]'
                 (click)="move_to(verse)"
                 class="border-2 flex p-0.5 rounded hover:bg-blue-50 hover:text-blue-500 
                 dark:border-gray-400 dark:hover:bg-gray-300 dark:hover:text-blue-600">
@@ -175,6 +178,7 @@ export class SearchResultComponent implements AfterViewInit{
 
   bible_services = inject(BibleServices);
   lang = inject(LanguageServices);
+  sidebar_settings_services = inject(SettingsServices);
 
   verses_index_selected: number[] = [];
 
@@ -296,7 +300,11 @@ export class SearchResultComponent implements AfterViewInit{
   }
 
   move_to(verse: IndexedVerse){
-    this.close_search_results()
-    this.bible_services.move_to_verse(verse.book_number, verse.chapter_number, verse.verse_number)
+    setTimeout(()=>{
+      this.close_search_results()
+      this.bible_services.is_jumped_from_note_page.set(false);
+      this.bible_services.move_to_verse(verse.book_number, verse.chapter_number, verse.verse_number)
+      this.sidebar_settings_services.anchor_handler(0);
+    }, 0)
   }
 }

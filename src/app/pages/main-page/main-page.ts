@@ -52,18 +52,17 @@ export class MainPage implements AfterViewInit{
 
   ngOnInit(): void {
     setTimeout(() => {
-      this.bible_services.move_to_chapter(
-        (this.bible_services.current_book()?.nr ?? 1),
-        this.bible_services.current_chapter(),
-      );
+      if(this.bible_services.is_jumped_from_note_page())
+        this.bible_services.move_to_chapter(
+          (this.bible_services.current_book()?.nr ?? 1),
+          this.bible_services.current_chapter(),
+        );
+
+      this.bible_services.is_jumped_from_note_page.set(true);
     }, 0);
   }
 
   ngAfterViewInit(): void {
-    document.addEventListener("scroll", () => {
-      console.log("scroll");
-    })
-
     document.addEventListener('click', ()=>{
       this.isMakerOpen.set(!document.getSelection()?.isCollapsed);
     });
@@ -73,8 +72,10 @@ export class MainPage implements AfterViewInit{
         setTimeout(()=>{
           this.scrolling = true;
 
-          const verse = this.versiculos.find(el => el.nativeElement.id == verse_id)?.nativeElement!;
+          const verse = this.versiculos.find(el => el.nativeElement.id == verse_id)?.nativeElement;
           
+          if(!verse) return;
+
           verse.scrollIntoView(true);
           verse.classList.add("bg-blue-400")
 
@@ -89,9 +90,7 @@ export class MainPage implements AfterViewInit{
           });
 
           observer.observe(verse)
-
           setTimeout(()=>{verse.classList.remove("bg-blue-400")}, 3000)
-
         }, 0);
       })
     })
@@ -211,11 +210,6 @@ export class MainPage implements AfterViewInit{
     }
   }
 
-  // @HostListener("scroll", ['$event'])
-  // show_scroll(event: any){
-  //   console.log(event);
-    
-  // }
 }
 
 const map_marks = [
