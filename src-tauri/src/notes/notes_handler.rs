@@ -24,9 +24,8 @@ pub fn update_file_name (dir: &str, new_dir: &str) -> Result<bool, String> {
 }
 
 #[tauri::command]
-pub fn create_new_note (dir: &str) -> Result<Note, String>{
-    let extension = String::from("txt");
-    let mut note: Note = Note { title: "note_1".to_string(), extension };
+pub fn create_new_note (dir: &str, title: String, extension: String) -> Result<Note, String>{
+    let mut note: Note = Note { title, extension };
     let mut files: Vec<String> = Vec::new();
 
     let folder_dir = fs::read_dir(dir)
@@ -53,7 +52,7 @@ pub fn create_new_note (dir: &str) -> Result<Note, String>{
         for file in &files {
             if *file == format!("{}.{}", note.title, note.extension) {
                 cont += 1;
-                note = Note { title: format!("note_{}", cont), extension: note.extension };
+                note = Note { title: format!("{}_{}", file, cont), extension: note.extension };
                 continued_while = true;
                 break;
             }
@@ -69,8 +68,8 @@ pub fn create_new_note (dir: &str) -> Result<Note, String>{
 }
 
 #[tauri::command]
-pub fn create_new_folder (dir: &str) -> Result<String, String>{
-    let mut new_folder: String = String::from("new folder");
+pub fn create_new_folder (dir: &str, folder: String) -> Result<String, String>{
+    let mut new_folder: String = String::from(folder);
     let mut folders: Vec<String> = Vec::new();
 
     let folder_dir = fs::read_dir(dir)
@@ -97,7 +96,7 @@ pub fn create_new_folder (dir: &str) -> Result<String, String>{
         for file in &folders {
             if *file == format!("{}", new_folder) {
                 cont += 1;
-                new_folder =  format!("new folder ({})", cont);
+                new_folder = format!("new folder ({})", cont);
                 continued_while = true;
                 break;
             }

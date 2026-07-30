@@ -1,6 +1,6 @@
-<div class="w-full h-full dark:bg-gray-800 dark:text-white overflow-y-scroll 
-scrollbar-hidden select-none text-nowrap"
-(contextmenu)="show_options_from_extended_sidebar($event)">
+<div class="w-full dark:bg-gray-800 dark:text-white overflow-y-scroll 
+scrollbar-hidden select-none text-nowrap py-0.5"
+>
     @if(this.folders()?.folder_name != "root"){
 
         @if (this.folders() == folder_services.folder_to_rename()) {
@@ -10,9 +10,17 @@ scrollbar-hidden select-none text-nowrap"
                 (keydown)="handler_rename_input($event, true)"
                 [style.margin-left.rem]="floor() * 0.75"
                 class="hover:bg-gray-200 dark:hover:bg-gray-700 ml-1 pl-1 outline outline-1 my-1 w-9/12
-                border-r-transparent"
+                border-r-transparent dark:bg-gray-700"
                 />
-        } @else {
+        } @else if (this.folders() == folder_services.folder_to_create()) {
+                <input type="text" appFocusOnCreate #create_input
+                [value]=""
+                (blur)="finish_to_create()"
+                (keydown)="handler_create_input($event, true)"
+                class="hover:bg-gray-200 dark:hover:bg-gray-700 ml-1 pl-1 outline outline-gray-600 
+                outline-1 border-r-transparent dark:bg-gray-700 w-10/12"
+                />
+            } @else {
             <p 
             class="cursor-default w-full hover:bg-gray-200 dark:hover:bg-gray-700"
             (contextmenu)="$event.stopPropagation(); show_options($event);"
@@ -48,10 +56,22 @@ scrollbar-hidden select-none text-nowrap"
                 [value]="file.title" 
                 (blur)="finish_to_rename()"
                 (keydown)="handler_rename_input($event)"
-                class="hover:bg-gray-200 dark:hover:bg-gray-700 ml-1 pl-1 outline outline-gray-600 outline-1
-                border-r-transparent"
+                class="hover:bg-gray-200 dark:hover:bg-gray-700 ml-1 pl-1 outline outline-gray-600 
+                outline-1 border-r-transparent dark:bg-gray-700 w-10/12"
                 />
-            } @else {
+            } 
+            
+            @else if (folder_services.file_to_create() == file) {
+                <input type="text" appFocusOnCreate #create_input
+                [value]=""
+                (blur)="finish_to_create()"
+                (keydown)="handler_create_input($event)"
+                class="hover:bg-gray-200 dark:hover:bg-gray-700 ml-1 pl-1 outline outline-gray-600 
+                outline-1 border-r-transparent dark:bg-gray-700 w-10/12"
+                />
+            }
+            
+            @else {
                 <p class="w-full text-nowrap overflow-x-hidden text-ellipsis pl-1">
                     {{file.title}}
                 </p>

@@ -24,9 +24,10 @@ export class TreeFolderComponent {
   folders = input<Folder>();
   floor = input.required<number>();
 
-  enabled_input = signal<boolean> (true);
+  enabled_create_input = true;
 
   @ViewChild("rename_input") rename_input!: ElementRef<HTMLInputElement>;
+  @ViewChild("create_input") create_input!: ElementRef<HTMLInputElement>;
 
   is_open = signal<boolean>(this.folders()?.open ?? true);
 
@@ -65,6 +66,41 @@ export class TreeFolderComponent {
 
     if(event.key == "Enter"){
       this.folder_services.update_name_from_sidebar(el.value, is_dir)
+    } 
+  }
+
+  finish_to_create(){
+    this.folder_services.finish_to_create();
+  }
+
+  handler_create_input(event: KeyboardEvent, is_dir: boolean = false){
+    const el = event.target as HTMLInputElement;
+
+    if(FORBIDDEN_CHARACTERS.has(event.key)){
+      setTimeout(()=>{
+        el.value = el.value.slice(0, -1);
+      }, 0)
+    }
+
+    if(this.folders()?.files != undefined)
+      for (const file of this.folders()?.files!)
+        if(`${file.title}.${file.extension}` == el.value){
+          this.enabled_create_input = false;
+          el.classList.add("bg-red-400", "dark:bg-red-600")
+          setTimeout(() => {el.classList.remove("bg-red-400", "dark:bg-red-600")}, 1500)
+          return;
+        }
+
+    if(event.key == "Enter" && this.enabled_create_input){
+      
+      if(el.value == ""){
+        el.blur();
+        return
+      }
+
+      (is_dir)
+      ? this.folder_services.create_new_folder(el.value)
+      : this.folder_services.create_new_note(el.value)
     } 
   }
 

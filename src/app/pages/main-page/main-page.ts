@@ -101,7 +101,10 @@ export class MainPage implements AfterViewInit{
         setTimeout(()=>{
           this.scrolling = true;
 
-          const chapter = this.chap_headers.find(el => el.nativeElement.id == chapter_id)?.nativeElement!;
+          const chapter = this.chap_headers.find(el => el.nativeElement.id == chapter_id)?.nativeElement;
+          
+          if(!chapter) return
+          
           chapter.scrollIntoView(true);
 
           const observer = new IntersectionObserver((entries) => {

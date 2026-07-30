@@ -60,9 +60,13 @@
 
             @if (current_path() == 1) {
                 <tree-folder-component 
-                class="w-full"
+                class="w-full h-full"
                 [folders]="folder_services.folder_root()"
                 [floor]="1"
+                (contextmenu)="
+                    $event.preventDefault();
+                    this.folder_services.show_folder_option_from_extended_sidebar($event.x, $event.y);
+                "
                 />
             }
 

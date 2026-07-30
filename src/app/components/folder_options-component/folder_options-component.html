@@ -1,11 +1,12 @@
-<div class="fixed bg-transparent w-screen h-screen top-0 left-0 cursor-default z-50"
+<div 
+class="fixed bg-transparent w-screen h-screen top-0 left-0 cursor-default z-50"
 (click)="this.folder_services.close_folder_option()"
 >
-    <div 
+    <div #menu_container
     class="absolute dark-bg light-bg border rounded-lg whitespace-nowrap overflow-visible z-50
     shadow-md"
-    [style.left.px]="this.folder_services.x_position()"
-    [style.top.px]="this.folder_services.y_position()"
+    [style.left.px]="x_position()"
+    [style.top.px]="y_position()"
     (click)="$event.stopPropagation()"
     >
         <p class="hover:dark:bg-gray-700 cursor-pointer py-2 px-2 rounded-t-lg hover:bg-gray-300"

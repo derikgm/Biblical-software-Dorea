@@ -26,7 +26,9 @@ export class FolderServices {
     extension: ''
   });
   file_to_rename = signal<Note | null>(null);
+  file_to_create = signal<Note | null>(null);
   folder_to_rename = signal<Folder | null>(null);
+  folder_to_create = signal<Folder | null>(null);
 
   async init(){
     invoke("get_notes_folders", {}).then((v) => {
@@ -73,44 +75,97 @@ export class FolderServices {
     })
   }
 
-  create_new_note(){
+  enable_create_folder(){
+    if(!this.folder_selected())
+      this.folder_selected.set(this.folder_root()!);
+
+    const new_folder: Folder = {
+      folder_name: '',
+      dir: '',
+      folders: [],
+      files: []
+    };
+
+    this.folder_selected()?.folders.push(new_folder);
+    this.folder_to_create.set(new_folder);
+
+    this.show_file_and_folder_options.set(false)
+    this.is_from_extended_sidebar.set(false);
+  }
+
+  enable_create_note(){
+    if(!this.folder_selected())
+      this.folder_selected.set(this.folder_root()!);
+
+    const new_note: Note = {
+      title: '<>',
+      extension: 'txt'
+    };
+
+    this.folder_selected()?.files.push(new_note);
+    this.file_to_create.set(new_note);
+
+    this.show_file_and_folder_options.set(false)
+    this.is_from_extended_sidebar.set(false);
+  }
+
+  finish_to_create(){
+    this.file_to_create()
+    ? this.folder_selected()?.files.pop()
+    : this.folder_selected()?.folders.pop();
+
+    this.file_to_create.set(null);
+    this.folder_to_create.set(null);
+  }
+
+  create_new_note(file_name: string){
     if(!this.folder_selected())
       this.folder_selected.set(this.folder_root()!);
 
     const dir = this.folder_selected()?.dir;
 
-    invoke("create_new_note", {dir})
+    console.log(dir, file_name);
+
+    invoke("create_new_note", {dir, title: file_name, extension: "txt"})
     .then((res)=>{
       const new_note: Note = res as unknown as Note;
 
-      this.folder_selected.update((folder_selected) => {
-        folder_selected?.files.push(new_note);
-        return folder_selected;
+      this.file_to_create.update(n => {
+        n!.title = new_note.title;
+        n!.extension = new_note.extension;
+
+        return n;
       })
-      
+
       this.current_content.set("");
       this.current_note.set(new_note);
-      this.close_folder_option();
       this.current_dir.set(dir ?? "");
+      this.file_to_create.set(null);
+      this.close_folder_option();
     });
   }
 
-  async create_new_folder(){
+  async create_new_folder(folder_name: string){
     const dir = this.folder_selected()?.dir;
 
-    await invoke("create_new_folder", {dir})
+    console.log(dir);
+
+    await invoke("create_new_folder", {dir, folder: folder_name})
     .then((res) => {
       const new_folder: string = res as string;
 
-      this.folder_selected.update((folder_selected) => {
-        folder_selected?.folders.push({
-          folder_name: new_folder,
-          dir: `${dir}/${new_folder}`,
-          folders: [],
-          files: []
-        });
-        return folder_selected;
+      this.folder_to_create.update((folder) => {
+        if(!folder) return null;
+
+        folder.folder_name = new_folder;
+        folder.dir = dir + "/" + folder_name;
+        folder.folders = [];
+        folder.files = [];
+        
+        return folder;
       })
+
+      this.folder_to_create.set(null);
     })
 
     this.close_folder_option();
@@ -122,7 +177,6 @@ export class FolderServices {
     } else {
       this.folder_to_rename.set(this.folder_selected());  
     }
-
     this.show_file_and_folder_options.set(false)
   }
   
