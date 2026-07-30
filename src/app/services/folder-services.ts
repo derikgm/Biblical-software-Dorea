@@ -30,7 +30,7 @@ export class FolderServices {
 
   async init(){
     invoke("get_notes_folders", {}).then((v) => {
-      this.folder_root.set(v as unknown as Folder)
+      this.folder_root.set(v as unknown as Folder);
     })
   }
 
@@ -74,6 +74,9 @@ export class FolderServices {
   }
 
   create_new_note(){
+    if(!this.folder_selected())
+      this.folder_selected.set(this.folder_root()!);
+
     const dir = this.folder_selected()?.dir;
 
     invoke("create_new_note", {dir})
@@ -86,8 +89,9 @@ export class FolderServices {
       })
       
       this.current_content.set("");
-      this.current_note.set(new_note)
+      this.current_note.set(new_note);
       this.close_folder_option();
+      this.current_dir.set(dir ?? "");
     });
   }
 
@@ -134,8 +138,6 @@ export class FolderServices {
     }).then(()=>{
       this.folder_selected.update((folder) => {
         folder?.files.forEach((f) => {
-          console.log(f);
-          
           if(f.title == this.current_note().title){
             f.title = new_title;
             return;

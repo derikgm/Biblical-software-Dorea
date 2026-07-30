@@ -6,7 +6,7 @@ import { invoke } from '@tauri-apps/api/core';
 })
 export class GlobalSettingsServices {
   settings: Settings = {
-    font_size: 0,
+    font_size: 16,
     bible_form_lineal: false,
     current_book: 1,
     current_chapter: 1,
@@ -17,7 +17,6 @@ export class GlobalSettingsServices {
 
   async init(){
     this.settings = await invoke('get_settings');
-    console.log(this.settings);
   }
 
   async save_settings(){

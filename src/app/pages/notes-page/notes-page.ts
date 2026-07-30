@@ -22,8 +22,12 @@ export class NotesPage {
     }
   }
 
+  create_new_note(){
+    this.folder_services.create_new_note();
+  }
+
+
   update_title(event: Event){
-    
     const el = event.target as HTMLInputElement;
     const current_dir = this.folder_services.current_dir();
     const title = this.folder_services.current_note().title;
@@ -34,7 +38,6 @@ export class NotesPage {
       `${current_dir}/${el.value}.${extension}`,
       el.value,
     );
-
   }
 
   text_area_handler() {
@@ -49,15 +52,12 @@ export class NotesPage {
   save_note(event: KeyboardEvent){
     if(event.ctrlKey && event.key === "s"){
       event.preventDefault()
-
       invoke("save_note", {dir: this.folder_services.current_dir(), content: this.text_area.nativeElement.value})
       .then((v)=>{
-        console.log(v);
         this.folder_services.old_content.set(this.text_area.nativeElement.value);        
       })
       .catch(e => console.log(e))
     }
-
   }
 
 }

@@ -19,7 +19,7 @@ import { VerseNavigationComponent } from "../verse_navigation-component/verse_na
 
 @Component({
   selector: 'sidebar-component',
-  imports: [NgIconComponent, RouterLink, RouterLinkActive, TreeFolderComponent, FolderOptionsComponent, VerseNavigationComponent],
+  imports: [NgIconComponent, RouterLink, RouterLinkActive, TreeFolderComponent, VerseNavigationComponent],
   templateUrl: './sidebar-component.html',
   styleUrl: './sidebar-component.css',
   providers: [

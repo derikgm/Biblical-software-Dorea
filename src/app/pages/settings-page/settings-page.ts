@@ -112,9 +112,6 @@ export class SettingsPage implements AfterViewInit{
 
   select_bible(select_target: EventTarget | null){
     const select = select_target as HTMLSelectElement;
-    console.log(this.gss.settings);
-    
-    console.log(select.value.toString());
 
     if(select.value == ""){
       this.select_bible_element.nativeElement.value = this.gss.settings.current_bible;

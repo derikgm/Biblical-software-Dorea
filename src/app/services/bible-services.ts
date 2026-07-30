@@ -45,7 +45,7 @@ export class BibleServices {
 
   move_to_chapter (book_number: number, chapter_number: number){
     this.set_current_chapter(book_number, chapter_number);
-    this.chapter_moved.next(`${book_number}-${chapter_number}`)
+    this.chapter_moved.next(`${book_number}-${chapter_number}`);
   }
 
   move_to_verse(book_number: number, chapter_number: number, verse_number: number){
@@ -76,9 +76,6 @@ export class BibleServices {
   }
 
   async select_bible(bible_abb: string) {
-    console.log(bible_abb);
-    console.log(this.gss.settings.current_bible);
-
     if(bible_abb == "") return;
     if(bible_abb == this.gss.settings.current_bible) return;
 

@@ -1,5 +1,5 @@
 import { AfterViewInit, Component, computed, ElementRef, HostListener, 
-  inject, QueryList, signal, ViewChild, ViewChildren } from '@angular/core';
+  inject, OnInit, QueryList, signal, ViewChild, ViewChildren } from '@angular/core';
 import { FontSettingsServices } from '../../services/font_settings-services';
 import { MarkerComponent } from '../../components/marker-component/marker-component';
 import { BibleServices } from '../../services/bible-services';
@@ -26,6 +26,7 @@ import { LanguageServices } from '../../services/language-services';
   styleUrl: './main-page.css',
 })
 export class MainPage implements AfterViewInit{
+
   @ViewChild('text_option') text_option!: ElementRef<HTMLDivElement>;
   @ViewChildren('versiculo') versiculos!: QueryList<ElementRef<HTMLParagraphElement>>;
   @ViewChildren('chap_header') chap_headers!: QueryList<ElementRef<HTMLParagraphElement>>;
@@ -49,7 +50,20 @@ export class MainPage implements AfterViewInit{
 
   current_book = this.bible_services.current_book;
 
+  ngOnInit(): void {
+    setTimeout(() => {
+      this.bible_services.move_to_chapter(
+        (this.bible_services.current_book()?.nr ?? 1),
+        this.bible_services.current_chapter(),
+      );
+    }, 0);
+  }
+
   ngAfterViewInit(): void {
+    document.addEventListener("scroll", () => {
+      console.log("scroll");
+    })
+
     document.addEventListener('click', ()=>{
       this.isMakerOpen.set(!document.getSelection()?.isCollapsed);
     });
@@ -67,9 +81,6 @@ export class MainPage implements AfterViewInit{
           const observer = new IntersectionObserver((entries) => {
             entries.forEach((entrie) => {
               if(entrie.isIntersecting){
-                console.log(entrie.target);
-                console.log(verse_id);
-
                 this.current_chapter = this.bible_services.current_chapter()
                 this.scrolling = false;
                 observer.disconnect();
@@ -97,16 +108,14 @@ export class MainPage implements AfterViewInit{
             entries.forEach((entrie) => {
 
               if(entrie.isIntersecting){
-                console.log(chapter);
-                console.log(chapter_id);
                 this.current_chapter = this.bible_services.current_chapter()
                 this.scrolling = false;
+                chapter_id = ""
                 observer.disconnect();
               }
             })
           }, 
         );
-
           observer.observe(chapter)
         }, 0);
       })
@@ -129,9 +138,6 @@ export class MainPage implements AfterViewInit{
         this.gss.save_current_chapter((this.current_book()?.nr ?? 1) - 1, chapter);
       }
     }
-
-    console.log(this.current_chapter);
-    
   }
 
   showMarker(event: MouseEvent){
@@ -202,7 +208,11 @@ export class MainPage implements AfterViewInit{
     }
   }
 
-
+  // @HostListener("scroll", ['$event'])
+  // show_scroll(event: any){
+  //   console.log(event);
+    
+  // }
 }
 
 const map_marks = [

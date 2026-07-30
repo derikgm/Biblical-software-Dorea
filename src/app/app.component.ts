@@ -1,5 +1,5 @@
 import { AfterViewInit, Component, HostListener, inject, signal } from "@angular/core";
-import { RouterOutlet } from "@angular/router";
+import { RouteReuseStrategy, RouterOutlet } from "@angular/router";
 import { SidebarComponent } from "./components/sidebar-component/sidebar-component";
 import { TopbarComponent } from "./components/topbar-component/topbar-component";
 import { LanguageServices } from "./services/language-services";
@@ -11,9 +11,13 @@ import { GlobalSettingsServices } from "./services/global_settings-services";
 import { FontSettingsServices } from "./services/font_settings-services";
 import { SearchResultComponent } from "./components/search_result-component/search_result-component";
 import { FolderOptionsComponent } from "./components/folder_options-component/folder_options-component";
+import { CustomRouteReuseStrategy } from "./stratergies/custom-route-reuse.strategy";
 
 @Component({
   selector: "app-root",
+  providers:[
+    // {provide: RouteReuseStrategy, useClass: CustomRouteReuseStrategy}
+  ],
   imports: [RouterOutlet, SidebarComponent, TopbarComponent, SpinComponent, SearchResultComponent, FolderOptionsComponent],
   templateUrl: "./app.component.html",
   styleUrl: "./app.component.css",
