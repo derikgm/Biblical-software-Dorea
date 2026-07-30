@@ -45,6 +45,7 @@ export class MainPage implements AfterViewInit{
   yPosition = signal<number>(0);
   
   scrolling = false;
+  current_chapter = 0;
 
   current_book = this.bible_services.current_book;
 
@@ -69,9 +70,7 @@ export class MainPage implements AfterViewInit{
                 console.log(entrie.target);
                 console.log(verse_id);
 
-                this.visibility_range = []
-                this.visibility_range.push(this.bible_services.current_chapter());
-                this.visibility_range.push(this.bible_services.current_chapter() + 1);
+                this.current_chapter = this.bible_services.current_chapter()
                 this.scrolling = false;
                 observer.disconnect();
               }
@@ -100,15 +99,12 @@ export class MainPage implements AfterViewInit{
               if(entrie.isIntersecting){
                 console.log(chapter);
                 console.log(chapter_id);
-                this.visibility_range = []
-                this.visibility_range.push(this.bible_services.current_chapter());
-                this.visibility_range.push(this.bible_services.current_chapter() + 1);
+                this.current_chapter = this.bible_services.current_chapter()
                 this.scrolling = false;
                 observer.disconnect();
               }
             })
           }, 
-          // {rootMargin: "-100% 0px 0px 0px", threshold: 0}
         );
 
           observer.observe(chapter)
@@ -118,43 +114,23 @@ export class MainPage implements AfterViewInit{
   }
 
   handler_chapter_visibility(chapter: number, visible: boolean) {
-    console.log(this.scrolling, this.visibility_range, chapter);
-    
     if(this.scrolling) return;
-    if(this.visibility_range.length == 0) return;
 
-    if(visible){
-      if(chapter < this.visibility_range[0]){
-        this.visibility_range.unshift(chapter);
-        this.bible_services.current_chapter.set(chapter);
-
-        this.gss.save_current_chapter(
-          (this.current_book()?.nr ?? 1) - 1,
-          chapter,
-        );
+    if(!visible){
+      if(chapter == this.current_chapter){
+        this.current_chapter = chapter + 1;
+        this.bible_services.current_chapter.set(chapter + 1)
+        this.gss.save_current_chapter((this.current_book()?.nr ?? 1) - 1, chapter + 1);
       }
-
-      if(this.visibility_range.at(-1)! < chapter){
-        this.visibility_range.push(chapter);
-      }
-
-    } else if (!visible && this.visibility_range.length > 1) {
-      if(chapter <= this.visibility_range[0]){
-        this.visibility_range.shift();
-        this.bible_services.current_chapter.set(chapter + 1);
-
-        this.gss.save_current_chapter(
-          (this.current_book()?.nr ?? 1) - 1,
-          chapter + 1,
-        );
-      }
-
-      if(this.visibility_range.at(-1)! < chapter){
-        this.visibility_range.pop();
+    } else {
+      if(chapter == this.current_chapter - 1){
+        this.current_chapter = chapter;
+        this.bible_services.current_chapter.set(chapter)
+        this.gss.save_current_chapter((this.current_book()?.nr ?? 1) - 1, chapter);
       }
     }
 
-    console.log(this.visibility_range);
+    console.log(this.current_chapter);
     
   }
 
