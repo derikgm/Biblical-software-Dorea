@@ -67,6 +67,24 @@ export class MainPage implements AfterViewInit{
       this.isMakerOpen.set(!document.getSelection()?.isCollapsed);
     });
 
+    window.addEventListener("resize", (event) => {
+      event.preventDefault();
+
+      const current_chapter = this.current_chapter;
+      this.scrolling = true;
+
+      requestAnimationFrame(() => {
+        setTimeout(() => {
+          this.bible_services.move_to_chapter(
+            (this.bible_services.current_book()?.nr ?? 1),
+            current_chapter,
+          );
+
+          this.current_chapter = current_chapter;
+        }, 100)
+      })
+    })
+
     this.bible_services.select_verse_to_move$.subscribe((verse_id) => {
       requestAnimationFrame(() => {
         setTimeout(()=>{
