@@ -33,7 +33,7 @@ export class AppComponent implements AfterViewInit{
   marker_services = inject(MarkerServices);
 
   async ngAfterViewInit() {
-    this.global_settings_services.is_loading.set(true);
+    this.global_settings_services.is_loading_the_app.set(true);
 
     await this.global_settings_services.init();
     await this.marker_services.init();
@@ -43,7 +43,7 @@ export class AppComponent implements AfterViewInit{
     
     this.font_settings_services.init();
 
-    this.global_settings_services.is_loading.set(false);
+    this.global_settings_services.is_loading_the_app.set(false);
   }
 
   // @HostListener('mouseup')

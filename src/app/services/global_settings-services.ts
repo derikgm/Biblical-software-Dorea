@@ -14,7 +14,8 @@ export class GlobalSettingsServices {
   };
 
   is_loading = signal(false);
-
+  is_loading_the_app = signal(false);
+  
   async init(){
     this.settings = await invoke('get_settings');
   }

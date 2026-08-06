@@ -1,16 +1,14 @@
 <main class="h-screen flex flex-col">
-  <!-- @if (global_settings_services.is_loading()) {
-    <spin-component class="h-full"/>
-  } @else { -->
+
+  @if (global_settings_services.is_loading_the_app()) {
+    <spin-component class="absolute inset-0 z-50"/>
+  } @else {
     <div class="flex flex-col h-full">
       <topbar-component class="sticky top-0 z-10"/>
       
       <div class="flex flex-row flex-1 overflow-hidden">
         <sidebar-component class="sticky top-0 h-full overflow-y-visible"/>
         
-          @if (global_settings_services.is_loading()) {
-            <spin-component class="absolute inset-0 z-50"/>
-          }
 
         <div class="flex-1 relative overflow-hidden">
           
@@ -25,12 +23,15 @@
             <search-result-component class="absolute inset-0 z-50"/>
           }
 
+          @if (global_settings_services.is_loading()) {
+            <spin-component class="absolute inset-0 z-50"/>
+          }
 
         </div>
       </div>
     </div>
 
-  <!-- } -->
+  }
 </main>
 
 @if(folder_services.show_file_and_folder_options()){
