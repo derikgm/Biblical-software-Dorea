@@ -36,9 +36,9 @@ export class AppComponent implements AfterViewInit{
     this.global_settings_services.is_loading_the_app.set(true);
 
     await this.global_settings_services.init();
+    await this.bible_services.init();
     await this.marker_services.init();
     await this.language_services.init();
-    await this.bible_services.init();
     await this.folder_services.init();
     
     this.font_settings_services.init();

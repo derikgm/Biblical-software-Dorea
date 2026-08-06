@@ -1,4 +1,4 @@
-import { AfterViewInit, Component, ElementRef, input, output, signal, ViewChild, } from '@angular/core';
+import { AfterViewInit, Component, computed, ElementRef, input, output, signal, ViewChild, } from '@angular/core';
 import { provideIcons, NgIcon } from '@ng-icons/core';
 import { heroXMark } from '@ng-icons/heroicons/outline';
 
@@ -22,6 +22,17 @@ export class MarkerComponent implements AfterViewInit{
 
   y_position = signal(0);
   x_position = signal(0);
+
+  x_position_plus = computed(() => {
+    console.log("hola?");
+    
+    const width = this.menu_container.nativeElement.getBoundingClientRect().width
+    const x_pos = this.y_position() - (width/2);
+
+    console.log(x_pos);
+
+    return x_pos;
+  })
 
   ngAfterViewInit(): void {
     const width = this.menu_container.nativeElement.getBoundingClientRect().width;

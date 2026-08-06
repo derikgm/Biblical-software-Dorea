@@ -10,7 +10,6 @@ pub fn get_marks (bible: String, state: tauri::State<IndexedBible>) -> Result<Ve
     let mut marks= state.marks.lock().unwrap();
 
     if Path::new(&mark_json_path).exists() {
-
         let marks_json_file = fs::read_to_string(mark_json_path)
         .map_err(|e| format!("Error de lectura de Json: {e}"))?;
         
@@ -19,8 +18,6 @@ pub fn get_marks (bible: String, state: tauri::State<IndexedBible>) -> Result<Ve
     }
     
     marks.clear();
-
-    println!("{:?}", marks);
 
     for mark in vec_mark.iter() {
         marks.push(mark.clone());
@@ -35,7 +32,7 @@ pub fn get_marks (bible: String, state: tauri::State<IndexedBible>) -> Result<Ve
 pub fn save_mark (mark: Mark, bible: String, state: tauri::State<IndexedBible>) -> Result<(), String> {
     let mark_json_path = format!("{}/{}.json", get_mark_path(), bible);
     let mut marks = state.marks.lock().unwrap();
-
+    
     marks.push(mark);
 
     let mark_to_string = marks.clone();

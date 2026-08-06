@@ -6,7 +6,7 @@ class="flex flex-row"
 >
 
     @if (is_marker_open()) {
-        <marker-component 
+            <marker-component 
         [x_position_input]="xPosition()"
         [y_position_input]="yPosition()"
         (colorMark)="handlerSelected($event)"

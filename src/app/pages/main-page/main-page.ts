@@ -29,7 +29,7 @@ import { MarkerServices } from '../../services/marker_services';
 })
 export class MainPage implements AfterViewInit{
 
-  @ViewChild('text_option') text_option!: ElementRef<HTMLDivElement>;
+  @ViewChild('marker_component') marker_component!: ElementRef<HTMLElement>;
   @ViewChildren('versiculo') versiculos!: QueryList<ElementRef<HTMLParagraphElement>>;
   @ViewChildren('chap_header') chap_headers!: QueryList<ElementRef<HTMLParagraphElement>>;
   @ViewChildren('div_chapter') div_chapter!: QueryList<ElementRef<HTMLDivElement>>;
@@ -67,8 +67,18 @@ export class MainPage implements AfterViewInit{
   }
 
   ngAfterViewInit(): void {
-    document.addEventListener('click', ()=>{
-      this.is_marker_open.set(!document.getSelection()?.isCollapsed && !this.is_marker_open());
+    document.addEventListener('mouseup', ()=>{
+      // this.is_marker_open.set(!document.getSelection()?.isCollapsed && !this.is_marker_open());
+      console.log(!document.getSelection()?.isCollapsed);
+      console.log(this.is_marker_open());
+      
+      if(!document.getSelection()?.isCollapsed)
+        this.is_marker_open.set(true);
+      else 
+        this.is_marker_open.set(false)
+
+      // console.log(this.xPosition());
+      // console.log(this.yPosition());
     });
 
     window.addEventListener("resize", (event) => {
@@ -175,6 +185,9 @@ export class MainPage implements AfterViewInit{
         this.rangeSelected = document.getSelection()?.getRangeAt(0);
         this.xPosition.set(event.layerX)
         this.yPosition.set(event.layerY)
+
+        console.log(this.marker_component.nativeElement);
+        
       }
   }
 
@@ -211,25 +224,28 @@ export class MainPage implements AfterViewInit{
     if(this.rangeSelected === undefined) return;
 
     if(this.rangeSelected.endContainer !== this.rangeSelected.startContainer){
-      const chap_parent = this.rangeSelected.startContainer.parentElement?.parentElement?.parentElement!;
-      const chapter_number = +chap_parent.id;
+      const chap_parent = this.rangeSelected.startContainer.parentElement?.parentElement?.parentElement! as HTMLDivElement;
 
-      const start_vers = this.rangeSelected.startContainer.parentElement?.parentElement?.firstChild?.textContent ?? 0;
-      const end_vers = this.rangeSelected.endContainer.parentElement?.parentElement?.firstChild?.textContent ?? 0;
+      const start_verse = this.rangeSelected.startContainer.parentElement?.parentElement?.firstChild?.textContent ?? 0;
+      const end_verse = this.rangeSelected.endContainer.parentElement?.parentElement?.firstChild?.textContent ?? 0;
 
-      for (let i = +start_vers ; i <= +end_vers; i++) {
+      paint_several_sections(
+        chap_parent,
+        +start_verse - 1,
+        +end_verse - 1,
+        this.rangeSelected.startOffset,
+        this.rangeSelected.endOffset,
+        color
+      );
 
-        const node = this.div_chapter.get(chapter_number)?.nativeElement
-        .childNodes[i]?.lastChild?.lastChild
+      this.marker_services.save_mark(
+        color, 
+        +start_verse - 1, 
+        +end_verse - 1, 
+        this.rangeSelected.startOffset, 
+        this.rangeSelected.endOffset
+      );
 
-        if(node){
-          const start = (i == +start_vers) ? this.rangeSelected.startOffset : 0;
-          const end = (i == +end_vers) ? this.rangeSelected.endOffset : (node.textContent?.length ?? 0);
-          
-          paint_seccion(node, start, end, color);
-          this.marker_services.save_mark(color, i - 1, i - 1, start, end);
-        }
-      }
     } else {
       const verse = this.rangeSelected.startContainer.parentElement?.parentElement?.firstChild?.textContent ?? 1
 
@@ -260,11 +276,22 @@ export class MainPage implements AfterViewInit{
           marks.forEach((m) => {
             const chapter = this.div_chapter.get(m.chapter)
 
-            //NOTE: El texto plano dentro del span cuenta como nodo ._.
-            const node = chapter?.nativeElement.childNodes[m.start_verse + 1].lastChild?.lastChild
-
-            if(node){
-              paint_seccion(node, m.start, m.end, m.style);
+            if(m.end_verse == m.start_verse){
+              //NOTE: El texto plano dentro del span cuenta como nodo ._.
+              const node = chapter?.nativeElement.childNodes[m.start_verse + 1].lastChild?.lastChild
+  
+              if(node){
+                paint_seccion(node, m.start, m.end, m.style);
+              }
+            } else {
+              paint_several_sections(
+                chapter?.nativeElement,
+                m.start_verse,
+                m.end_verse,
+                m.start,
+                m.end,
+                m.style
+              );
             }
           })
         }
@@ -286,6 +313,32 @@ function paint_seccion(node: ChildNode, start: number, end: number, style: numbe
   range.surroundContents(span);
 }
 
+function paint_several_sections (
+  chapter_html_div: HTMLDivElement | undefined,
+  start_verse: number,
+  end_verse: number,
+  start_mark: number,
+  end_mark: number,
+  style: number,
+) {
+
+  if(!chapter_html_div) return;
+
+  start_verse++;
+  end_verse++;
+
+  for (let i = start_verse; i <= end_verse; i++) {
+    const node = chapter_html_div.childNodes[i]?.lastChild?.lastChild
+
+    if(node){
+      const start = (i == start_verse) ? start_mark : 0;
+      const end = (i == end_verse) ? end_mark : (node.textContent?.length ?? 0);
+      
+      paint_seccion(node, start, end, style);
+    }
+  }
+}
+
 const map_marks = [
   ['hover:cursor-pointer', 'text-white', 'bg-red-700'],
   ['hover:cursor-pointer', 'text-white', 'bg-blue-700'],
@@ -293,27 +346,3 @@ const map_marks = [
   ['hover:cursor-pointer', 'text-white', 'bg-violet-700'],
   ['hover:cursor-pointer', 'text-black', 'bg-transparent'],
 ]
-
-// 500
-// main-page.ts:177 500
-// main-page.ts:178 500
-// main-page.ts:179 228
-// main-page.ts:180 1636
-// main-page.ts:181 0
-// marker-component.ts:32 473
-// marker-component.ts:33 244
-// marker-component.ts:34 88
-// marker-component.ts:35 332
-// marker-component.ts:36 141
-
-// 513
-// main-page.ts:177 513
-// main-page.ts:178 513
-// main-page.ts:179 449
-// main-page.ts:180 1649
-// main-page.ts:181 0
-// marker-component.ts:32 473
-// marker-component.ts:33 465
-// marker-component.ts:34 88
-// marker-component.ts:35 553
-// marker-component.ts:36 -80

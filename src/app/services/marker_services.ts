@@ -17,6 +17,7 @@ export class MarkerServices {
 
     await invoke("get_marks", {bible})
     .then((v) => {
+      
       const marks = v as unknown as Mark[];
       this.marks = new Map();
 
@@ -38,6 +39,8 @@ export class MarkerServices {
       start_verse,
       end_verse
     }
+
+    console.log(mark);
 
     const mark_key = this.marks.get(mark.book);
 
