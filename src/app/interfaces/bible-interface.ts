@@ -46,3 +46,13 @@ export interface IndexedVerse {
     verse_number: number,
     verse_string: string,
 }
+
+export interface Mark {
+    style: number,
+    start: number,
+    end: number,
+    book: number,
+    chapter: number,
+    start_verse: number,
+    end_verse: number,
+}

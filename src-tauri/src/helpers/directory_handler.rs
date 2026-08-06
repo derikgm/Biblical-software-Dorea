@@ -13,6 +13,7 @@ pub fn verify_and_create_data_directory(){
     let note_path = &get_note_path();
     let language_path = &get_language_path();
     let settings_path = &get_settings_path();
+    let marks_path = &get_mark_path();
 
     if !Path::new(DATA_PATH).exists() {
         let _ = std::fs::create_dir("./Data");
@@ -43,7 +44,10 @@ pub fn verify_and_create_data_directory(){
         }
     }
 
-    
+    if !Path::new(marks_path).exists() {
+        let _ = std::fs::create_dir(marks_path);
+    }
+
 }
 
 pub fn get_bible_path () -> String {
@@ -60,5 +64,9 @@ pub fn get_language_path () -> String {
 
 pub fn get_settings_path () -> String {
     return DATA_PATH.to_owned() + "/settings" 
+}
+
+pub fn get_mark_path () -> String {
+    return DATA_PATH.to_owned() + "/marks" 
 }
 

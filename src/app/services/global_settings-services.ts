@@ -9,8 +9,8 @@ export class GlobalSettingsServices {
     font_size: 16,
     bible_form_lineal: false,
     current_book: 1,
-    current_chapter: 1,
-    current_bible: "",
+    current_chapter: 2,
+    current_bible: "", 
   };
 
   is_loading = signal(false);

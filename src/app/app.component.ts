@@ -12,6 +12,7 @@ import { FontSettingsServices } from "./services/font_settings-services";
 import { SearchResultComponent } from "./components/search_result-component/search_result-component";
 import { FolderOptionsComponent } from "./components/folder_options-component/folder_options-component";
 import { CustomRouteReuseStrategy } from "./stratergies/custom-route-reuse.strategy";
+import { MarkerServices } from "./services/marker_services";
 
 @Component({
   selector: "app-root",
@@ -29,11 +30,13 @@ export class AppComponent implements AfterViewInit{
   folder_services = inject(FolderServices);
   global_settings_services = inject(GlobalSettingsServices);
   font_settings_services = inject(FontSettingsServices);
+  marker_services = inject(MarkerServices);
 
   async ngAfterViewInit() {
     this.global_settings_services.is_loading.set(true);
 
     await this.global_settings_services.init();
+    await this.marker_services.init();
     await this.language_services.init();
     await this.bible_services.init();
     await this.folder_services.init();
@@ -43,8 +46,8 @@ export class AppComponent implements AfterViewInit{
     this.global_settings_services.is_loading.set(false);
   }
 
-  @HostListener('mouseup')
-  disable_sidebar_rezising_event(){
-    this.settings_services.disable_resizing();
-  }
+  // @HostListener('mouseup')
+  // disable_sidebar_rezising_event(){
+  //   this.settings_services.disable_resizing();
+  // }
 }

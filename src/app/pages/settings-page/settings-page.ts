@@ -4,6 +4,7 @@ import { GlobalSettingsServices } from '../../services/global_settings-services'
 import { invoke } from '@tauri-apps/api/core';
 import { BibleServices } from '../../services/bible-services';
 import { Bible } from '../../interfaces/bible-interface';
+import { MarkerServices } from '../../services/marker_services';
 
 @Component({
   selector: 'settings-page',
@@ -20,6 +21,7 @@ export class SettingsPage implements AfterViewInit{
   http = inject(HttpClient);
   gss = inject(GlobalSettingsServices);
   bible_services = inject(BibleServices);
+  marker_services = inject(MarkerServices);
 
   async ngAfterViewInit() {
     await invoke("get_local_bibles", {})
@@ -110,7 +112,7 @@ export class SettingsPage implements AfterViewInit{
     return this.available_biblies().find(ab => ab.abbreviation == bible_abb);
   }
 
-  select_bible(select_target: EventTarget | null){
+  async select_bible(select_target: EventTarget | null){
     const select = select_target as HTMLSelectElement;
 
     if(select.value == ""){
@@ -118,7 +120,8 @@ export class SettingsPage implements AfterViewInit{
       return;
     }
 
-    this.bible_services.select_bible(select.value);
+    await this.bible_services.select_bible(select.value);
+    await this.marker_services.init();
   }
 
   async download_bible(select_target: EventTarget | null){

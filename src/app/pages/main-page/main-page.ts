@@ -3,13 +3,15 @@ import { AfterViewInit, Component, computed, ElementRef, HostListener,
 import { FontSettingsServices } from '../../services/font_settings-services';
 import { MarkerComponent } from '../../components/marker-component/marker-component';
 import { BibleServices } from '../../services/bible-services';
-import { Chapter } from '../../interfaces/bible-interface';
+import { Chapter, Mark } from '../../interfaces/bible-interface';
 import { VisibleDirective } from "../../directives/visible-directive";
 import { NgIcon, provideIcons } from '@ng-icons/core';
 import { heroBars3, heroBars3CenterLeft, heroEquals, heroPause } from '@ng-icons/heroicons/outline';
 import { BibleOptionComponent } from "../../components/bible_option-component/bible_option-component";
 import { GlobalSettingsServices } from '../../services/global_settings-services';
 import { LanguageServices } from '../../services/language-services';
+import { invoke } from '@tauri-apps/api/core';
+import { MarkerServices } from '../../services/marker_services';
 
 @Component({
   selector: 'main-page',
@@ -30,17 +32,19 @@ export class MainPage implements AfterViewInit{
   @ViewChild('text_option') text_option!: ElementRef<HTMLDivElement>;
   @ViewChildren('versiculo') versiculos!: QueryList<ElementRef<HTMLParagraphElement>>;
   @ViewChildren('chap_header') chap_headers!: QueryList<ElementRef<HTMLParagraphElement>>;
+  @ViewChildren('div_chapter') div_chapter!: QueryList<ElementRef<HTMLDivElement>>;
 
   rangeSelected!: Range | undefined;
   visibility_range: number[] = [];
 
   fontSettingsServices = inject(FontSettingsServices);
   bible_services = inject(BibleServices);
+  marker_services = inject(MarkerServices);
   gss = inject(GlobalSettingsServices);
   lang = inject(LanguageServices);
 
   // headers = map_headers;
-  isMakerOpen = signal<boolean>(false);
+  is_marker_open = signal<boolean>(false);
   first_init = signal<boolean>(true)
   xPosition = signal<number>(0);
   yPosition = signal<number>(0);
@@ -64,7 +68,7 @@ export class MainPage implements AfterViewInit{
 
   ngAfterViewInit(): void {
     document.addEventListener('click', ()=>{
-      this.isMakerOpen.set(!document.getSelection()?.isCollapsed);
+      this.is_marker_open.set(!document.getSelection()?.isCollapsed && !this.is_marker_open());
     });
 
     window.addEventListener("resize", (event) => {
@@ -109,6 +113,8 @@ export class MainPage implements AfterViewInit{
 
           observer.observe(verse)
           setTimeout(()=>{verse.classList.remove("bg-blue-400")}, 3000)
+
+          this.apply_marks()
         }, 0);
       })
     })
@@ -137,9 +143,13 @@ export class MainPage implements AfterViewInit{
           }, 
         );
           observer.observe(chapter)
+
+          this.apply_marks()
+
         }, 0);
       })
     })
+
   }
 
   handler_chapter_visibility(chapter: number, visible: boolean) {
@@ -163,8 +173,8 @@ export class MainPage implements AfterViewInit{
   showMarker(event: MouseEvent){
     if(document.getSelection() && !document.getSelection()?.isCollapsed){
         this.rangeSelected = document.getSelection()?.getRangeAt(0);
-        this.xPosition.set(event.x)
-        this.yPosition.set(event.y)
+        this.xPosition.set(event.layerX)
+        this.yPosition.set(event.layerY)
       }
   }
 
@@ -201,39 +211,109 @@ export class MainPage implements AfterViewInit{
     if(this.rangeSelected === undefined) return;
 
     if(this.rangeSelected.endContainer !== this.rangeSelected.startContainer){
-      const start_vers =this.rangeSelected.startContainer.parentElement?.parentElement?.firstChild?.textContent ?? 0;
-      const end_vers =this.rangeSelected.endContainer.parentElement?.parentElement?.firstChild?.textContent ?? 0;
+      const chap_parent = this.rangeSelected.startContainer.parentElement?.parentElement?.parentElement!;
+      const chapter_number = +chap_parent.id;
 
-      for (let i = +start_vers - 1 ; i < +end_vers; i++) {
+      const start_vers = this.rangeSelected.startContainer.parentElement?.parentElement?.firstChild?.textContent ?? 0;
+      const end_vers = this.rangeSelected.endContainer.parentElement?.parentElement?.firstChild?.textContent ?? 0;
 
-        const node = this.versiculos.get(i)?.nativeElement.lastChild?.firstChild;
+      for (let i = +start_vers ; i <= +end_vers; i++) {
+
+        const node = this.div_chapter.get(chapter_number)?.nativeElement
+        .childNodes[i]?.lastChild?.lastChild
 
         if(node){
-          const rangeAux = document.createRange();
-
-          rangeAux.setStart(node, (i == +start_vers - 1) ? this.rangeSelected.startOffset : 0);
-          rangeAux.setEnd(node, (i == +end_vers - 1) ? this.rangeSelected.endOffset : (node.textContent?.length ?? 0));
-
-          const span = document.createElement('span');
-          span.classList.add(...map_marks[color]);
-
-          rangeAux.surroundContents(span);
+          const start = (i == +start_vers) ? this.rangeSelected.startOffset : 0;
+          const end = (i == +end_vers) ? this.rangeSelected.endOffset : (node.textContent?.length ?? 0);
+          
+          paint_seccion(node, start, end, color);
+          this.marker_services.save_mark(color, i - 1, i - 1, start, end);
         }
       }
     } else {
-        const span = document.createElement('span');
-        span.classList.add(...map_marks[color]);
-        this.rangeSelected.surroundContents(span);
-        document.getSelection()?.removeAllRanges();
+      const verse = this.rangeSelected.startContainer.parentElement?.parentElement?.firstChild?.textContent ?? 1
+
+      this.marker_services.save_mark(
+        color,
+        +verse - 1,
+        +verse - 1,
+        this.rangeSelected.startOffset,
+        this.rangeSelected.endOffset
+      );
+
+      const span = document.createElement('span');
+      span.classList.add(...map_marks[color]);
+      
+      this.rangeSelected.surroundContents(span);
+      document.getSelection()?.removeAllRanges();
     }
+
   }
 
+  apply_marks() {
+    requestAnimationFrame(() => {
+      setTimeout(() => {
+        const marks = this.marker_services.marks.get(this.current_chapter);
+
+        if(marks){
+
+          marks.forEach((m) => {
+            const chapter = this.div_chapter.get(m.chapter)
+
+            //NOTE: El texto plano dentro del span cuenta como nodo ._.
+            const node = chapter?.nativeElement.childNodes[m.start_verse + 1].lastChild?.lastChild
+
+            if(node){
+              paint_seccion(node, m.start, m.end, m.style);
+            }
+          })
+        }
+      }, 0)
+    })
+    
+  }
+}
+
+function paint_seccion(node: ChildNode, start: number, end: number, style: number) {
+  const range = document.createRange();
+
+  const span = document.createElement('span');
+  span.classList.add(...map_marks[style]);
+
+  range.setStart(node, start);
+  range.setEnd(node, end);
+  
+  range.surroundContents(span);
 }
 
 const map_marks = [
-  ['text-white', 'bg-red-700'],
-  ['text-white', 'bg-blue-700'],
-  ['text-white', 'bg-green-700'],
-  ['text-white', 'bg-violet-700'],
-  ['text-black', 'bg-transparent'],
+  ['hover:cursor-pointer', 'text-white', 'bg-red-700'],
+  ['hover:cursor-pointer', 'text-white', 'bg-blue-700'],
+  ['hover:cursor-pointer', 'text-white', 'bg-green-700'],
+  ['hover:cursor-pointer', 'text-white', 'bg-violet-700'],
+  ['hover:cursor-pointer', 'text-black', 'bg-transparent'],
 ]
+
+// 500
+// main-page.ts:177 500
+// main-page.ts:178 500
+// main-page.ts:179 228
+// main-page.ts:180 1636
+// main-page.ts:181 0
+// marker-component.ts:32 473
+// marker-component.ts:33 244
+// marker-component.ts:34 88
+// marker-component.ts:35 332
+// marker-component.ts:36 141
+
+// 513
+// main-page.ts:177 513
+// main-page.ts:178 513
+// main-page.ts:179 449
+// main-page.ts:180 1649
+// main-page.ts:181 0
+// marker-component.ts:32 473
+// marker-component.ts:33 465
+// marker-component.ts:34 88
+// marker-component.ts:35 553
+// marker-component.ts:36 -80

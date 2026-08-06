@@ -5,6 +5,7 @@ use std::collections::HashMap;
 use std::fs::{self};
 use std::sync::Mutex;
 
+use crate::bible::marker_handler::Mark;
 use crate::helpers::directory_handler::get_settings_path;
 use crate::{helpers::directory_handler::get_bible_path};
 
@@ -265,6 +266,7 @@ pub struct SerialisableIndexedBible {
 pub struct IndexedBible {
     pub verses: Mutex<HashMap<usize, IndexedVerse>>,
     pub words: Mutex<HashMap<String, Vec<usize>>>,
+    pub marks: Mutex<Vec<Mark>>,
 }
 
 impl Default for IndexedBible {
@@ -272,6 +274,7 @@ impl Default for IndexedBible {
         Self {
             verses: Mutex::new(HashMap::new()),
             words: Mutex::new(HashMap::new()),
+            marks: Mutex::new(Vec::new())
         }
     }
 }
