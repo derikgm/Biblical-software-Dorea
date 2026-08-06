@@ -29,7 +29,7 @@ import { MarkerServices } from '../../services/marker_services';
 })
 export class MainPage implements AfterViewInit{
 
-  @ViewChild('marker_component') marker_component!: ElementRef<HTMLElement>;
+  @ViewChild('marker_component') marker_component!: ElementRef<HTMLDivElement>;
   @ViewChildren('versiculo') versiculos!: QueryList<ElementRef<HTMLParagraphElement>>;
   @ViewChildren('chap_header') chap_headers!: QueryList<ElementRef<HTMLParagraphElement>>;
   @ViewChildren('div_chapter') div_chapter!: QueryList<ElementRef<HTMLDivElement>>;
@@ -46,8 +46,8 @@ export class MainPage implements AfterViewInit{
   // headers = map_headers;
   is_marker_open = signal<boolean>(false);
   first_init = signal<boolean>(true)
-  xPosition = signal<number>(0);
-  yPosition = signal<number>(0);
+  x_position = signal<number>(0);
+  y_position = signal<number>(0);
   
   scrolling = false;
   current_chapter = 0;
@@ -67,20 +67,6 @@ export class MainPage implements AfterViewInit{
   }
 
   ngAfterViewInit(): void {
-    document.addEventListener('mouseup', ()=>{
-      // this.is_marker_open.set(!document.getSelection()?.isCollapsed && !this.is_marker_open());
-      console.log(!document.getSelection()?.isCollapsed);
-      console.log(this.is_marker_open());
-      
-      if(!document.getSelection()?.isCollapsed)
-        this.is_marker_open.set(true);
-      else 
-        this.is_marker_open.set(false)
-
-      // console.log(this.xPosition());
-      // console.log(this.yPosition());
-    });
-
     window.addEventListener("resize", (event) => {
       event.preventDefault();
 
@@ -183,12 +169,30 @@ export class MainPage implements AfterViewInit{
   showMarker(event: MouseEvent){
     if(document.getSelection() && !document.getSelection()?.isCollapsed){
         this.rangeSelected = document.getSelection()?.getRangeAt(0);
-        this.xPosition.set(event.layerX)
-        this.yPosition.set(event.layerY)
-
-        console.log(this.marker_component.nativeElement);
+        this.marker_component.nativeElement.classList.remove("hidden");
         
+        const marker_width = this.marker_component.nativeElement.getBoundingClientRect().width
+        const marker_height = this.marker_component.nativeElement.getBoundingClientRect().height
+        const father_width = this.marker_component.nativeElement?.parentElement?.getBoundingClientRect().width ?? 0
+
+        const x_event = event.layerX; 
+        const y_event = event.layerY;
+
+        const excedent_right = father_width - ((marker_width/2) + x_event);
+        const excedent_left = x_event - (marker_width/2);
+
+        let x_pos = x_event - (marker_width/2);
+
+        if(excedent_right < 0) x_pos = x_pos + excedent_right
+        if(excedent_left < 0) x_pos = x_pos - excedent_left
+
+        this.y_position.set(y_event - marker_height - 12)
+        this.x_position.set(x_pos)
+
+      } else {
+        this.marker_component.nativeElement.classList.add("hidden");
       }
+      
   }
 
   @HostListener('wheel', ['$event'])
@@ -200,22 +204,44 @@ export class MainPage implements AfterViewInit{
   }
 
   fixSelection(){
+    
     if(this.rangeSelected){
+
       const startText = this.rangeSelected.startContainer.textContent;
       const endText = this.rangeSelected.endContainer.textContent;
       let startOffset = this.rangeSelected.startOffset;
       let endOffset = this.rangeSelected.endOffset - 1;
 
-      while(startText?.at(startOffset) !== " ")
-        startOffset -= 1;
+      let stop_overflow = 100;
 
-      while(endText?.at(endOffset) !== " ")
+      while(startText?.at(startOffset) !== " "){
+        startOffset -= 1;
+        if(-- stop_overflow < 0) {
+          console.log("Ocurrio un bucle infinito");
+          return
+        }
+      }
+
+      stop_overflow = 100;
+
+      while(endText?.at(endOffset) !== " "){
         endOffset += 1;
+        if(-- stop_overflow < 0) {
+          console.log("Ocurrio un bucle infinito");
+          return
+        }
+      }
       
       this.rangeSelected.setStart(this.rangeSelected.startContainer, startOffset + 1);
       this.rangeSelected.setEnd(this.rangeSelected.endContainer, endOffset);
     }
-    
+
+    if(Number.parseInt(this.rangeSelected?.endContainer.nodeValue ?? "", 2)){
+      //TODO: Buscar otra alternativa a esto
+      this.rangeSelected = undefined;
+      document.getSelection()?.removeAllRanges();
+      this.marker_component.nativeElement.classList.add("hidden");
+    }
   }
 
   handlerSelected(color: number){
@@ -229,12 +255,15 @@ export class MainPage implements AfterViewInit{
       const start_verse = this.rangeSelected.startContainer.parentElement?.parentElement?.firstChild?.textContent ?? 0;
       const end_verse = this.rangeSelected.endContainer.parentElement?.parentElement?.firstChild?.textContent ?? 0;
 
+      const start = this.rangeSelected.startOffset;
+      const end = this.rangeSelected.endOffset;
+      
       paint_several_sections(
         chap_parent,
         +start_verse - 1,
         +end_verse - 1,
-        this.rangeSelected.startOffset,
-        this.rangeSelected.endOffset,
+        start,
+        end,
         color
       );
 
@@ -242,8 +271,8 @@ export class MainPage implements AfterViewInit{
         color, 
         +start_verse - 1, 
         +end_verse - 1, 
-        this.rangeSelected.startOffset, 
-        this.rangeSelected.endOffset
+        start, 
+        end
       );
 
     } else {
@@ -340,9 +369,9 @@ function paint_several_sections (
 }
 
 const map_marks = [
-  ['hover:cursor-pointer', 'text-white', 'bg-red-700'],
-  ['hover:cursor-pointer', 'text-white', 'bg-blue-700'],
-  ['hover:cursor-pointer', 'text-white', 'bg-green-700'],
-  ['hover:cursor-pointer', 'text-white', 'bg-violet-700'],
-  ['hover:cursor-pointer', 'text-black', 'bg-transparent'],
+  ['select-none','hover:cursor-pointer', 'text-white', 'bg-red-700'],
+  ['select-none','hover:cursor-pointer', 'text-white', 'bg-blue-700'],
+  ['select-none','hover:cursor-pointer', 'text-white', 'bg-green-700'],
+  ['select-none','hover:cursor-pointer', 'text-white', 'bg-violet-700'],
+  ['select-none','hover:cursor-pointer', 'text-black', 'bg-transparent'],
 ]

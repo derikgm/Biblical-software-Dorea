@@ -25,3 +25,8 @@ export const appConfig: ApplicationConfig = {
     ),
   ],
 };
+
+--------------
+TODO:
+
+Correguir el error del triple click que selecciona todo...

@@ -40,8 +40,6 @@ export class MarkerServices {
       end_verse
     }
 
-    console.log(mark);
-
     const mark_key = this.marks.get(mark.book);
 
     if(mark_key)
@@ -52,6 +50,11 @@ export class MarkerServices {
       this.marks.has(mark.book)
         ? this.marks.get(mark.book)?.push(mark)
         : this.marks.set(mark.book, [mark]);
+
+      console.log(this.marks);
+    })
+    .catch((e) => {
+      console.log(e);
     })
   }
 }

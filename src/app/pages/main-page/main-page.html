@@ -5,13 +5,16 @@ class="flex flex-row"
 (mouseup)="fixSelection()"
 >
 
-    @if (is_marker_open()) {
-            <marker-component 
-        [x_position_input]="xPosition()"
-        [y_position_input]="yPosition()"
+    <div #marker_component 
+    class="w-44 h-12 absolute hidden"
+    [style.top.px]="y_position()"
+    [style.left.px]="x_position()"
+    >
+        <marker-component 
+        class="w-full h-full"
         (colorMark)="handlerSelected($event)"
         />
-    }
+    </div>
     
     <div class="flex flex-col" #text_option>
         <bible-option-component 
@@ -44,7 +47,7 @@ class="flex flex-row"
                             [style.fontSize.px]="fontSettingsServices.font_size()"
                             [class.inline]="fontSettingsServices.is_inline()"
                             >
-                                <sup class="font-bold z-0">
+                                <sup class="font-bold z-0 select-none">
                                     {{$index + 1}}
                                 </sup>
                                 <span class="flex-1">
