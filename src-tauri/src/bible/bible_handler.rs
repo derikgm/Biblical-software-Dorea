@@ -7,6 +7,7 @@ use std::sync::Mutex;
 
 use crate::bible::marker_handler::Mark;
 use crate::helpers::directory_handler::get_settings_path;
+use crate::notes::notes_handler::Note;
 use crate::{helpers::directory_handler::get_bible_path};
 
 #[tauri::command]
@@ -267,6 +268,7 @@ pub struct IndexedBible {
     pub verses: Mutex<HashMap<usize, IndexedVerse>>,
     pub words: Mutex<HashMap<String, Vec<usize>>>,
     pub marks: Mutex<Vec<Mark>>,
+    pub notes: Mutex<HashMap<String, Note>>
 }
 
 impl Default for IndexedBible {
@@ -274,7 +276,8 @@ impl Default for IndexedBible {
         Self {
             verses: Mutex::new(HashMap::new()),
             words: Mutex::new(HashMap::new()),
-            marks: Mutex::new(Vec::new())
+            marks: Mutex::new(Vec::new()),
+            notes: Mutex::new(HashMap::new()),
         }
     }
 }

@@ -30,3 +30,25 @@ export const appConfig: ApplicationConfig = {
 TODO:
 
 Correguir el error del triple click que selecciona todo...
+
+--------------
+Contar:
+
+la historia de como me confundi con la metadata:
+
+#[tauri::command]
+pub fn save_with_metada (dir: &str, note: Note) -> Result<(), String>{
+    let nota_serializada = serde_json::to_string(&note)
+    .map_err(|e| format!("Error al formatear Json: {e}"))?;
+
+    let mut file = File::create(dir)
+    .map_err(|e| format!("e: {e}"))?;
+
+    println!("{:?}", file);
+
+    writeln!(file, "{}: {}", "note", nota_serializada);
+
+    write!(file, "YUJUUUU!!!");
+
+    Ok(())
+}

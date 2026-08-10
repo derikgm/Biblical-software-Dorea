@@ -1,13 +1,12 @@
-use std::fs;
+use std::{fs, path::Path, fs::ReadDir};
 use std::fs::File;
-use std::path::PathBuf;
 use serde::{Deserialize, Serialize};
 
-use crate::helpers::directory_handler::get_note_path;
+use crate::bible::bible_handler::IndexedBible;
+use crate::{bible::bible_handler::IndexedVerse, helpers::directory_handler::get_note_path};
 
 #[tauri::command]
 pub fn save_note (dir: &str, content: &str) -> Result<bool, String> {
-
     let _ = fs::write(dir, content)
     .map_err(|e| {format!("ocurrio un error de escritura: {e}")})?;
 
@@ -25,7 +24,7 @@ pub fn update_file_name (dir: &str, new_dir: &str) -> Result<bool, String> {
 
 #[tauri::command]
 pub fn create_new_note (dir: &str, title: String, extension: String) -> Result<Note, String>{
-    let mut note: Note = Note { title, extension };
+    let mut note: Note = Note { title, extension, linked_verses: Vec::new()};
     let mut files: Vec<String> = Vec::new();
 
     let folder_dir = fs::read_dir(dir)
@@ -52,7 +51,11 @@ pub fn create_new_note (dir: &str, title: String, extension: String) -> Result<N
         for file in &files {
             if *file == format!("{}.{}", note.title, note.extension) {
                 cont += 1;
-                note = Note { title: format!("{}_{}", file, cont), extension: note.extension };
+                note = Note { 
+                    title: format!("{}_{}", file, cont), 
+                    extension: note.extension,
+                    linked_verses: Vec::new(), 
+                };
                 continued_while = true;
                 break;
             }
@@ -134,67 +137,52 @@ pub fn delete_note (dir: &str, is_dir: bool) -> Result<bool, String> {
 }
 
 #[tauri::command]
-pub fn get_notes_folders() -> Result<Folder, String>{
+pub fn get_notes_folders(state: tauri::State<IndexedBible>) -> Result<Folder, String>{
 
-    let mut root_files: Vec<Note> = Vec::from([]); 
-    let mut root_folders: Vec<Folder> = Vec::from([]); 
+    let root_folder: Folder;
+    let linked_notes_path = format!("{}/linked_notes.json", get_note_path());
 
-    let iterator = fs::read_dir(get_note_path())
+    let mut notes = state.notes.lock().unwrap();
+
+    let iterator: ReadDir = fs::read_dir(get_note_path())
     .map_err(|e| format!("Error la leer los datos: {e}"))?;
 
-    for entry in iterator {
-        let entry = entry
-        .map_err(|e| format!("Error de lectura: {e}"))?;
+    root_folder = surf_folders2(iterator, get_note_path(), String::from("root"))
+    .map_err(|e| format!("{}", e))?;
 
-        let path_buf = entry.path();
-
-        if path_buf.is_dir() {
-            let folder = surf_folders(&path_buf)
-            .map_err(|e| format!("Error de navegacion de carpetas: {e}"))?;
-
-            root_folders.push(folder);
-        }
-
-        if path_buf.is_file() {
-            if let (Some(prefix), Some(extension)) = (path_buf.file_prefix(), path_buf.extension()) {
-                if extension == "txt" {
-                    root_files.push( Note { 
-                        title: prefix.to_str().unwrap().to_string(), 
-                        extension: extension.to_str().unwrap().to_string()
-                    });
-                }
-            } 
-        }
+    if Path::new(&linked_notes_path).exists() {
+        //...
     }
 
-    Ok(Folder { 
-        dir: String::from(get_note_path()),
-        folder_name: String::from("root"), 
-        open: false, 
-        folders: root_folders, 
-        files: root_files
-    })
-
+    Ok(root_folder)
 }
 
-fn surf_folders(path_buf: &PathBuf) -> Result<Folder, String> {
+//TODO: arreglar esto
+fn surf_folders2 (read_dir: ReadDir, dir: String, folder_name: String) -> Result<Folder, String> {
     let mut files: Vec<Note> = Vec::from([]); 
     let mut folders: Vec<Folder> = Vec::from([]);
 
-    let iterator = fs::read_dir(path_buf.as_path())
-    .map_err(|e| format!("Error la leer los datos: {e}"))?;
-
-    for entry in iterator {
+    for entry in read_dir {
         let entry = entry
         .map_err(|e| format!("Error de lectura: {e}"))?;
 
         let surf_path_buf = entry.path();
 
         if surf_path_buf.is_dir() {
-            let folder = surf_folders(&surf_path_buf)
-            .map_err(|e| format!("Error de navegacion de carpetas: {e}"))?;
+            if let (Some(path_str), Some(path_prefix)) = (surf_path_buf.to_str(), surf_path_buf.file_prefix()) {
 
-            folders.push(folder);
+                let read_folder_dir = fs::read_dir(path_str)
+                .map_err(|e| format!("Error de lectura: {e}"))?;
+    
+                let folder = surf_folders2(
+                    read_folder_dir,
+                    path_str.to_string().replace("\\", "/"),
+                    path_prefix.to_str().unwrap().to_string(),
+                )
+                .map_err(|e| format!("Error de navegacion de carpetas: {e}"))?;
+    
+                folders.push(folder);
+            }
         }
 
         if surf_path_buf.is_file() {
@@ -202,7 +190,8 @@ fn surf_folders(path_buf: &PathBuf) -> Result<Folder, String> {
                 if extension == "txt" {
                     files.push( Note { 
                         title: prefix.to_str().unwrap().to_string(), 
-                        extension: extension.to_str().unwrap().to_string()
+                        extension: extension.to_str().unwrap().to_string(),
+                        linked_verses: Vec::new(),
                     });
                 }
             } 
@@ -210,8 +199,8 @@ fn surf_folders(path_buf: &PathBuf) -> Result<Folder, String> {
     }
 
     Ok(Folder { 
-        dir: path_buf.to_str().unwrap().replace("\\", "/").to_string(),
-        folder_name: path_buf.file_name().unwrap().to_str().unwrap().to_string(), 
+        dir,
+        folder_name, 
         open: false, 
         folders, 
         files
@@ -219,10 +208,11 @@ fn surf_folders(path_buf: &PathBuf) -> Result<Folder, String> {
     
 }
 
-#[derive(Deserialize, Serialize, Debug)]
+#[derive(Deserialize, Serialize, Debug, Clone)]
 pub struct Note {
     title: String,
-    extension: String
+    extension: String,
+    linked_verses: Vec<IndexedVerse>
 }
 
 #[derive(Deserialize, Serialize, Debug)]
