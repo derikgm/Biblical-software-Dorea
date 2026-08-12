@@ -52,3 +52,5 @@ pub fn save_with_metada (dir: &str, note: Note) -> Result<(), String>{
 
     Ok(())
 }
+
+Contar 2: las tuplas TS las recive como array, ver tible en notes_handler

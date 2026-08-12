@@ -1,0 +1,43 @@
+<div class="h-full w-full bg-gray-200/50 flex items-center justify-center"
+(click)="close()">
+    <div class="w-4/5 h-4/5">
+        <input type="text" #filter_input appFocusOnCreate
+        (click)="$event.stopPropagation()"
+        (keydown)="handler_filter($event)"
+        class="w-full outline-none outline p-1 border-2 rounded dark:text-white
+         dark:bg-gray-900 dark:border-gray-400">
+
+        <div #container
+        class="w-full h-4/5 bg-white mt-1 rounded border-2 select-none dark:bg-gray-900 
+        dark:border-gray-400 scrollbar-hidden overflow-scroll flex flex-row relative">
+        
+                <div #scroll_bar 
+                class="border absolute right-0 top-0 w-4 bg-gray-500/50 scroll-bar z-10
+                "></div>
+
+                <div class="">
+                    @for ( note of notes(); track $index) {
+                        <p #note
+                        (click)="jump_to_note_page($index, $event)"
+                        class="inline-flex overflow-x-hidden overflow-ellipsis text-nowrap dark:text-white
+                        cursor-pointer hover:bg-gray-200 w-full px-2 dark:hover:bg-gray-700"
+                        >
+                        <!-- [class.bg]="apply_selector($index)" -->
+                            <span class="pr-2">{{note.title}}</span>
+                            <span class="italic text-gray-400">{{note.dir}}</span>
+                        </p>
+                    }
+                </div>
+        </div>
+    </div>
+</div>
+
+<style>
+    .bg-note {
+        @apply bg-gray-200 dark:bg-gray-700;
+    }
+
+    /* .scroll-bar {
+        height: 8;
+    } */
+</style>

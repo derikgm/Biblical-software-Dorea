@@ -1,3 +1,5 @@
+import { IndexedVerse, Verse } from "./bible-interface";
+
 export interface Folder {
     folder_name: string;
     dir: string;
@@ -8,7 +10,9 @@ export interface Folder {
 
 export interface Note {
     title: string,
-    extension: string
+    extension: string,
+    dir: string,
+    linked_verses: IndexedVerse[]
 }
 
 export enum NoteFSOptions {

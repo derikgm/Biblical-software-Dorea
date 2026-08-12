@@ -11,7 +11,7 @@ import { ThemeServices } from '../../services/theme-services';
 import { RouterLink, RouterLinkActive } from "@angular/router";
 import { TreeFolderComponent } from "../tree_folder-component/tree_folder-component";
 import { FolderServices } from '../../services/folder-services';
-import { SettingsServices } from '../../services/sidebar_settings-services';
+import { SidebarSettingsServices } from '../../services/sidebar_settings-services';
 import { VerseNavigationComponent } from "../verse_navigation-component/verse_navigation-component";
 
 
@@ -34,7 +34,7 @@ export class SidebarComponent {
 
   theme_services = inject(ThemeServices);
   folder_services = inject(FolderServices);
-  sidebar_settings_services = inject(SettingsServices);
+  sidebar_settings_services = inject(SidebarSettingsServices);
 
   ancor_handler(anchor: number){
     this.sidebar_settings_services.anchor_handler(anchor);

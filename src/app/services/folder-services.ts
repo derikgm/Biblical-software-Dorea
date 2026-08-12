@@ -23,16 +23,23 @@ export class FolderServices {
   current_dir = signal<string>("");
   current_note = signal<Note>({
     title: '',
-    extension: ''
+    extension: '',
+    dir: '',
+    linked_verses: []
   });
   file_to_rename = signal<Note | null>(null);
   file_to_create = signal<Note | null>(null);
   folder_to_rename = signal<Folder | null>(null);
   folder_to_create = signal<Folder | null>(null);
+  notes_array = signal<Note[]>([]); 
+
+  //
+  show_notes_searcher = signal(false);
 
   async init(){
-    invoke("get_notes_folders", {}).then((v) => {
-      this.folder_root.set(v as unknown as Folder);
+    await invoke<[Folder, Note[]]>("get_notes_folders", {}).then((v) => {
+      this.folder_root.set(v[0]);
+      this.notes_array.set(v[1]);
     })
   }
 
@@ -60,7 +67,10 @@ export class FolderServices {
   }
 
   open_file(note: Note, folder: Folder | undefined){
-    const dir: string = `${folder?.dir}/${note.title}.${note.extension}`;
+    // const dir: string = `${folder?.dir}/${note.title}.${note.extension}`;
+    const dir = note.dir;
+
+    console.log(dir);
 
     invoke('get_note', {dir})
     .then((v)=> {
@@ -99,7 +109,9 @@ export class FolderServices {
 
     const new_note: Note = {
       title: '<>',
-      extension: 'txt'
+      extension: 'txt',
+      dir: "",
+      linked_verses: [],
     };
 
     this.folder_selected()?.files.push(new_note);
@@ -124,18 +136,25 @@ export class FolderServices {
 
     const dir = this.folder_selected()?.dir;
 
-    console.log(dir, file_name);
-
-    invoke("create_new_note", {dir, title: file_name, extension: "txt"})
+    invoke<Note>("create_new_note", {dir, title: file_name, extension: "txt"})
     .then((res)=>{
-      const new_note: Note = res as unknown as Note;
+      const new_note = res;
+
+      console.log(new_note);
+      
 
       this.file_to_create.update(n => {
         n!.title = new_note.title;
         n!.extension = new_note.extension;
+        n!.dir = new_note.dir;
 
         return n;
       })
+
+      this.notes_array.update((map) => {
+        map.push(new_note);
+        return map;
+      });
 
       this.current_content.set("");
       this.current_note.set(new_note);

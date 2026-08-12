@@ -3,13 +3,13 @@ import { HostListener, Injectable, signal } from '@angular/core';
 @Injectable({
   providedIn: 'root',
 })
-export class SettingsServices {
+export class SidebarSettingsServices {
   min_sidebar_extended_width = 8;
   click_position_init = 0;
   sidebar_extended_size_init = 0;
   movement_capture_function = (e: MouseEvent) => {};
 
-  extended_sidebar_open = signal<boolean>(true); //TODO: change later
+  extended_sidebar_open = signal<boolean>(false); //TODO: change later
   sidebar_extended_size = signal<number>(13);
   enabled_extended_sidebar_rezising = signal<boolean>(false)
 

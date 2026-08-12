@@ -10,12 +10,12 @@ import { heroBars3, heroBars3CenterLeft, heroEquals, heroPause } from '@ng-icons
 import { BibleOptionComponent } from "../../components/bible_option-component/bible_option-component";
 import { GlobalSettingsServices } from '../../services/global_settings-services';
 import { LanguageServices } from '../../services/language-services';
-import { invoke } from '@tauri-apps/api/core';
 import { MarkerServices } from '../../services/marker_services';
+import { MarkOptionsComponent } from "../../components/mark_options-component/mark_options-component";
 
 @Component({
   selector: 'main-page',
-  imports: [MarkerComponent, VisibleDirective, BibleOptionComponent],
+  imports: [MarkerComponent, VisibleDirective, BibleOptionComponent, MarkOptionsComponent,],
   providers: [
     provideIcons({
       row: heroBars3,
@@ -29,6 +29,7 @@ import { MarkerServices } from '../../services/marker_services';
 })
 export class MainPage implements AfterViewInit{
 
+  @ViewChild('mark_options_component') mark_options_component!: ElementRef<HTMLDivElement>;
   @ViewChild('marker_component') marker_component!: ElementRef<HTMLDivElement>;
   @ViewChildren('versiculo') versiculos!: QueryList<ElementRef<HTMLParagraphElement>>;
   @ViewChildren('chap_header') chap_headers!: QueryList<ElementRef<HTMLParagraphElement>>;
@@ -43,12 +44,15 @@ export class MainPage implements AfterViewInit{
   gss = inject(GlobalSettingsServices);
   lang = inject(LanguageServices);
 
-  // headers = map_headers;
-  is_marker_open = signal<boolean>(false);
   first_init = signal<boolean>(true)
-  x_position = signal<number>(0);
-  y_position = signal<number>(0);
-  
+  is_marker_open = signal<boolean>(false);
+  x_marker_position = signal<number>(0);
+  y_marker_position = signal<number>(0);
+
+  is_mark_options_open = signal<boolean>(false);
+  x_mark_options_position = signal<number>(0);
+  y_mark_options_position = signal<number>(0);
+
   scrolling = false;
   current_chapter = 0;
 
@@ -170,29 +174,39 @@ export class MainPage implements AfterViewInit{
     if(document.getSelection() && !document.getSelection()?.isCollapsed){
         this.rangeSelected = document.getSelection()?.getRangeAt(0);
         this.marker_component.nativeElement.classList.remove("hidden");
-        
-        const marker_width = this.marker_component.nativeElement.getBoundingClientRect().width
-        const marker_height = this.marker_component.nativeElement.getBoundingClientRect().height
-        const father_width = this.marker_component.nativeElement?.parentElement?.getBoundingClientRect().width ?? 0
 
-        const x_event = event.layerX; 
-        const y_event = event.layerY;
+        const pos = calc_floating_options_position(
+          this.marker_component.nativeElement,
+          event.layerX,
+          event.layerY,
+        );
 
-        const excedent_right = father_width - ((marker_width/2) + x_event);
-        const excedent_left = x_event - (marker_width/2);
-
-        let x_pos = x_event - (marker_width/2);
-
-        if(excedent_right < 0) x_pos = x_pos + excedent_right
-        if(excedent_left < 0) x_pos = x_pos - excedent_left
-
-        this.y_position.set(y_event - marker_height - 12)
-        this.x_position.set(x_pos)
+        this.y_marker_position.set(pos.y)
+        this.x_marker_position.set(pos.x)
 
       } else {
         this.marker_component.nativeElement.classList.add("hidden");
       }
-      
+  }
+
+  show_mark_options(event: MouseEvent, mark_index: number, mark_book:number) {
+    this.mark_options_component.nativeElement.classList.remove("hidden")
+    event.stopPropagation();
+
+    const pos = calc_floating_options_position(
+      this.mark_options_component.nativeElement,
+      event.layerX,
+      event.layerY,
+    );
+
+    this.marker_services.set_current_mark(mark_book, mark_index);
+
+    this.y_mark_options_position.set(pos.y)
+    this.x_mark_options_position.set(pos.x)
+  }
+
+  close_mark_options(){
+    this.mark_options_component.nativeElement.classList.add("hidden")
   }
 
   @HostListener('wheel', ['$event'])
@@ -204,9 +218,7 @@ export class MainPage implements AfterViewInit{
   }
 
   fixSelection(){
-    
     if(this.rangeSelected){
-
       const startText = this.rangeSelected.startContainer.textContent;
       const endText = this.rangeSelected.endContainer.textContent;
       let startOffset = this.rangeSelected.startOffset;
@@ -257,21 +269,27 @@ export class MainPage implements AfterViewInit{
 
       const start = this.rangeSelected.startOffset;
       const end = this.rangeSelected.endOffset;
+
+      const current_book_number = (this.current_book()?.nr ?? 1) - 1
+
+      const mark_index = this.marker_services.marks.get(current_book_number)?.length ?? 0;
       
-      paint_several_sections(
+      this.paint_several_sections(
         chap_parent,
         +start_verse - 1,
         +end_verse - 1,
         start,
         end,
-        color
+        color,
+        mark_index,
+        current_book_number
       );
 
       this.marker_services.save_mark(
         color, 
         +start_verse - 1, 
         +end_verse - 1, 
-        start, 
+        start,
         end
       );
 
@@ -292,7 +310,6 @@ export class MainPage implements AfterViewInit{
       this.rangeSelected.surroundContents(span);
       document.getSelection()?.removeAllRanges();
     }
-
   }
 
   apply_marks() {
@@ -301,8 +318,7 @@ export class MainPage implements AfterViewInit{
         const marks = this.marker_services.marks.get(this.current_chapter);
 
         if(marks){
-
-          marks.forEach((m) => {
+          marks.forEach((m, index) => {
             const chapter = this.div_chapter.get(m.chapter)
 
             if(m.end_verse == m.start_verse){
@@ -310,60 +326,65 @@ export class MainPage implements AfterViewInit{
               const node = chapter?.nativeElement.childNodes[m.start_verse + 1].lastChild?.lastChild
   
               if(node){
-                paint_seccion(node, m.start, m.end, m.style);
+                this.paint_seccion(node, m.start, m.end, m.style, index, m.book);
               }
             } else {
-              paint_several_sections(
+              this.paint_several_sections(
                 chapter?.nativeElement,
                 m.start_verse,
                 m.end_verse,
                 m.start,
                 m.end,
-                m.style
+                m.style,
+                index,
+                m.book
               );
             }
           })
         }
       }, 0)
     })
-    
   }
-}
 
-function paint_seccion(node: ChildNode, start: number, end: number, style: number) {
-  const range = document.createRange();
+  paint_seccion(node: ChildNode, start: number, end: number, style: number, mark_index: number, mark_book:number) {
+    const range = document.createRange();
 
-  const span = document.createElement('span');
-  span.classList.add(...map_marks[style]);
+    const span = document.createElement('span');
+    span.classList.add(...map_marks[style]);
 
-  range.setStart(node, start);
-  range.setEnd(node, end);
-  
-  range.surroundContents(span);
-}
+    span.onclick = (event: MouseEvent) => { this.show_mark_options(event, mark_index, mark_book) };
 
-function paint_several_sections (
-  chapter_html_div: HTMLDivElement | undefined,
-  start_verse: number,
-  end_verse: number,
-  start_mark: number,
-  end_mark: number,
-  style: number,
-) {
+    range.setStart(node, start);
+    range.setEnd(node, end);
+    
+    range.surroundContents(span);
+  }
 
-  if(!chapter_html_div) return;
+  paint_several_sections (
+    chapter_html_div: HTMLDivElement | undefined,
+    start_verse: number,
+    end_verse: number,
+    start_mark: number,
+    end_mark: number,
+    style: number,
+    mark_index: number, 
+    mark_book:number
+  ) {
 
-  start_verse++;
-  end_verse++;
+    if(!chapter_html_div) return;
 
-  for (let i = start_verse; i <= end_verse; i++) {
-    const node = chapter_html_div.childNodes[i]?.lastChild?.lastChild
+    start_verse++;
+    end_verse++;
 
-    if(node){
-      const start = (i == start_verse) ? start_mark : 0;
-      const end = (i == end_verse) ? end_mark : (node.textContent?.length ?? 0);
-      
-      paint_seccion(node, start, end, style);
+    for (let i = start_verse; i <= end_verse; i++) {
+      const node = chapter_html_div.childNodes[i]?.lastChild?.lastChild
+
+      if(node){
+        const start = (i == start_verse) ? start_mark : 0;
+        const end = (i == end_verse) ? end_mark : (node.textContent?.length ?? 0);
+        
+        this.paint_seccion(node, start, end, style, mark_index, mark_book);
+      }
     }
   }
 }
@@ -375,3 +396,23 @@ const map_marks = [
   ['select-none','hover:cursor-pointer', 'text-white', 'bg-violet-700'],
   ['select-none','hover:cursor-pointer', 'text-black', 'bg-transparent'],
 ]
+
+
+function calc_floating_options_position(nativeElement: HTMLDivElement, x_event: number, y_event: number){
+  const marker_width = nativeElement.getBoundingClientRect().width
+  const marker_height = nativeElement.getBoundingClientRect().height
+  const father_width = nativeElement?.parentElement?.getBoundingClientRect().width ?? 0
+  
+  const excedent_right = father_width - ((marker_width/2) + x_event);
+  const excedent_left = x_event - (marker_width/2);
+
+  let x_pos = x_event - (marker_width/2);
+
+  if(excedent_right < 0) x_pos = x_pos + excedent_right;
+  if(excedent_left < 0) x_pos = x_pos - excedent_left;
+
+  return ({
+    x: x_pos, 
+    y: y_event - marker_height - 12
+  });
+}

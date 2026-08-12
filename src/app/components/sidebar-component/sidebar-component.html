@@ -60,7 +60,7 @@
 
             @if (sidebar_settings_services.current_path() == 1) {
                 <tree-folder-component 
-                class="w-full h-full"
+                class="w-full h-full overflow-y-auto scrollbar-hidden"
                 [folders]="folder_services.folder_root()"
                 [floor]="1"
                 (contextmenu)="

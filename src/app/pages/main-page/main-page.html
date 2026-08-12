@@ -3,18 +3,29 @@
 class="flex flex-row" 
 (mouseup)="showMarker($event)"
 (mouseup)="fixSelection()"
+(mouseup)="close_mark_options()"
 >
 
     <div #marker_component 
     class="w-44 h-12 absolute hidden"
-    [style.top.px]="y_position()"
-    [style.left.px]="x_position()"
+    [style.top.px]="y_marker_position()"
+    [style.left.px]="x_marker_position()"
     >
         <marker-component 
         class="w-full h-full"
         (colorMark)="handlerSelected($event)"
         />
     </div>
+
+    <div #mark_options_component
+    class="absolute bottom-0 right-0 dark-bg light-bg w-24 h-10 rounded text-2xl
+    dark:border-gray-500 border-2 hidden z-30"
+    [style.top.px]="y_mark_options_position()"
+    [style.left.px]="x_mark_options_position()"
+    >
+        <mark-options-component class="w-full h-full flex justify-around items-center"/>
+    </div>
+
     
     <div class="flex flex-col" #text_option>
         <bible-option-component 

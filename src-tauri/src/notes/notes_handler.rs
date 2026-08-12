@@ -1,3 +1,4 @@
+use std::collections::HashMap;
 use std::{fs, path::Path, fs::ReadDir};
 use std::fs::File;
 use serde::{Deserialize, Serialize};
@@ -24,7 +25,9 @@ pub fn update_file_name (dir: &str, new_dir: &str) -> Result<bool, String> {
 
 #[tauri::command]
 pub fn create_new_note (dir: &str, title: String, extension: String) -> Result<Note, String>{
-    let mut note: Note = Note { title, extension, linked_verses: Vec::new()};
+    let base_title = title.clone();
+    let mut note_dir = format!("{}/{}.{}", dir, title, extension);
+    let mut note: Note = Note {title, extension, linked_verses:Vec::new(), dir: note_dir };
     let mut files: Vec<String> = Vec::new();
 
     let folder_dir = fs::read_dir(dir)
@@ -51,10 +54,15 @@ pub fn create_new_note (dir: &str, title: String, extension: String) -> Result<N
         for file in &files {
             if *file == format!("{}.{}", note.title, note.extension) {
                 cont += 1;
+                let note_title = format!("{}_{}", base_title, cont);
+
+                note_dir = format!("{}/{}.{}", dir, note_title, note.extension);
+
                 note = Note { 
-                    title: format!("{}_{}", file, cont), 
+                    title: note_title, 
                     extension: note.extension,
                     linked_verses: Vec::new(), 
+                    dir: note_dir,
                 };
                 continued_while = true;
                 break;
@@ -137,28 +145,42 @@ pub fn delete_note (dir: &str, is_dir: bool) -> Result<bool, String> {
 }
 
 #[tauri::command]
-pub fn get_notes_folders(state: tauri::State<IndexedBible>) -> Result<Folder, String>{
+pub fn get_notes_folders(state: tauri::State<IndexedBible>) -> Result<(Folder, Vec<Note>), String>{
 
     let root_folder: Folder;
     let linked_notes_path = format!("{}/linked_notes.json", get_note_path());
+    let mut notes_searched: Vec<Note> = Vec::new();
 
     let mut notes = state.notes.lock().unwrap();
 
     let iterator: ReadDir = fs::read_dir(get_note_path())
     .map_err(|e| format!("Error la leer los datos: {e}"))?;
 
-    root_folder = surf_folders2(iterator, get_note_path(), String::from("root"))
+    root_folder = surf_folders2(iterator, get_note_path(), String::from("root"), &mut notes_searched)
     .map_err(|e| format!("{}", e))?;
 
     if Path::new(&linked_notes_path).exists() {
-        //...
+        //Extraido del fichero, TODO: Probar
+        let notes_file_string = fs::read_to_string(linked_notes_path)
+        .map_err(|e| format!("Error leyendo archivo: {e}"))?;
+    
+        let mut notes_file_json: HashMap<String, Note> = serde_json::from_str(&notes_file_string)
+        .map_err(|e| format!("Error Parseando el Json: {e}"))?;
+
+        // notes_file_json.retain(|&k, note| {
+        //     notes_searched.contains(note)
+        // });
     }
 
-    Ok(root_folder)
+    Ok((root_folder, notes_searched))
 }
 
 //TODO: arreglar esto
-fn surf_folders2 (read_dir: ReadDir, dir: String, folder_name: String) -> Result<Folder, String> {
+fn surf_folders2 (
+    read_dir: ReadDir, 
+    dir: String, folder_name: String, 
+    notes_searched: &mut Vec<Note>
+) -> Result<Folder, String> {
     let mut files: Vec<Note> = Vec::from([]); 
     let mut folders: Vec<Folder> = Vec::from([]);
 
@@ -178,6 +200,7 @@ fn surf_folders2 (read_dir: ReadDir, dir: String, folder_name: String) -> Result
                     read_folder_dir,
                     path_str.to_string().replace("\\", "/"),
                     path_prefix.to_str().unwrap().to_string(),
+                    notes_searched,
                 )
                 .map_err(|e| format!("Error de navegacion de carpetas: {e}"))?;
     
@@ -188,11 +211,19 @@ fn surf_folders2 (read_dir: ReadDir, dir: String, folder_name: String) -> Result
         if surf_path_buf.is_file() {
             if let (Some(prefix), Some(extension)) = (surf_path_buf.file_prefix(), surf_path_buf.extension()) {
                 if extension == "txt" {
-                    files.push( Note { 
-                        title: prefix.to_str().unwrap().to_string(), 
-                        extension: extension.to_str().unwrap().to_string(),
+                    let title = prefix.to_str().unwrap().to_string();
+                    let extension = extension.to_str().unwrap().to_string();
+
+                    let note = Note { 
+                        dir: format!("{}/{}.{}", dir, title.clone(), extension.clone()),
+                        title,
+                        extension,
                         linked_verses: Vec::new(),
-                    });
+                    };
+
+                    notes_searched.push(note.clone());
+
+                    files.push(note);
                 }
             } 
         }
@@ -212,6 +243,7 @@ fn surf_folders2 (read_dir: ReadDir, dir: String, folder_name: String) -> Result
 pub struct Note {
     title: String,
     extension: String,
+    dir: String,
     linked_verses: Vec<IndexedVerse>
 }
 

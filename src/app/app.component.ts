@@ -1,9 +1,9 @@
-import { AfterViewInit, Component, HostListener, inject, signal } from "@angular/core";
+import { AfterViewInit, Component, ElementRef, HostListener, inject, signal } from "@angular/core";
 import { RouteReuseStrategy, RouterOutlet } from "@angular/router";
 import { SidebarComponent } from "./components/sidebar-component/sidebar-component";
 import { TopbarComponent } from "./components/topbar-component/topbar-component";
 import { LanguageServices } from "./services/language-services";
-import { SettingsServices } from "./services/sidebar_settings-services";
+import { SidebarSettingsServices } from "./services/sidebar_settings-services";
 import { BibleServices } from "./services/bible-services";
 import { FolderServices } from "./services/folder-services";
 import { SpinComponent } from "./components/spin-component/spin-component";
@@ -13,19 +13,20 @@ import { SearchResultComponent } from "./components/search_result-component/sear
 import { FolderOptionsComponent } from "./components/folder_options-component/folder_options-component";
 import { CustomRouteReuseStrategy } from "./stratergies/custom-route-reuse.strategy";
 import { MarkerServices } from "./services/marker_services";
+import { SearchNoteComponent } from "./components/search_note-component/search_note-component";
 
 @Component({
   selector: "app-root",
   providers:[
     // {provide: RouteReuseStrategy, useClass: CustomRouteReuseStrategy}
   ],
-  imports: [RouterOutlet, SidebarComponent, TopbarComponent, SpinComponent, SearchResultComponent, FolderOptionsComponent],
+  imports: [RouterOutlet, SidebarComponent, TopbarComponent, SpinComponent, SearchResultComponent, FolderOptionsComponent, SearchNoteComponent],
   templateUrl: "./app.component.html",
   styleUrl: "./app.component.css",
 })
 export class AppComponent implements AfterViewInit{
   language_services = inject(LanguageServices);
-  settings_services = inject(SettingsServices);
+  settings_services = inject(SidebarSettingsServices);
   bible_services = inject(BibleServices);
   folder_services = inject(FolderServices);
   global_settings_services = inject(GlobalSettingsServices);
@@ -44,6 +45,21 @@ export class AppComponent implements AfterViewInit{
     this.font_settings_services.init();
 
     this.global_settings_services.is_loading_the_app.set(false);
+
+    window.addEventListener("keydown", (event) => {
+
+    if(event.key == "p")
+      if(event.ctrlKey){
+        event.preventDefault();
+        this.folder_services.show_notes_searcher.update(v => !v)
+      }
+    })
+
+  }
+
+  @HostListener('keydown', ['$event'])
+  disable_sidebar_rezising_event(event: KeyboardEvent){
+
   }
 
   // @HostListener('mouseup')

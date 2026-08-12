@@ -6,8 +6,8 @@ import { NgIcon, provideIcons } from '@ng-icons/core';
 import { heroArrowTopRightOnSquare, heroClipboard, heroClipboardDocument, heroClipboardDocumentList, heroXMark } from '@ng-icons/heroicons/outline';
 import { coolDoubleQuotesR, coolSingleQuotesR } from "@ng-icons/coolicons"
 import { IndexedVerse } from '../../interfaces/bible-interface';
-import { RouterLink, RouterLinkActive } from "@angular/router";
-import { SettingsServices } from '../../services/sidebar_settings-services';
+import { RouterLink } from "@angular/router";
+import { SidebarSettingsServices } from '../../services/sidebar_settings-services';
 
 @Component({
   selector: 'search-result-component',
@@ -178,7 +178,7 @@ export class SearchResultComponent implements AfterViewInit{
 
   bible_services = inject(BibleServices);
   lang = inject(LanguageServices);
-  sidebar_settings_services = inject(SettingsServices);
+  sidebar_settings_services = inject(SidebarSettingsServices);
 
   verses_index_selected: number[] = [];
 

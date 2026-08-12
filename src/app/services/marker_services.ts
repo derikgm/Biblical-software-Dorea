@@ -1,4 +1,4 @@
-import { inject, Injectable } from '@angular/core';
+import { inject, Injectable, signal } from '@angular/core';
 import { Mark } from '../interfaces/bible-interface';
 import { invoke } from '@tauri-apps/api/core';
 import { GlobalSettingsServices } from './global_settings-services';
@@ -10,6 +10,8 @@ import { BibleServices } from './bible-services';
 export class MarkerServices {
   marks: Map<number, Mark[]> = new Map();
   bible_services = inject(BibleServices)
+  
+  current_mark_selected = signal<Mark | null>(null);
 
   async init(){
     const bible = this.bible_services.bible()?.abbreviation;
@@ -56,5 +58,10 @@ export class MarkerServices {
     .catch((e) => {
       console.log(e);
     })
+  }
+
+  set_current_mark(book: number, index: number){
+    const mark = this.marks.get(book)?.at(index);
+    if(mark) this.current_mark_selected.set(mark)
   }
 }

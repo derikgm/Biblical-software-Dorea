@@ -8,7 +8,6 @@
       
       <div class="flex flex-row flex-1 overflow-hidden">
         <sidebar-component class="sticky top-0 h-full overflow-y-visible"/>
-        
 
         <div class="flex-1 relative overflow-hidden">
           
@@ -24,7 +23,11 @@
           }
 
           @if (global_settings_services.is_loading()) {
-            <spin-component class="absolute inset-0 z-50"/>
+            <spin-component class="absolute "/>
+          }
+
+          @if(this.folder_services.show_notes_searcher()){
+            <search-note-component class="absolute inset-0 z-50"/>
           }
 
         </div>
