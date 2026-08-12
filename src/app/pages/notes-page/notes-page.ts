@@ -37,7 +37,7 @@ export class NotesPage {
   }
 
   create_new_note(){
-    this.folder_services.create_new_note("");
+    this.folder_services.create_new_note("new_note");
   }
 
   update_title(event: Event){

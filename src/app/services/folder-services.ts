@@ -139,17 +139,18 @@ export class FolderServices {
     invoke<Note>("create_new_note", {dir, title: file_name, extension: "txt"})
     .then((res)=>{
       const new_note = res;
-
-      console.log(new_note);
       
-
-      this.file_to_create.update(n => {
-        n!.title = new_note.title;
-        n!.extension = new_note.extension;
-        n!.dir = new_note.dir;
-
-        return n;
-      })
+      if(this.file_to_create()){
+        this.file_to_create.update(n => {
+          n!.title = new_note.title;
+          n!.extension = new_note.extension;
+          n!.dir = new_note.dir;
+  
+          return n;
+        })
+      } else {
+        this.folder_root()?.files.push(new_note)
+      }
 
       this.notes_array.update((map) => {
         map.push(new_note);
