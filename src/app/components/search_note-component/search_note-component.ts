@@ -90,7 +90,7 @@ export class SearchNoteComponent implements AfterViewInit{
     } 
     else if(key == "Enter") { this.jump_to_note_page(this.selected_item()); } 
     else {
-      this.selected_item.update(() => -1);
+      
       const filter_notes: Note[] = [];
 
       let word = this.filter_input.nativeElement.value;
@@ -112,6 +112,9 @@ export class SearchNoteComponent implements AfterViewInit{
         const scroll_bar_size_string = `${scroll_bar_size}%`
         this.scroll_bar.nativeElement.style.height = scroll_bar_size_string;
       }
+
+      this.selected_item.update(() => 0);
+      this.apply_selector(0, true);
     }
   }
 
