@@ -1,4 +1,4 @@
-import { IndexedVerse, Verse } from "./bible-interface";
+import {Mark, } from "./bible-interface";
 
 export interface Folder {
     folder_name: string;
@@ -12,7 +12,7 @@ export interface Note {
     title: string,
     extension: string,
     dir: string,
-    linked_verses: IndexedVerse[]
+    linked_marks: Mark[]
 }
 
 export enum NoteFSOptions {

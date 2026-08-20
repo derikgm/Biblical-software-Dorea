@@ -28,8 +28,8 @@ export interface Book {
 }
 
 export interface Chapter {
-  chapter: number;      
-  name: string;         
+  chapter: number;
+  name: string;
   verses: Verse[];
 }
 

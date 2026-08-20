@@ -2,9 +2,11 @@ use std::collections::HashMap;
 use std::{fs, path::Path, fs::ReadDir};
 use std::fs::File;
 use serde::{Deserialize, Serialize};
+use serde_json::json;
 
 use crate::bible::bible_handler::IndexedBible;
-use crate::{bible::bible_handler::IndexedVerse, helpers::directory_handler::get_note_path};
+use crate::bible::marker_handler::Mark;
+use crate::{ helpers::directory_handler::get_note_path};
 
 #[tauri::command]
 pub fn save_note (dir: &str, content: &str) -> Result<bool, String> {
@@ -27,7 +29,7 @@ pub fn update_file_name (dir: &str, new_dir: &str) -> Result<bool, String> {
 pub fn create_new_note (dir: &str, title: String, extension: String) -> Result<Note, String>{
     let base_title = title.clone();
     let mut note_dir = format!("{}/{}.{}", dir, title, extension);
-    let mut note: Note = Note {title, extension, linked_verses:Vec::new(), dir: note_dir };
+    let mut note: Note = Note {title, extension, linked_marks:Vec::new(), dir: note_dir };
     let mut files: Vec<String> = Vec::new();
 
     let folder_dir = fs::read_dir(dir)
@@ -61,7 +63,7 @@ pub fn create_new_note (dir: &str, title: String, extension: String) -> Result<N
                 note = Note { 
                     title: note_title, 
                     extension: note.extension,
-                    linked_verses: Vec::new(), 
+                    linked_marks: Vec::new(), 
                     dir: note_dir,
                 };
                 continued_while = true;
@@ -123,7 +125,7 @@ pub fn create_new_folder (dir: &str, folder: String) -> Result<String, String>{
 }
 
 #[tauri::command]
-pub fn get_note (dir: &str) -> Result<String, String>{
+pub fn get_note (dir: &str) -> Result<String, String> {
     let note_content = fs::read_to_string(dir)
     .map_err(|e| format!("No se pudo leer el elemento: {e}"))?;
 
@@ -145,7 +147,7 @@ pub fn delete_note (dir: &str, is_dir: bool) -> Result<bool, String> {
 }
 
 #[tauri::command]
-pub fn get_notes_folders(state: tauri::State<IndexedBible>) -> Result<(Folder, Vec<Note>), String>{
+pub fn get_notes_folders(state: tauri::State<IndexedBible>) -> Result<Folder, String>{
 
     let root_folder: Folder;
     let linked_notes_path = format!("{}/linked_notes.json", get_note_path());
@@ -156,7 +158,7 @@ pub fn get_notes_folders(state: tauri::State<IndexedBible>) -> Result<(Folder, V
     let iterator: ReadDir = fs::read_dir(get_note_path())
     .map_err(|e| format!("Error la leer los datos: {e}"))?;
 
-    root_folder = surf_folders2(iterator, get_note_path(), String::from("root"), &mut notes_searched)
+    root_folder = surf_folders(iterator, get_note_path(), String::from("root"), &mut notes_searched)
     .map_err(|e| format!("{}", e))?;
 
     if Path::new(&linked_notes_path).exists() {
@@ -172,11 +174,10 @@ pub fn get_notes_folders(state: tauri::State<IndexedBible>) -> Result<(Folder, V
         // });
     }
 
-    Ok((root_folder, notes_searched))
+    Ok(root_folder)
 }
 
-//TODO: arreglar esto
-fn surf_folders2 (
+fn surf_folders (
     read_dir: ReadDir, 
     dir: String, folder_name: String, 
     notes_searched: &mut Vec<Note>
@@ -196,7 +197,7 @@ fn surf_folders2 (
                 let read_folder_dir = fs::read_dir(path_str)
                 .map_err(|e| format!("Error de lectura: {e}"))?;
     
-                let folder = surf_folders2(
+                let folder = surf_folders(
                     read_folder_dir,
                     path_str.to_string().replace("\\", "/"),
                     path_prefix.to_str().unwrap().to_string(),
@@ -218,7 +219,7 @@ fn surf_folders2 (
                         dir: format!("{}/{}.{}", dir, title.clone(), extension.clone()),
                         title,
                         extension,
-                        linked_verses: Vec::new(),
+                        linked_marks: Vec::new(),
                     };
 
                     notes_searched.push(note.clone());
@@ -239,12 +240,37 @@ fn surf_folders2 (
     
 }
 
+#[tauri::command]
+pub fn save_linked_mark (note: Note, state: tauri::State<IndexedBible>) -> Result<(), String> {
+
+    let mut notes = state.notes.lock().unwrap();
+    let dir = note.dir.clone();
+
+    if let Some(hash_note) = notes.get_mut(&note.dir) {
+        *hash_note = note;
+    } else {
+        notes.insert(dir, note);
+    }
+
+    let content_to_string = json!({
+        "notes": *notes
+    });
+
+    let content_string = serde_json::to_string(&content_to_string)
+    .map_err(|e| format!("Error de parseo de Json: {e}"))?;
+
+    let _ = fs::write(format!("{}/linked_notes.json", get_note_path()), content_string)
+    .map_err(|e| format!("Error de escritura de link_note: {e}"));
+
+    Ok(())
+}
+
 #[derive(Deserialize, Serialize, Debug, Clone)]
 pub struct Note {
     title: String,
     extension: String,
     dir: String,
-    linked_verses: Vec<IndexedVerse>
+    linked_marks: Vec<Mark>
 }
 
 #[derive(Deserialize, Serialize, Debug)]

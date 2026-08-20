@@ -3,6 +3,7 @@ import { Mark } from '../interfaces/bible-interface';
 import { invoke } from '@tauri-apps/api/core';
 import { GlobalSettingsServices } from './global_settings-services';
 import { BibleServices } from './bible-services';
+import { Note } from '../interfaces/tree_folder-interfaces';
 
 @Injectable({
   providedIn: 'root',
@@ -32,6 +33,7 @@ export class MarkerServices {
   } 
 
   async save_mark (style: number, start_verse: number, end_verse: number, start: number, end: number){
+    const {} = this.bible_services.current_book()!;
     const mark: Mark = {
       style,
       start,
@@ -39,7 +41,7 @@ export class MarkerServices {
       book: (this.bible_services.current_book()?.nr ?? 1) - 1,
       chapter: this.bible_services.current_chapter() - 1,
       start_verse,
-      end_verse
+      end_verse,
     }
 
     const mark_key = this.marks.get(mark.book);
@@ -63,5 +65,15 @@ export class MarkerServices {
   set_current_mark(book: number, index: number){
     const mark = this.marks.get(book)?.at(index);
     if(mark) this.current_mark_selected.set(mark)
+  }
+
+  async save_linked_mark (note: Note) {
+    invoke("save_link_mark", {note})
+    .then((v) => {
+      console.log("Guardado correctamente");
+    })
+    .catch((e) => {
+      console.log("Error: ", e);
+    })
   }
 }

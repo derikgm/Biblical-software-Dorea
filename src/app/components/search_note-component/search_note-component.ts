@@ -4,6 +4,7 @@ import { Note } from '../../interfaces/tree_folder-interfaces';
 import { Router } from "@angular/router";
 import { SidebarSettingsServices } from '../../services/sidebar_settings-services';
 import { FocusOnCreateDirective } from '../../directives/focus-on-create.directive';
+import { MarkerServices } from '../../services/marker_services';
 
 
 @Component({
@@ -19,6 +20,7 @@ export class SearchNoteComponent implements AfterViewInit{
 
   folder_and_notes_services = inject(FolderServices);
   sidebar_settings_services = inject(SidebarSettingsServices);
+  marker_services = inject(MarkerServices);
   notes_array = this.folder_and_notes_services.notes_array;
 
   filter = signal("");
@@ -40,12 +42,7 @@ export class SearchNoteComponent implements AfterViewInit{
       this.container_size = this.container.nativeElement.getBoundingClientRect().height;
       this.scroll_bar_size_porcent = this.container_size / (this.note_size * this.notes_length);
       
-      if(this.scroll_bar_size_porcent * 100 >= 100)
-        this.scroll_bar.nativeElement.classList.add("hidden")
-      else {
-        this.scroll_bar.nativeElement.classList.remove("hidden")
-        this.scroll_bar.nativeElement.style.height = `${this.scroll_bar_size_porcent * 100}%`;
-      }
+      this.handler_scroll_bar_visibility();
     })
 
     requestAnimationFrame(() => {
@@ -61,6 +58,8 @@ export class SearchNoteComponent implements AfterViewInit{
         this.scroll_bar_size_porcent = this.container_size / (this.note_size * this.notes_length);
 
         this.scroll_bar.nativeElement.style.height = `${this.scroll_bar_size_porcent * 100}%`;
+
+        this.handler_scroll_bar_visibility();
       }, 0)
     })
 
@@ -69,6 +68,15 @@ export class SearchNoteComponent implements AfterViewInit{
       const top = `${scroll + (scroll * this.scroll_bar_size_porcent) - (this.scroll_bar_size_porcent * 10)}px`
       this.scroll_bar.nativeElement.style.top = top;
     })
+  }
+
+  handler_scroll_bar_visibility(){
+    if(this.scroll_bar_size_porcent * 100 >= 100)
+        this.scroll_bar.nativeElement.classList.add("hidden")
+    else {
+      this.scroll_bar.nativeElement.classList.remove("hidden")
+      this.scroll_bar.nativeElement.style.height = `${this.scroll_bar_size_porcent * 100}%`;
+    }
   }
 
   handler_filter(event: KeyboardEvent){
@@ -124,10 +132,20 @@ export class SearchNoteComponent implements AfterViewInit{
     if(note_index == -1 || note_index > this.notes().length) return
     const note = this.notes()[note_index];
     
-    this.folder_and_notes_services.open_file(note, undefined);
-    this.sidebar_settings_services.anchor_handler(1);
+    if(this.folder_and_notes_services.is_from_link_note){
+     const mark = this.marker_services.current_mark_selected();
+
+     if(mark != null) note.linked_marks.push(mark)
+
+      this.marker_services.save_linked_mark(note);
+
+    } else {
+      this.folder_and_notes_services.open_file(note, undefined);
+      this.sidebar_settings_services.anchor_handler(1);
+      this.router.navigate(["/notes"]);
+    }
+
     this.close();
-    this.router.navigate(["/notes"]);
   }
 
   close() {

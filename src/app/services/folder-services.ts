@@ -25,7 +25,7 @@ export class FolderServices {
     title: '',
     extension: '',
     dir: '',
-    linked_verses: []
+    linked_marks: []
   });
   file_to_rename = signal<Note | null>(null);
   file_to_create = signal<Note | null>(null);
@@ -33,13 +33,15 @@ export class FolderServices {
   folder_to_create = signal<Folder | null>(null);
   notes_array = signal<Note[]>([]); 
 
-  //
+  //notes_searcher
   show_notes_searcher = signal(false);
+  is_from_link_note = false;
 
   async init(){
-    await invoke<[Folder, Note[]]>("get_notes_folders", {}).then((v) => {
-      this.folder_root.set(v[0]);
-      this.notes_array.set(v[1]);
+    await invoke<Folder>("get_notes_folders", {}).then((v) => {
+      this.folder_root.set(v);
+
+      set_notes_array(this.folder_root()!, this.notes_array());
     })
   }
 
@@ -70,7 +72,7 @@ export class FolderServices {
     // const dir: string = `${folder?.dir}/${note.title}.${note.extension}`;
     const dir = note.dir;
 
-    console.log(dir);
+    console.log(note);
 
     invoke('get_note', {dir})
     .then((v)=> {
@@ -111,7 +113,7 @@ export class FolderServices {
       title: '<>',
       extension: 'txt',
       dir: "",
-      linked_verses: [],
+      linked_marks: [],
     };
 
     this.folder_selected()?.files.push(new_note);
@@ -203,6 +205,12 @@ export class FolderServices {
   finish_to_rename(){
     this.file_to_rename.set(null);
     this.folder_to_rename.set(null);
+  }
+
+  //Note Searcher
+  link_note(){
+    this.is_from_link_note = true;
+    this.show_notes_searcher.set(true);
   }
 
   async update_file_name(dir: string, newDir: string, new_title: string){
@@ -330,4 +338,14 @@ export class FolderServices {
     this.close_folder_option();
   }
 
+}
+
+function set_notes_array(folder: Folder, notes_array: Note[]) {
+  folder.files.forEach((n) => {
+    notes_array.push(n);
+  })
+
+  folder.folders.forEach((f) => {
+    set_notes_array(f, notes_array);
+  })
 }

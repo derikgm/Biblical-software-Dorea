@@ -47,12 +47,19 @@
                 class="p-0 m-0"
                 />
             </div>
-
         </div>
 
         @if(show_linked_verses()){
             <div class="w-full border-t text-gray-600 select-none dark:text-gray-400">
-                <p>hola :D</p>
+                @if(this.folder_services.current_note().linked_marks.length == 0){
+                    <p class="select-none">lang.no_linked_verse</p>
+                } @else {
+                    @for (indexed_verses of this.folder_services.current_note().linked_marks; track $index) {
+                        <p>
+                            <span>{{indexed_verses}}</span>
+                        </p>
+                    }
+                }
             </div>
         }
     }
