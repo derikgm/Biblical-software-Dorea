@@ -7,7 +7,7 @@ use crate::bible::bible_handler::{get_all_bible, IndexedBible, search_in_bible, 
 save_available_list_of_bibles, get_available_list_of_bibles, save_bible};
 use crate::bible::marker_handler::{save_mark, get_marks};
 use crate::notes::notes_handler::{create_new_note, save_note, get_notes_folders, 
-    get_note, update_file_name, create_new_folder, delete_note, save_link_mark};
+    get_note, update_file_name, create_new_folder, delete_note, save_linked_mark};
 use crate::helpers::directory_handler::{verify_and_create_data_directory};
 use crate::settings::language_handler::{get_language};
 use crate::settings::settings_handler::{get_settings, save_settings};
@@ -26,7 +26,7 @@ pub fn run() {
         .invoke_handler(tauri::generate_handler![
             get_all_bible,
             save_bible,
-            save_link_mark,
+            save_linked_mark,
             save_mark,
             save_available_list_of_bibles,
             get_available_list_of_bibles,
