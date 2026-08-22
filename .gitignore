@@ -10,6 +10,8 @@
 /node_modules
 npm-debug.log
 yarn-error.log
+pnpm-lock.yaml
+src-tauri/Data/
 
 # IDEs and editors
 .idea/
@@ -41,6 +43,6 @@ testem.log
 .DS_Store
 Thumbs.db
 
-# My 
+# My
 /tauri-webview-data
 notes.txt

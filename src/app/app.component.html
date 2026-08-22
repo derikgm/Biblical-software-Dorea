@@ -18,12 +18,13 @@
             </div>
           </div>
           
-          @if (bible_services.open_search_result()) {
-            <search-result-component class="absolute inset-0 z-50"/>
-          }
-
+          <!-- Spin -->
           @if (global_settings_services.is_loading()) {
             <spin-component class="absolute "/>
+          }
+
+          @if (bible_services.open_search_result()) {
+            <search-result-component class="absolute inset-0 z-50"/>
           }
 
           @if(this.folder_services.show_notes_searcher()){

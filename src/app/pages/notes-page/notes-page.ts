@@ -4,6 +4,10 @@ import { invoke } from '@tauri-apps/api/core';
 import { FolderServices } from '../../services/folder-services';
 import { provideIcons, NgIcon } from '@ng-icons/core';
 import { matLinkOffOutline, matLinkOutline } from "@ng-icons/material-icons/outline"
+import { BibleServices } from '../../services/bible-services';
+import { Mark } from '../../interfaces/bible-interface';
+
+
 @Component({
   selector: 'notes-page',
   templateUrl: './notes-page.html',
@@ -20,6 +24,7 @@ export class NotesPage {
   @ViewChild("text_area") text_area!: ElementRef<HTMLTextAreaElement>
 
   folder_services = inject(FolderServices);
+  bible_services = inject(BibleServices);
   lang = inject(LanguageServices);
 
   is_ready_to_save = signal(false);
@@ -45,7 +50,7 @@ export class NotesPage {
     const current_dir = this.folder_services.current_dir();
     const title = this.folder_services.current_note().title;
     const extension = this.folder_services.current_note().extension;
-    
+
     this.folder_services.update_file_name(
       `${current_dir}/${title}.${extension}`,
       `${current_dir}/${el.value}.${extension}`,
@@ -57,6 +62,19 @@ export class NotesPage {
     this.folder_services.current_content.set(this.text_area.nativeElement.value);
   }
 
+  get_quote_string(indexed_verse: Mark){
+    const books = this.bible_services.bible()?.books!;
+    const book = books[indexed_verse.book].name;
+
+    let quote = `(${book} ${indexed_verse.chapter + 1}:${indexed_verse.start_verse + 1}`;
+
+    quote += (indexed_verse.end_verse == indexed_verse.start_verse)
+    ? ")"
+    : `-${indexed_verse.end_verse})`;
+
+    return quote;
+  }
+
   @HostListener('keydown', ['$event'])
   save_note(event: KeyboardEvent){
     if(!this.is_ready_to_save())
@@ -64,17 +82,17 @@ export class NotesPage {
 
     if(event.ctrlKey && event.key === "s"){
       event.preventDefault()
-      
+
       const current_dir = this.folder_services.current_dir();
       const note = this.folder_services.current_note();
       const title = note.title;
       const extension = note.extension;
-      
+
       const dir = `${current_dir}/${title}.${extension}`
 
       // invoke("save_note", {dir, content: this.text_area.nativeElement.value})
       // .then((v)=>{
-      //   this.folder_services.old_content.set(this.text_area.nativeElement.value);        
+      //   this.folder_services.old_content.set(this.text_area.nativeElement.value);
       // })
       // .catch(e => console.log(e))
 

@@ -11,7 +11,7 @@ import { Note } from '../interfaces/tree_folder-interfaces';
 export class MarkerServices {
   marks: Map<number, Mark[]> = new Map();
   bible_services = inject(BibleServices)
-  
+
   current_mark_selected = signal<Mark | null>(null);
 
   async init(){
@@ -20,7 +20,7 @@ export class MarkerServices {
 
     await invoke("get_marks", {bible})
     .then((v) => {
-      
+
       const marks = v as unknown as Mark[];
       this.marks = new Map();
 
@@ -30,7 +30,10 @@ export class MarkerServices {
         : this.marks.set(m.book, [m]);
       })
     })
-  } 
+    .catch((e) => {
+      console.log(e);
+    })
+  }
 
   async save_mark (style: number, start_verse: number, end_verse: number, start: number, end: number){
     const {} = this.bible_services.current_book()!;
@@ -68,7 +71,7 @@ export class MarkerServices {
   }
 
   async save_linked_mark (note: Note) {
-    invoke("save_link_mark", {note})
+    invoke("save_linked_mark", {note})
     .then((v) => {
       console.log("Guardado correctamente");
     })

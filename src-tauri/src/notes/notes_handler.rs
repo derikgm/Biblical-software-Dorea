@@ -1,55 +1,55 @@
-use std::collections::HashMap;
-use std::{fs, path::Path, fs::ReadDir};
-use std::fs::File;
 use serde::{Deserialize, Serialize};
 use serde_json::json;
+use std::collections::HashMap;
+use std::fs::File;
+use std::{fs, fs::ReadDir, path::Path};
 
 use crate::bible::bible_handler::IndexedBible;
 use crate::bible::marker_handler::Mark;
-use crate::{ helpers::directory_handler::get_note_path};
+use crate::helpers::directory_handler::get_note_path;
 
 #[tauri::command]
-pub fn save_note (dir: &str, content: &str) -> Result<bool, String> {
-    let _ = fs::write(dir, content)
-    .map_err(|e| {format!("ocurrio un error de escritura: {e}")})?;
+pub fn save_note(dir: &str, content: &str) -> Result<bool, String> {
+    let _ = fs::write(dir, content).map_err(|e| format!("ocurrio un error de escritura: {e}"))?;
 
     Ok(true)
 }
 
 #[tauri::command]
-pub fn update_file_name (dir: &str, new_dir: &str) -> Result<bool, String> {
-
-    let _ = fs::rename(dir, new_dir)
-    .map_err(|e| format!("Error renonbrando: {e}"))?;
+pub fn update_file_name(dir: &str, new_dir: &str) -> Result<bool, String> {
+    let _ = fs::rename(dir, new_dir).map_err(|e| format!("Error renonbrando: {e}"))?;
 
     Ok(true)
 }
 
 #[tauri::command]
-pub fn create_new_note (dir: &str, title: String, extension: String) -> Result<Note, String>{
+pub fn create_new_note(dir: &str, title: String, extension: String) -> Result<Note, String> {
     let base_title = title.clone();
     let mut note_dir = format!("{}/{}.{}", dir, title, extension);
-    let mut note: Note = Note {title, extension, linked_marks:Vec::new(), dir: note_dir };
+    let mut note: Note = Note {
+        title,
+        extension,
+        linked_marks: Vec::new(),
+        dir: note_dir,
+    };
     let mut files: Vec<String> = Vec::new();
 
-    let folder_dir = fs::read_dir(dir)
-    .map_err(|e| format!("Error de lectura de carpeta: {e}"))?;
+    let folder_dir = fs::read_dir(dir).map_err(|e| format!("Error de lectura de carpeta: {e}"))?;
 
     for content in folder_dir {
-        let content = content
-        .map_err(|e| format!("Error de navegacion: {e}"))?;
+        let content = content.map_err(|e| format!("Error de navegacion: {e}"))?;
 
         let path_buf = content.path();
 
-        if path_buf.is_file(){
+        if path_buf.is_file() {
             if let Some(file_name) = path_buf.file_name() {
                 files.push(file_name.to_str().unwrap().to_string());
             }
         }
     }
 
-    let mut cont:u32 = 1;
-    
+    let mut cont: u32 = 1;
+
     loop {
         let mut continued_while = false;
 
@@ -60,10 +60,10 @@ pub fn create_new_note (dir: &str, title: String, extension: String) -> Result<N
 
                 note_dir = format!("{}/{}.{}", dir, note_title, note.extension);
 
-                note = Note { 
-                    title: note_title, 
+                note = Note {
+                    title: note_title,
                     extension: note.extension,
-                    linked_marks: Vec::new(), 
+                    linked_marks: Vec::new(),
                     dir: note_dir,
                 };
                 continued_while = true;
@@ -71,38 +71,38 @@ pub fn create_new_note (dir: &str, title: String, extension: String) -> Result<N
             }
         }
 
-        if !continued_while {break;}
+        if !continued_while {
+            break;
+        }
     }
 
     let _ = File::create(format!("{}/{}.{}", dir, note.title, note.extension))
-    .map_err(|e| format!("Error de creacion de archivo: {e}"))?;
+        .map_err(|e| format!("Error de creacion de archivo: {e}"))?;
 
     Ok(note)
 }
 
 #[tauri::command]
-pub fn create_new_folder (dir: &str, folder: String) -> Result<String, String>{
+pub fn create_new_folder(dir: &str, folder: String) -> Result<String, String> {
     let mut new_folder: String = String::from(folder);
     let mut folders: Vec<String> = Vec::new();
 
-    let folder_dir = fs::read_dir(dir)
-    .map_err(|e| format!("Error de lectura de carpeta: {e}"))?;
+    let folder_dir = fs::read_dir(dir).map_err(|e| format!("Error de lectura de carpeta: {e}"))?;
 
     for content in folder_dir {
-        let content = content
-        .map_err(|e| format!("Error de navegacion: {e}"))?;
+        let content = content.map_err(|e| format!("Error de navegacion: {e}"))?;
 
         let path_buf = content.path();
 
-        if path_buf.is_dir(){
+        if path_buf.is_dir() {
             if let Some(file_name) = path_buf.file_name() {
                 folders.push(file_name.to_str().unwrap().to_string());
             }
         }
     }
 
-    let mut cont:u32 = 1;
-    
+    let mut cont: u32 = 1;
+
     loop {
         let mut continued_while = false;
 
@@ -115,59 +115,63 @@ pub fn create_new_folder (dir: &str, folder: String) -> Result<String, String>{
             }
         }
 
-        if !continued_while {break;}
+        if !continued_while {
+            break;
+        }
     }
 
     let _ = fs::create_dir(format!("{}/{}", dir, new_folder))
-    .map_err(|e| format!("Error en la creacion nueva carpeta: {e}"));
+        .map_err(|e| format!("Error en la creacion nueva carpeta: {e}"));
 
     Ok(new_folder)
 }
 
 #[tauri::command]
-pub fn get_note (dir: &str) -> Result<String, String> {
-    let note_content = fs::read_to_string(dir)
-    .map_err(|e| format!("No se pudo leer el elemento: {e}"))?;
+pub fn get_note(dir: &str) -> Result<String, String> {
+    let note_content =
+        fs::read_to_string(dir).map_err(|e| format!("No se pudo leer el elemento: {e}"))?;
 
     Ok(note_content)
 }
 
 #[tauri::command]
-pub fn delete_note (dir: &str, is_dir: bool) -> Result<bool, String> {
-
+pub fn delete_note(dir: &str, is_dir: bool) -> Result<bool, String> {
     if is_dir {
-        let _ = fs::remove_dir_all(dir)
-        .map_err(|e| format!("Error borrando un archivo: {e}"))?;
+        let _ = fs::remove_dir_all(dir).map_err(|e| format!("Error borrando un archivo: {e}"))?;
     } else {
-        let _ = fs::remove_file(dir)
-        .map_err(|e| format!("Error borrando un archivo: {e}"))?;
+        let _ = fs::remove_file(dir).map_err(|e| format!("Error borrando un archivo: {e}"))?;
     }
 
     Ok(true)
 }
 
 #[tauri::command]
-pub fn get_notes_folders(state: tauri::State<IndexedBible>) -> Result<Folder, String>{
-
+pub fn get_notes_folders(state: tauri::State<IndexedBible>) -> Result<Folder, String> {
     let root_folder: Folder;
     let linked_notes_path = format!("{}/linked_notes.json", get_note_path());
     let mut notes_searched: Vec<Note> = Vec::new();
 
     let mut notes = state.notes.lock().unwrap();
 
-    let iterator: ReadDir = fs::read_dir(get_note_path())
-    .map_err(|e| format!("Error la leer los datos: {e}"))?;
+    let iterator: ReadDir =
+        fs::read_dir(get_note_path()).map_err(|e| format!("Error la leer los datos: {e}"))?;
 
-    root_folder = surf_folders(iterator, get_note_path(), String::from("root"), &mut notes_searched)
+    root_folder = surf_folders(
+        iterator,
+        get_note_path(),
+        String::from("root"),
+        &mut notes_searched,
+    )
     .map_err(|e| format!("{}", e))?;
 
     if Path::new(&linked_notes_path).exists() {
         //Extraido del fichero, TODO: Probar
         let notes_file_string = fs::read_to_string(linked_notes_path)
-        .map_err(|e| format!("Error leyendo archivo: {e}"))?;
-    
-        let mut notes_file_json: HashMap<String, Note> = serde_json::from_str(&notes_file_string)
-        .map_err(|e| format!("Error Parseando el Json: {e}"))?;
+            .map_err(|e| format!("Error leyendo archivo: {e}"))?;
+
+        let mut notes_file_json: HashMap<String, Note> =
+            serde_json::from_str(&notes_file_string)
+                .map_err(|e| format!("Error Parseando el Json: {e}"))?;
 
         // notes_file_json.retain(|&k, note| {
         //     notes_searched.contains(note)
@@ -177,26 +181,27 @@ pub fn get_notes_folders(state: tauri::State<IndexedBible>) -> Result<Folder, St
     Ok(root_folder)
 }
 
-fn surf_folders (
-    read_dir: ReadDir, 
-    dir: String, folder_name: String, 
-    notes_searched: &mut Vec<Note>
+fn surf_folders(
+    read_dir: ReadDir,
+    dir: String,
+    folder_name: String,
+    notes_searched: &mut Vec<Note>,
 ) -> Result<Folder, String> {
-    let mut files: Vec<Note> = Vec::from([]); 
+    let mut files: Vec<Note> = Vec::from([]);
     let mut folders: Vec<Folder> = Vec::from([]);
 
     for entry in read_dir {
-        let entry = entry
-        .map_err(|e| format!("Error de lectura: {e}"))?;
+        let entry = entry.map_err(|e| format!("Error de lectura: {e}"))?;
 
         let surf_path_buf = entry.path();
 
         if surf_path_buf.is_dir() {
-            if let (Some(path_str), Some(path_prefix)) = (surf_path_buf.to_str(), surf_path_buf.file_prefix()) {
+            if let (Some(path_str), Some(path_prefix)) =
+                (surf_path_buf.to_str(), surf_path_buf.file_prefix())
+            {
+                let read_folder_dir =
+                    fs::read_dir(path_str).map_err(|e| format!("Error de lectura: {e}"))?;
 
-                let read_folder_dir = fs::read_dir(path_str)
-                .map_err(|e| format!("Error de lectura: {e}"))?;
-    
                 let folder = surf_folders(
                     read_folder_dir,
                     path_str.to_string().replace("\\", "/"),
@@ -204,18 +209,20 @@ fn surf_folders (
                     notes_searched,
                 )
                 .map_err(|e| format!("Error de navegacion de carpetas: {e}"))?;
-    
+
                 folders.push(folder);
             }
         }
 
         if surf_path_buf.is_file() {
-            if let (Some(prefix), Some(extension)) = (surf_path_buf.file_prefix(), surf_path_buf.extension()) {
+            if let (Some(prefix), Some(extension)) =
+                (surf_path_buf.file_prefix(), surf_path_buf.extension())
+            {
                 if extension == "txt" {
                     let title = prefix.to_str().unwrap().to_string();
                     let extension = extension.to_str().unwrap().to_string();
 
-                    let note = Note { 
+                    let note = Note {
                         dir: format!("{}/{}.{}", dir, title.clone(), extension.clone()),
                         title,
                         extension,
@@ -226,23 +233,21 @@ fn surf_folders (
 
                     files.push(note);
                 }
-            } 
+            }
         }
     }
 
-    Ok(Folder { 
+    Ok(Folder {
         dir,
-        folder_name, 
-        open: false, 
-        folders, 
-        files
+        folder_name,
+        open: false,
+        folders,
+        files,
     })
-    
 }
 
 #[tauri::command]
-pub fn save_linked_mark (note: Note, state: tauri::State<IndexedBible>) -> Result<(), String> {
-
+pub fn save_linked_mark(note: Note, state: tauri::State<IndexedBible>) -> Result<(), String> {
     let mut notes = state.notes.lock().unwrap();
     let dir = note.dir.clone();
 
@@ -252,14 +257,19 @@ pub fn save_linked_mark (note: Note, state: tauri::State<IndexedBible>) -> Resul
         notes.insert(dir, note);
     }
 
-    let content_to_string = json!({
-        "notes": *notes
-    });
+    let hash_notes = notes.clone();
 
-    let content_string = serde_json::to_string(&content_to_string)
-    .map_err(|e| format!("Error de parseo de Json: {e}"))?;
+    // let content_to_string = json!({
+    //     "notes": *notes
+    // });
 
-    let _ = fs::write(format!("{}/linked_notes.json", get_note_path()), content_string)
+    let content_string =
+        serde_json::to_string(&hash_notes).map_err(|e| format!("Error de parseo de Json: {e}"))?;
+
+    let _ = fs::write(
+        format!("{}/linked_notes.json", get_note_path()),
+        content_string,
+    )
     .map_err(|e| format!("Error de escritura de link_note: {e}"));
 
     Ok(())
@@ -270,7 +280,7 @@ pub struct Note {
     title: String,
     extension: String,
     dir: String,
-    linked_marks: Vec<Mark>
+    linked_marks: Vec<Mark>,
 }
 
 #[derive(Deserialize, Serialize, Debug)]

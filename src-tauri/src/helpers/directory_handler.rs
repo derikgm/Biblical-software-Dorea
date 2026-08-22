@@ -1,5 +1,6 @@
 use std::{fs, path::Path};
 
+// pub const DATA_PATH: &str = "../../Data";
 pub const DATA_PATH: &str = "./Data";
 
 pub const ENGLISH_LANG: &str = include_str!("../../resources/en.json");
@@ -7,8 +8,7 @@ pub const DEFAULT_SETTINGS: &str = include_str!("../../resources/default_setting
 pub const EXAMPLE_NOTE: &str = include_str!("../../resources/example_note.txt");
 
 #[tauri::command]
-pub fn verify_and_create_data_directory(){
-
+pub fn verify_and_create_data_directory() {
     let bible_path = &get_bible_path();
     let note_path = &get_note_path();
     let language_path = &get_language_path();
@@ -16,7 +16,7 @@ pub fn verify_and_create_data_directory(){
     let marks_path = &get_mark_path();
 
     if !Path::new(DATA_PATH).exists() {
-        let _ = std::fs::create_dir("./Data");
+        let _ = std::fs::create_dir(DATA_PATH);
     }
 
     if !Path::new(language_path).exists() {
@@ -33,39 +33,37 @@ pub fn verify_and_create_data_directory(){
         let _ = std::fs::create_dir(bible_path);
     }
 
+    let setting_file_path = format!("{}/settings.json", settings_path);
+
     if !Path::new(settings_path).exists() {
         let _ = std::fs::create_dir(settings_path);
-    } else {
-        let mut setting_file_path = String::from(settings_path);
-        setting_file_path.push_str("/settings.json");
+    }
 
-        if !Path::new(&setting_file_path).exists() {
-            let _ = fs::write(format!("{}/settings.json", settings_path), DEFAULT_SETTINGS);
-        }
+    if !Path::new(&setting_file_path).exists() {
+        let _ = fs::write(setting_file_path, DEFAULT_SETTINGS);
     }
 
     if !Path::new(marks_path).exists() {
         let _ = std::fs::create_dir(marks_path);
     }
-
 }
 
-pub fn get_bible_path () -> String {
-    return DATA_PATH.to_owned() + "/biblies"
+pub fn get_bible_path() -> String {
+    return DATA_PATH.to_owned() + "/biblies";
 }
 
-pub fn get_note_path () -> String {
-    return DATA_PATH.to_owned() + "/notes"
+pub fn get_note_path() -> String {
+    return DATA_PATH.to_owned() + "/notes";
 }
 
-pub fn get_language_path () -> String {
-    return DATA_PATH.to_owned() + "/languages"
+pub fn get_language_path() -> String {
+    return DATA_PATH.to_owned() + "/languages";
 }
 
-pub fn get_settings_path () -> String {
-    return DATA_PATH.to_owned() + "/settings"
+pub fn get_settings_path() -> String {
+    return DATA_PATH.to_owned() + "/settings";
 }
 
-pub fn get_mark_path () -> String {
-    return DATA_PATH.to_owned() + "/marks"
+pub fn get_mark_path() -> String {
+    return DATA_PATH.to_owned() + "/marks";
 }

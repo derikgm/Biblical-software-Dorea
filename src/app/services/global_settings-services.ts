@@ -10,14 +10,20 @@ export class GlobalSettingsServices {
     bible_form_lineal: false,
     current_book: 1,
     current_chapter: 2,
-    current_bible: "", 
+    current_bible: "",
   };
 
   is_loading = signal(false);
   is_loading_the_app = signal(false);
-  
+
   async init(){
-    this.settings = await invoke('get_settings');
+    await invoke('get_settings')
+      .then((v) => {
+        this.settings = v as Settings
+      })
+      .catch((e)=> {
+        console.log(e);
+      });
   }
 
   async save_settings(){
@@ -39,7 +45,7 @@ export class GlobalSettingsServices {
 }
 export interface Settings {
     font_size: number,
-    bible_form_lineal: boolean, 
+    bible_form_lineal: boolean,
     current_book: number,
     current_chapter: number,
     current_bible: string,

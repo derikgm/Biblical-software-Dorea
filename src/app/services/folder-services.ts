@@ -31,7 +31,7 @@ export class FolderServices {
   file_to_create = signal<Note | null>(null);
   folder_to_rename = signal<Folder | null>(null);
   folder_to_create = signal<Folder | null>(null);
-  notes_array = signal<Note[]>([]); 
+  notes_array = signal<Note[]>([]);
 
   //notes_searcher
   show_notes_searcher = signal(false);
@@ -40,8 +40,9 @@ export class FolderServices {
   async init(){
     await invoke<Folder>("get_notes_folders", {}).then((v) => {
       this.folder_root.set(v);
-
       set_notes_array(this.folder_root()!, this.notes_array());
+    }).catch((e) => {
+      console.log(e)
     })
   }
 
@@ -141,13 +142,13 @@ export class FolderServices {
     invoke<Note>("create_new_note", {dir, title: file_name, extension: "txt"})
     .then((res)=>{
       const new_note = res;
-      
+
       if(this.file_to_create()){
         this.file_to_create.update(n => {
           n!.title = new_note.title;
           n!.extension = new_note.extension;
           n!.dir = new_note.dir;
-  
+
           return n;
         })
       } else {
@@ -183,7 +184,7 @@ export class FolderServices {
         folder.dir = dir + "/" + folder_name;
         folder.folders = [];
         folder.files = [];
-        
+
         return folder;
       })
 
@@ -197,11 +198,11 @@ export class FolderServices {
     if(this.file()){
       this.file_to_rename.set(this.file());
     } else {
-      this.folder_to_rename.set(this.folder_selected());  
+      this.folder_to_rename.set(this.folder_selected());
     }
     this.show_file_and_folder_options.set(false)
   }
-  
+
   finish_to_rename(){
     this.file_to_rename.set(null);
     this.folder_to_rename.set(null);
@@ -252,7 +253,7 @@ export class FolderServices {
           dir,
           newDir
         }).then(()=>{
-          
+
           this.folder_selected.update((folder) => {
             folder!.dir = newDir;
             folder!.folder_name = new_title;
@@ -319,7 +320,7 @@ export class FolderServices {
             }
           }
         }
-      parent_folder.folders = parent_folder.folders.filter((f) => f.folder_name !== folder_to_remove);    
+      parent_folder.folders = parent_folder.folders.filter((f) => f.folder_name !== folder_to_remove);
       } else {
         this.folder_selected.update((folder) => {
           folder?.files.forEach((f, i) => {
@@ -327,7 +328,7 @@ export class FolderServices {
               folder!.files.splice(i, 1);
             }
           })
-  
+
           return folder;
         })
       }

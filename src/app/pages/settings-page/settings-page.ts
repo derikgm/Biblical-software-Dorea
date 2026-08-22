@@ -120,8 +120,12 @@ export class SettingsPage implements AfterViewInit{
       return;
     }
 
+    this.gss.is_loading.set(true);
+
     await this.bible_services.select_bible(select.value);
     await this.marker_services.init();
+
+    this.gss.is_loading.set(true);
   }
 
   async download_bible(select_target: EventTarget | null){

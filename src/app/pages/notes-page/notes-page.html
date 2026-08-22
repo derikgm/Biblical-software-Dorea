@@ -2,7 +2,7 @@
 
     @if (folder_services.current_note().title == "") {
         <div class="flex text-center justify-center items-center h-full">
-            <div 
+            <div
             (click)="create_new_note()"
             class="border-4 border-dashed rounded aspect-square flex justify-center items-center p-10
             select-none cursor-pointer hover:border-blue-400 hover:text-blue-500 dark:hover:text-blue-300">
@@ -11,7 +11,7 @@
         </div>
     }
     @else {
-        <div class="w-full flex flex-row border-b-cyan-700 dark:border-b-cyan-300 
+        <div class="w-full flex flex-row border-b-cyan-700 dark:border-b-cyan-300
         border-b-2">
             <div class="px-1 flex items-center">
                 <div class="w-3 h-3 rounded-full"
@@ -19,15 +19,15 @@
             </div>
             <input type="text" #header
             class="font-bold text-xl mb-1 text-cyan-700 outline outline-0 w-full
-            dark:bg-gray-800 dark:text-cyan-300 " 
+            dark:bg-gray-800 dark:text-cyan-300 "
             (keydown)="jump_to_textarea($event)"
             (change)="update_title($event)"
             [value]="folder_services.current_note().title" />
         </div>
 
-        <textarea 
+        <textarea
         #text_area
-        class="w-full h-full flex text-black dark:bg-gray-800 scrollbar-hidden resize-none 
+        class="w-full h-full flex text-black dark:bg-gray-800 scrollbar-hidden resize-none
         outline outline-0 dark:text-white"
         (input)="text_area_handler()"
         [value]="folder_services.current_content()"
@@ -36,14 +36,14 @@
 
         </textarea>
 
-        <div class="p-2 flex-row-reverse flex text-2xl 
+        <div class="p-2 flex-row-reverse flex text-2xl
         text-black/40 dark:text-white/40">
-            <div 
+            <div
             (click)="change_linked_verses_visibility()"
             class="p-0 m-0 flex cursor-pointer border-transparent border rounded
             hover:text-black hover:dark:text-white hover:bg-gray-200 hover:dark:bg-gray-600">
-                <ng-icon 
-                [name]="show_linked_verses() ? 'verses' : 'nonVerses' " 
+                <ng-icon
+                [name]="show_linked_verses() ? 'verses' : 'nonVerses' "
                 class="p-0 m-0"
                 />
             </div>
@@ -54,9 +54,9 @@
                 @if(this.folder_services.current_note().linked_marks.length == 0){
                     <p class="select-none">lang.no_linked_verse</p>
                 } @else {
-                    @for (indexed_verses of this.folder_services.current_note().linked_marks; track $index) {
-                        <p>
-                            <span>{{indexed_verses}}</span>
+                    @for (indexed_verse of this.folder_services.current_note().linked_marks; track $index) {
+                        <p class = "inline">
+                            {{get_quote_string(indexed_verse)}}
                         </p>
                     }
                 }

@@ -82,20 +82,20 @@ export class BibleServices {
 
     this.gss.is_loading.set(true);
     await this.get_bible(bible_abb);
-    
+
     this.current_book.set(this.bible()?.books[0]);
     this.current_chapter.set(0);
-    
+
     this.gss.settings.current_bible = bible_abb;
     this.gss.settings.current_book = 0;
     this.gss.settings.current_chapter = 1;
-    
+
     this.current_book.set(this.bible()?.books[0]);
     this.current_chapter.set(1);
 
-    this.gss.save_settings();    
+    this.gss.save_settings();
 
     this.gss.is_loading.set(false);
   }
-  
+
 }

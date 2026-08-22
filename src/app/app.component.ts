@@ -1,5 +1,5 @@
-import { AfterViewInit, Component, ElementRef, HostListener, inject, signal } from "@angular/core";
-import { RouteReuseStrategy, RouterOutlet } from "@angular/router";
+import { AfterViewInit, Component,HostListener, inject } from "@angular/core";
+import { RouterOutlet } from "@angular/router";
 import { SidebarComponent } from "./components/sidebar-component/sidebar-component";
 import { TopbarComponent } from "./components/topbar-component/topbar-component";
 import { LanguageServices } from "./services/language-services";
@@ -11,7 +11,6 @@ import { GlobalSettingsServices } from "./services/global_settings-services";
 import { FontSettingsServices } from "./services/font_settings-services";
 import { SearchResultComponent } from "./components/search_result-component/search_result-component";
 import { FolderOptionsComponent } from "./components/folder_options-component/folder_options-component";
-import { CustomRouteReuseStrategy } from "./stratergies/custom-route-reuse.strategy";
 import { MarkerServices } from "./services/marker_services";
 import { SearchNoteComponent } from "./components/search_note-component/search_note-component";
 
@@ -41,18 +40,28 @@ export class AppComponent implements AfterViewInit{
     await this.marker_services.init();
     await this.language_services.init();
     await this.folder_services.init();
-    
+
     this.font_settings_services.init();
 
     this.global_settings_services.is_loading_the_app.set(false);
 
     window.addEventListener("keydown", (event) => {
 
-    if(event.key == "p")
       if(event.ctrlKey){
-        event.preventDefault();
-        this.folder_services.show_notes_searcher.update(v => !v)
+        switch (event.key) {
+          case "p": {
+            //TODO: Quitar luego de que funcione todos los controles
+            event.preventDefault();
+            this.folder_services.show_notes_searcher.update(v => !v)
+            break;
+          }
+          default: {
+            break;
+          }
+
+        }
       }
+
     })
 
   }
