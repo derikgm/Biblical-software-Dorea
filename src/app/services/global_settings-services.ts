@@ -10,43 +10,42 @@ export class GlobalSettingsServices {
     bible_form_lineal: false,
     current_book: 1,
     current_chapter: 2,
-    current_bible: "",
+    current_bible: '',
   };
 
   is_loading = signal(false);
   is_loading_the_app = signal(false);
 
-  async init(){
+  async init() {
     await invoke('get_settings')
       .then((v) => {
-        this.settings = v as Settings
+        this.settings = v as Settings;
       })
-      .catch((e)=> {
-        console.log(e);
+      .catch((e) => {
+        console.error(e);
       });
   }
 
-  async save_settings(){
-    invoke("save_settings", {settings: this.settings})
+  async save_settings() {
+    invoke('save_settings', { settings: this.settings });
   }
 
-  save_font_size(n: number){
+  save_font_size(n: number) {
     this.settings.font_size = n;
     this.save_settings();
   }
 
-  async save_current_chapter(book: number, chapter: number ){
+  async save_current_chapter(book: number, chapter: number) {
     this.settings.current_book = book;
     this.settings.current_chapter = chapter;
 
     this.save_settings();
   }
-
 }
 export interface Settings {
-    font_size: number,
-    bible_form_lineal: boolean,
-    current_book: number,
-    current_chapter: number,
-    current_bible: string,
+  font_size: number;
+  bible_form_lineal: boolean;
+  current_book: number;
+  current_chapter: number;
+  current_bible: string;
 }

@@ -1,5 +1,13 @@
-import { AfterViewInit, ChangeDetectionStrategy, Component, ElementRef, inject, input, signal, ViewChild } from '@angular/core';
-import { NgIcon, provideIcons } from "@ng-icons/core";
+import {
+  AfterViewInit,
+  Component,
+  ElementRef,
+  inject,
+  input,
+  signal,
+  ViewChild,
+} from '@angular/core';
+import { NgIcon, provideIcons } from '@ng-icons/core';
 import { heroBars3, heroBars3CenterLeft, heroEquals, heroPause } from '@ng-icons/heroicons/outline';
 import { FontSettingsServices } from '../../services/font_settings-services';
 
@@ -12,81 +20,88 @@ import { FontSettingsServices } from '../../services/font_settings-services';
       lineal: heroBars3CenterLeft,
       right: heroEquals,
       top: heroPause,
-    })
+    }),
   ],
   template: `
     <div #container class="container">
-        <div class="option-group">
-            <a href="#" class="option" #lineal_anchor (click)="change_bible_form(true)">
-                <ng-icon name="lineal" />
-            </a>
-            <a href="#" class="option" #row_anchor (click)="change_bible_form(false)">
-                <ng-icon name="row"/>
-            </a>
-        </div>
+      <div class="option-group">
+        <button
+          type="button"
+          class="option cursor-pointer"
+          #lineal_anchor
+          (click)="change_bible_form(true)"
+        >
+          <ng-icon name="lineal" />
+        </button>
+        <button
+          type="button"
+          class="option cursor-pointer"
+          #row_anchor
+          (click)="change_bible_form(false)"
+        >
+          <ng-icon name="row" />
+        </button>
+      </div>
 
-        <div class="option-group">
-            <a href="#" class="option" 
-            (click)="change_option_bar_position()">
-                <ng-icon [name]="option_bar_in_top() ? 'top' : 'right'"/>
-            </a>
-        </div>
-        
+      <div class="option-group">
+        <button type="button" class="option cursor-pointer" (click)="change_option_bar_position()">
+          <ng-icon [name]="option_bar_in_top() ? 'top' : 'right'" />
+        </button>
+      </div>
     </div>
-        
+
     <style>
-      :host{
+      :host {
         @apply sticky top-0 z-50;
       }
 
       .container {
-          @apply w-full bg-transparent sticky right-0 top-0 flex z-50 m-0 py-1 text-xl;
+        @apply w-full bg-transparent sticky right-0 top-0 flex z-50 m-0 py-1 text-xl;
       }
 
-      .container:hover{
+      .container:hover {
         .option-group {
-            @apply bg-gray-200 border-gray-700 text-black shadow-md
+          @apply bg-gray-200 border-gray-700 text-black shadow-md
             dark:bg-gray-700 dark:text-white dark:border-gray-500;
 
-            .selected {
+          .selected {
             @apply text-blue-500 bg-white 
             dark:bg-gray-200 dark:text-blue-400;
-            }
+          }
         }
-    }
+      }
 
-    .option-in-right {
-          @apply h-screen mb-2 justify-center items-center align-middle flex flex-col
+      .option-in-right {
+        @apply h-screen mb-2 justify-center items-center align-middle flex flex-col
           space-y-1 space-x-0;
 
-          .option-group {
-              @apply space-x-0;
-          }
+        .option-group {
+          @apply space-x-0;
+        }
       }
       .option-in-top {
-          @apply space-x-1 flex flex-row;
+        @apply space-x-1 flex flex-row;
       }
 
       .option-group {
-          @apply px-1 py-0.5 rounded space-x-1 border 
+        @apply px-1 py-0.5 rounded space-x-1 border 
           bg-gray-200/10 border-gray-700/10 text-black/10;
       }
 
       .option {
-          @apply rounded px-1.5;
+        @apply rounded px-1.5;
       }
 
       .selected {
-          @apply text-blue-500/5 bg-white/5 cursor-default;
+        @apply text-blue-500/5 bg-white/5 cursor-default;
       }
-
     </style>
   `,
 })
-export class BibleOptionComponent implements AfterViewInit{
+export class BibleOptionComponent implements AfterViewInit {
   @ViewChild('container') container!: ElementRef<HTMLDivElement>;
-  @ViewChild("lineal_anchor") lineal_anchor!: ElementRef<HTMLAnchorElement>;
-  @ViewChild("row_anchor") row_anchor!: ElementRef<HTMLAnchorElement>;
+  @ViewChild('lineal_anchor') lineal_anchor!: ElementRef<HTMLButtonElement>;
+  @ViewChild('row_anchor') row_anchor!: ElementRef<HTMLButtonElement>;
 
   text_option = input<HTMLDivElement>();
   option_bar_in_top = signal<boolean>(false);
@@ -100,7 +115,7 @@ export class BibleOptionComponent implements AfterViewInit{
 
   change_option_bar_position() {
     const parentElement = this.text_option();
-    
+
     if (!parentElement) {
       return;
     }
@@ -117,21 +132,21 @@ export class BibleOptionComponent implements AfterViewInit{
       this.container.nativeElement.classList.add('option-in-top');
     }
 
-    this.option_bar_in_top.update(v => !v);
+    this.option_bar_in_top.update((v) => !v);
   }
 
-  change_bible_form(is_inline: boolean){
+  change_bible_form(is_inline: boolean) {
     this.font_settings_services.change_bible_form(is_inline);
     this.paint_bible_form_option(is_inline);
   }
 
-  private paint_bible_form_option(is_inline: boolean){
-    if(is_inline){
-      this.lineal_anchor.nativeElement.classList.add('selected')
-      this.row_anchor.nativeElement.classList.remove('selected')
+  private paint_bible_form_option(is_inline: boolean) {
+    if (is_inline) {
+      this.lineal_anchor.nativeElement.classList.add('selected');
+      this.row_anchor.nativeElement.classList.remove('selected');
     } else {
-      this.lineal_anchor.nativeElement.classList.remove('selected')
-      this.row_anchor.nativeElement.classList.add('selected')
+      this.lineal_anchor.nativeElement.classList.remove('selected');
+      this.row_anchor.nativeElement.classList.add('selected');
     }
   }
 }

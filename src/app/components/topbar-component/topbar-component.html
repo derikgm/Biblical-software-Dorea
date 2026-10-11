@@ -1,53 +1,58 @@
 <header class="sticky top-0 dark-bg light-bg flex items-center border-b-2">
+  <div class="w-12 px-3"></div>
 
-    <div class="w-12 px-3"></div>
+  <div class="justify-between flex w-full px-1 py-1">
+    <div class="flex space-x-2 border-2 rounded-lg px-2 border-gray-500">
+      <button
+        class="px-1 items-center justify-center"
+        (click)="font_settings_services.changeSize(true)"
+        aria-label="Aumentar tamaño de letra"
+      >
+        <ng-icon name="plus" class="items-center"></ng-icon>
+      </button>
 
-    <div class="justify-between flex w-full px-1 py-1">
-        <div class="flex space-x-2 border-2 rounded-lg px-2 border-gray-500">
-            <button class="px-1 items-center justify-center" (click)="font_settings_services.changeSize(true)">
-                <ng-icon name="plus" class="items-center"></ng-icon>
-            </button>
+      <input
+        type="text"
+        class="w-5 dark-bg light-bg"
+        [value]="font_settings_services.font_size()"
+        (change)="font_settings_services.changeSizeNumber(+$event.target.value)"
+      />
 
-            <input 
-                type="text" 
-                class="w-5 dark-bg light-bg" 
-                [value]="font_settings_services.font_size()"
-                (change)="font_settings_services.changeSizeNumber(+$event.target.value)"
-                >
-
-            <button class="px-1" (click)="font_settings_services.changeSize(false)">
-                <ng-icon name="minus"></ng-icon>
-            </button>
-        </div>
-
-        <div class="inline">
-            @if(bible_services.current_book()) {
-                <p class="inline">
-                    {{bible_services.current_book()?.name}} {{bible_services.current_chapter()}}
-                </p>
-            }
-        </div>
-
-        <div class="flex flex-row items-center justify-center"
-        >
-            <div class="bg-white rounded-lg border-2 w-full flex 
-            dark:bg-slate-800 border-gray-500">
-                <input type="text" #search_input
-                class="px-2 border-r-2 rounded-l-lg outline outline-none 
-                dark:bg-slate-800 border-gray-500"
-                (change)="search_in_bible()"
-                >
-
-                <div class="hover:text-blue-500 rounded-r-lg cursor-pointer hover:bg-blue-50
-                dark:hover:bg-gray-700 dark:hover:text-blue-400"
-                (click)="search_in_bible()">
-                    <ng-icon 
-                    name="search" 
-                    class="mx-2"/>
-                </div>
-            </div>
-
-        </div>
+      <button
+        class="px-1"
+        (click)="font_settings_services.changeSize(false)"
+        aria-label="Disminuir tamaño de letra"
+      >
+        <ng-icon name="minus"></ng-icon>
+      </button>
     </div>
 
+    <div class="inline">
+      @if(bible_services.current_book()) {
+      <p class="inline">
+        {{bible_services.current_book()?.name}} {{bible_services.current_chapter()}}
+      </p>
+      }
+    </div>
+
+    <div class="flex flex-row items-center justify-center">
+      <div class="bg-white rounded-lg border-2 w-full flex dark:bg-slate-800 border-gray-500">
+        <input
+          type="text"
+          #search_input
+          class="px-2 border-r-2 rounded-l-lg outline outline-none dark:bg-slate-800 border-gray-500"
+          (change)="search_in_bible()"
+        />
+
+        <button
+          type="button"
+          class="hover:text-blue-500 rounded-r-lg cursor-pointer hover:bg-blue-50 dark:hover:bg-gray-700 dark:hover:text-blue-400"
+          (click)="search_in_bible()"
+          aria-label="Buscar en la Biblia"
+        >
+          <ng-icon name="search" class="mx-2" />
+        </button>
+      </div>
+    </div>
+  </div>
 </header>

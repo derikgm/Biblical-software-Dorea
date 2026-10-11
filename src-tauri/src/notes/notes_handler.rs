@@ -1,29 +1,34 @@
 use serde::{Deserialize, Serialize};
-use serde_json::json;
 use std::collections::HashMap;
 use std::fs::File;
 use std::{fs, fs::ReadDir, path::Path};
 
 use crate::bible::bible_handler::IndexedBible;
 use crate::bible::marker_handler::Mark;
-use crate::helpers::directory_handler::get_note_path;
+use crate::helpers::directory_handler::{get_note_path, validate_note_path};
 
 #[tauri::command]
 pub fn save_note(dir: &str, content: &str) -> Result<bool, String> {
-    let _ = fs::write(dir, content).map_err(|e| format!("ocurrio un error de escritura: {e}"))?;
+    validate_note_path(dir)?;
+
+    fs::write(dir, content).map_err(|e| format!("ocurrio un error de escritura: {e}"))?;
 
     Ok(true)
 }
 
 #[tauri::command]
 pub fn update_file_name(dir: &str, new_dir: &str) -> Result<bool, String> {
-    let _ = fs::rename(dir, new_dir).map_err(|e| format!("Error renonbrando: {e}"))?;
+    validate_note_path(dir)?;
+    validate_note_path(new_dir)?;
+
+    fs::rename(dir, new_dir).map_err(|e| format!("Error renonbrando: {e}"))?;
 
     Ok(true)
 }
 
 #[tauri::command]
 pub fn create_new_note(dir: &str, title: String, extension: String) -> Result<Note, String> {
+    validate_note_path(dir)?;
     let base_title = title.clone();
     let mut note_dir = format!("{}/{}.{}", dir, title, extension);
     let mut note: Note = Note {
@@ -84,7 +89,9 @@ pub fn create_new_note(dir: &str, title: String, extension: String) -> Result<No
 
 #[tauri::command]
 pub fn create_new_folder(dir: &str, folder: String) -> Result<String, String> {
-    let mut new_folder: String = String::from(folder);
+    validate_note_path(dir)?;
+    let base_folder: String = folder.clone();
+    let mut new_folder: String = folder;
     let mut folders: Vec<String> = Vec::new();
 
     let folder_dir = fs::read_dir(dir).map_err(|e| format!("Error de lectura de carpeta: {e}"))?;
@@ -103,31 +110,21 @@ pub fn create_new_folder(dir: &str, folder: String) -> Result<String, String> {
 
     let mut cont: u32 = 1;
 
-    loop {
-        let mut continued_while = false;
-
-        for file in &folders {
-            if *file == format!("{}", new_folder) {
-                cont += 1;
-                new_folder = format!("new folder ({})", cont);
-                continued_while = true;
-                break;
-            }
-        }
-
-        if !continued_while {
-            break;
-        }
+    while folders.contains(&new_folder) {
+        cont += 1;
+        new_folder = format!("{} ({})", base_folder, cont);
     }
 
-    let _ = fs::create_dir(format!("{}/{}", dir, new_folder))
-        .map_err(|e| format!("Error en la creacion nueva carpeta: {e}"));
+    fs::create_dir(format!("{}/{}", dir, new_folder))
+        .map_err(|e| format!("Error en la creacion nueva carpeta: {e}"))?;
 
     Ok(new_folder)
 }
 
 #[tauri::command]
 pub fn get_note(dir: &str) -> Result<String, String> {
+    validate_note_path(dir)?;
+
     let note_content =
         fs::read_to_string(dir).map_err(|e| format!("No se pudo leer el elemento: {e}"))?;
 
@@ -136,10 +133,12 @@ pub fn get_note(dir: &str) -> Result<String, String> {
 
 #[tauri::command]
 pub fn delete_note(dir: &str, is_dir: bool) -> Result<bool, String> {
+    validate_note_path(dir)?;
+
     if is_dir {
-        let _ = fs::remove_dir_all(dir).map_err(|e| format!("Error borrando un archivo: {e}"))?;
+        fs::remove_dir_all(dir).map_err(|e| format!("Error borrando un archivo: {e}"))?;
     } else {
-        let _ = fs::remove_file(dir).map_err(|e| format!("Error borrando un archivo: {e}"))?;
+        fs::remove_file(dir).map_err(|e| format!("Error borrando un archivo: {e}"))?;
     }
 
     Ok(true)
@@ -147,36 +146,32 @@ pub fn delete_note(dir: &str, is_dir: bool) -> Result<bool, String> {
 
 #[tauri::command]
 pub fn get_notes_folders(state: tauri::State<IndexedBible>) -> Result<Folder, String> {
-    let root_folder: Folder;
     let linked_notes_path = format!("{}/linked_notes.json", get_note_path());
-    let mut notes_searched: Vec<Note> = Vec::new();
 
-    let mut notes = state.notes.lock().unwrap();
+    // Cargar las notas con marcas vinculadas (si existen) para poblar el árbol
+    let linked_notes: HashMap<String, Note> = if Path::new(&linked_notes_path).exists() {
+        let notes_file_string = fs::read_to_string(&linked_notes_path)
+            .map_err(|e| format!("Error leyendo archivo: {e}"))?;
+
+        serde_json::from_str(&notes_file_string)
+            .map_err(|e| format!("Error Parseando el Json: {e}"))?
+    } else {
+        HashMap::new()
+    };
 
     let iterator: ReadDir =
         fs::read_dir(get_note_path()).map_err(|e| format!("Error la leer los datos: {e}"))?;
 
-    root_folder = surf_folders(
+    let root_folder = surf_folders(
         iterator,
         get_note_path(),
         String::from("root"),
-        &mut notes_searched,
+        &linked_notes,
     )
-    .map_err(|e| format!("{}", e))?;
+    .map_err(|e| e.to_string())?;
 
-    if Path::new(&linked_notes_path).exists() {
-        //Extraido del fichero, TODO: Probar
-        let notes_file_string = fs::read_to_string(linked_notes_path)
-            .map_err(|e| format!("Error leyendo archivo: {e}"))?;
-
-        let mut notes_file_json: HashMap<String, Note> =
-            serde_json::from_str(&notes_file_string)
-                .map_err(|e| format!("Error Parseando el Json: {e}"))?;
-
-        // notes_file_json.retain(|&k, note| {
-        //     notes_searched.contains(note)
-        // });
-    }
+    let mut notes = state.notes.lock().unwrap();
+    *notes = linked_notes;
 
     Ok(root_folder)
 }
@@ -185,7 +180,7 @@ fn surf_folders(
     read_dir: ReadDir,
     dir: String,
     folder_name: String,
-    notes_searched: &mut Vec<Note>,
+    linked_notes: &HashMap<String, Note>,
 ) -> Result<Folder, String> {
     let mut files: Vec<Note> = Vec::from([]);
     let mut folders: Vec<Folder> = Vec::from([]);
@@ -206,7 +201,7 @@ fn surf_folders(
                     read_folder_dir,
                     path_str.to_string().replace("\\", "/"),
                     path_prefix.to_str().unwrap().to_string(),
-                    notes_searched,
+                    linked_notes,
                 )
                 .map_err(|e| format!("Error de navegacion de carpetas: {e}"))?;
 
@@ -221,15 +216,17 @@ fn surf_folders(
                 if extension == "txt" {
                     let title = prefix.to_str().unwrap().to_string();
                     let extension = extension.to_str().unwrap().to_string();
+                    let note_dir = format!("{}/{}.{}", dir, title.clone(), extension.clone());
 
                     let note = Note {
-                        dir: format!("{}/{}.{}", dir, title.clone(), extension.clone()),
+                        dir: note_dir.clone(),
                         title,
                         extension,
-                        linked_marks: Vec::new(),
+                        linked_marks: linked_notes
+                            .get(&note_dir)
+                            .map(|n| n.linked_marks.clone())
+                            .unwrap_or_default(),
                     };
-
-                    notes_searched.push(note.clone());
 
                     files.push(note);
                 }
@@ -258,10 +255,6 @@ pub fn save_linked_mark(note: Note, state: tauri::State<IndexedBible>) -> Result
     }
 
     let hash_notes = notes.clone();
-
-    // let content_to_string = json!({
-    //     "notes": *notes
-    // });
 
     let content_string =
         serde_json::to_string(&hash_notes).map_err(|e| format!("Error de parseo de Json: {e}"))?;

@@ -1,40 +1,32 @@
-
 <div class="select-none">
-    
-    @for (book of bible_services.bible()?.books; track $index) {
-        <div class="">
+  @for (book of bible_services.bible()?.books; track $index) {
+  <div class="">
+    <p
+      (click)="open_caps($index, $event)"
+      class="py-1 px-2 cursor-pointer text-center hover:bg-gray-200 dark:hover:bg-gray-700"
+      [class.border-b]="show_chaps() !== $index"
+    >
+      {{book.name}}
+    </p>
 
-            <p 
-            (click)="open_caps($index, $event)"
-            class="py-1 px-2 cursor-pointer text-center 
-            hover:bg-gray-200 dark:hover:bg-gray-700" 
-            [class.border-b]="show_chaps() != $index"
-            >
-                {{book.name}}
-            </p>
+    @if (show_chaps() === $index) {
 
-            @if (show_chaps() == $index) {
-
-                <div class="m-2 grid grid-cols-[repeat(auto-fill,minmax(2rem,1fr))] gap-1">
-                    @for(chap of book.chapters; track $index){
-                        <a 
-                        [href]="`#${book.nr}-${chap.chapter}`"
-                        class="flex items-center justify-center aspect-square cursor-pointer text-black 
-                        border-2 hover:bg-green-400 dark:text-white
-                        dark:hover:bg-green-600 dark:border-gray-500 dark:border"
-                        (click)="bible_services.move_to_chapter(book.nr, $index + 1)"
-                        [class.bg-green-600]="establish_current_chap(chap)"
-                        [class.text-white]="establish_current_chap(chap)"
-                        >
-                            {{chap.chapter}}
-                        </a>
-                    }
-                </div>
-            }
-
-            <div></div>
-
-        </div>
+    <div class="m-2 grid grid-cols-[repeat(auto-fill,minmax(2rem,1fr))] gap-1">
+      @for(chap of book.chapters; track $index){
+      <a
+        [href]="`#${book.nr}-${chap.chapter}`"
+        class="flex items-center justify-center aspect-square cursor-pointer text-black border-2 hover:bg-green-400 dark:text-white dark:hover:bg-green-600 dark:border-gray-500 dark:border"
+        (click)="bible_services.move_to_chapter(book.nr, $index + 1)"
+        [class.bg-green-600]="establish_current_chap(chap)"
+        [class.text-white]="establish_current_chap(chap)"
+      >
+        {{chap.chapter}}
+      </a>
+      }
+    </div>
     }
 
+    <div></div>
+  </div>
+  }
 </div>

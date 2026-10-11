@@ -1,27 +1,25 @@
-import { Component, computed, ElementRef, HostListener, inject, signal, ViewChild } from '@angular/core';
+import { Component, ElementRef, HostListener, inject, signal, ViewChild } from '@angular/core';
 import { LanguageServices } from '../../services/language-services';
 import { invoke } from '@tauri-apps/api/core';
 import { FolderServices } from '../../services/folder-services';
 import { provideIcons, NgIcon } from '@ng-icons/core';
-import { matLinkOffOutline, matLinkOutline } from "@ng-icons/material-icons/outline"
+import { matLinkOffOutline, matLinkOutline } from '@ng-icons/material-icons/outline';
 import { BibleServices } from '../../services/bible-services';
 import { Mark } from '../../interfaces/bible-interface';
-
 
 @Component({
   selector: 'notes-page',
   templateUrl: './notes-page.html',
-  styleUrl: './notes-page.css',
-  providers:[
+  providers: [
     provideIcons({
       verses: matLinkOutline,
       nonVerses: matLinkOffOutline,
-    })
+    }),
   ],
-  imports: [NgIcon]
+  imports: [NgIcon],
 })
 export class NotesPage {
-  @ViewChild("text_area") text_area!: ElementRef<HTMLTextAreaElement>
+  @ViewChild('text_area') text_area!: ElementRef<HTMLTextAreaElement>;
 
   folder_services = inject(FolderServices);
   bible_services = inject(BibleServices);
@@ -30,22 +28,22 @@ export class NotesPage {
   is_ready_to_save = signal(false);
   show_linked_verses = signal(true);
 
-  jump_to_textarea(event: KeyboardEvent){
-    if(event.key == 'Enter') {
+  jump_to_textarea(event: KeyboardEvent) {
+    if (event.key == 'Enter') {
       event.preventDefault();
-      this.text_area.nativeElement.focus()
+      this.text_area.nativeElement.focus();
     }
   }
 
-  change_linked_verses_visibility(){
-    this.show_linked_verses.update(v => !v);
+  change_linked_verses_visibility() {
+    this.show_linked_verses.update((v) => !v);
   }
 
-  create_new_note(){
-    this.folder_services.create_new_note("new_note");
+  create_new_note() {
+    this.folder_services.create_new_note('new_note');
   }
 
-  update_title(event: Event){
+  update_title(event: Event) {
     const el = event.target as HTMLInputElement;
     const current_dir = this.folder_services.current_dir();
     const title = this.folder_services.current_note().title;
@@ -62,44 +60,40 @@ export class NotesPage {
     this.folder_services.current_content.set(this.text_area.nativeElement.value);
   }
 
-  get_quote_string(indexed_verse: Mark){
-    const books = this.bible_services.bible()?.books!;
+  get_quote_string(indexed_verse: Mark) {
+    const books = this.bible_services.bible()?.books ?? [];
     const book = books[indexed_verse.book].name;
 
     let quote = `(${book} ${indexed_verse.chapter + 1}:${indexed_verse.start_verse + 1}`;
 
-    quote += (indexed_verse.end_verse == indexed_verse.start_verse)
-    ? ")"
-    : `-${indexed_verse.end_verse})`;
+    quote +=
+      indexed_verse.end_verse == indexed_verse.start_verse ? ')' : `-${indexed_verse.end_verse})`;
 
     return quote;
   }
 
   @HostListener('keydown', ['$event'])
-  save_note(event: KeyboardEvent){
-    if(!this.is_ready_to_save())
-      this.is_ready_to_save.set(true);
+  save_note(event: KeyboardEvent) {
+    if (!this.is_ready_to_save()) this.is_ready_to_save.set(true);
 
-    if(event.ctrlKey && event.key === "s"){
-      event.preventDefault()
+    if (event.ctrlKey && event.key === 's') {
+      event.preventDefault();
 
       const current_dir = this.folder_services.current_dir();
       const note = this.folder_services.current_note();
       const title = note.title;
       const extension = note.extension;
 
-      const dir = `${current_dir}/${title}.${extension}`
+      const dir = `${current_dir}/${title}.${extension}`;
+      const content = this.text_area.nativeElement.value;
 
-      // invoke("save_note", {dir, content: this.text_area.nativeElement.value})
-      // .then((v)=>{
-      //   this.folder_services.old_content.set(this.text_area.nativeElement.value);
-      // })
-      // .catch(e => console.log(e))
-
-      invoke("save_with_metada", {dir, note})
-
-      this.is_ready_to_save.set(false)
+      invoke('save_note', { dir, content })
+        .then(() => {
+          this.folder_services.old_content.set(content);
+          this.folder_services.current_content.set(content);
+          this.is_ready_to_save.set(false);
+        })
+        .catch((e) => console.error('Error al guardar la nota:', e));
     }
   }
-
 }

@@ -1,92 +1,85 @@
-<div class="w-full dark:bg-gray-800 dark:text-white overflow-y-scroll 
-scrollbar-hidden select-none text-nowrap py-0.5"
+<div
+  class="w-full dark:bg-gray-800 dark:text-white overflow-y-scroll scrollbar-hidden select-none text-nowrap py-0.5"
 >
-    @if(this.folders()?.folder_name != "root"){
-
-        @if (this.folders() == folder_services.folder_to_rename()) {
-            <input type="text" appFocusOnCreate #rename_input
-                [value]="this.folders()?.folder_name" 
-                (blur)="finish_to_rename()"
-                (keydown)="handler_rename_input($event, true)"
-                [style.margin-left.rem]="floor() * 0.75"
-                class="hover:bg-gray-200 dark:hover:bg-gray-700 ml-1 pl-1 outline outline-1 my-1 w-9/12
-                border-r-transparent dark:bg-gray-700"
-                />
-        } @else if (this.folders() == folder_services.folder_to_create()) {
-                <input type="text" appFocusOnCreate #create_input
-                [value]=""
-                (blur)="finish_to_create()"
-                (keydown)="handler_create_input($event, true)"
-                class="hover:bg-gray-200 dark:hover:bg-gray-700 ml-1 pl-1 outline outline-gray-600 
-                outline-1 border-r-transparent dark:bg-gray-700 w-10/12"
-                />
-            } @else {
-            <p 
-            class="cursor-default w-full hover:bg-gray-200 dark:hover:bg-gray-700"
-            (contextmenu)="$event.stopPropagation(); show_options($event);"
-            [style.padding-left.rem]="floor() * 0.5"
-            >
-                <span class="cursor-pointer" (click)="open_folder()">
-                    <ng-icon [name]="this.is_open() ? 'open' : 'close'"/>
-                    {{this.folders()?.folder_name}}
-                </span>
-            </p>
-        }
+  @if(this.folders()?.folder_name !== "root"){ @if (this.folders() ===
+  folder_services.folder_to_rename()) {
+  <input
+    type="text"
+    appFocusOnCreate
+    #rename_input
+    [value]="this.folders()?.folder_name"
+    (blur)="finish_to_rename()"
+    (keydown)="handler_rename_input($event, true)"
+    [style.margin-left.rem]="floor() * 0.75"
+    class="hover:bg-gray-200 dark:hover:bg-gray-700 ml-1 pl-1 outline outline-1 my-1 w-9/12 border-r-transparent dark:bg-gray-700"
+  />
+  } @else if (this.folders() === folder_services.folder_to_create()) {
+  <input
+    type="text"
+    appFocusOnCreate
+    #create_input
+    [value]=""
+    (blur)="finish_to_create()"
+    (keydown)="handler_create_input($event, true)"
+    class="hover:bg-gray-200 dark:hover:bg-gray-700 ml-1 pl-1 outline outline-gray-600 outline-1 border-r-transparent dark:bg-gray-700 w-10/12"
+  />
+  } @else {
+  <p
+    class="cursor-default w-full hover:bg-gray-200 dark:hover:bg-gray-700"
+    (contextmenu)="$event.stopPropagation(); show_options($event);"
+    [style.padding-left.rem]="floor() * 0.5"
+  >
+    <span class="cursor-pointer" (click)="open_folder()">
+      <ng-icon [name]="this.is_open() ? 'open' : 'close'" />
+      {{this.folders()?.folder_name}}
+    </span>
+  </p>
+  } } @if (this.is_open()) { @for (folder of this.folders()?.folders; track $index) {
+  <tree-folder-component class="w-full" [folders]="folder" [floor]="floor() + 1" />
+  } @for (file of this.folders()?.files; track $index) {
+  <div
+    (click)="open_file(file)"
+    (contextmenu)="show_options($event, $index); $event.stopPropagation()"
+    [style.padding-left.rem]="floor() * 0.75"
+    [class.file-selected]="folder_services.current_note() === file"
+    class="cursor-pointer w-full hover:bg-gray-200 dark:hover:bg-gray-700 flex"
+  >
+    <span class="text-blue-600 dark:text-blue-400">
+      <ng-icon name="txt" />
+    </span>
+    @if (folder_services.file_to_rename() === file) {
+    <input
+      type="text"
+      appFocusOnCreate
+      #rename_input
+      [value]="file.title"
+      (blur)="finish_to_rename()"
+      (keydown)="handler_rename_input($event)"
+      class="hover:bg-gray-200 dark:hover:bg-gray-700 ml-1 pl-1 outline outline-gray-600 outline-1 border-r-transparent dark:bg-gray-700 w-10/12"
+    />
+    } @else if (folder_services.file_to_create() === file) {
+    <input
+      type="text"
+      appFocusOnCreate
+      #create_input
+      [value]=""
+      (blur)="finish_to_create()"
+      (keydown)="handler_create_input($event)"
+      class="hover:bg-gray-200 dark:hover:bg-gray-700 ml-1 pl-1 outline outline-gray-600 outline-1 border-r-transparent dark:bg-gray-700 w-10/12"
+    />
+    } @else {
+    <p class="w-full text-nowrap overflow-x-hidden text-ellipsis pl-1">{{file.title}}</p>
     }
-
-    @if (this.is_open()) {
-
-        @for (folder of this.folders()?.folders; track $index) {
-            <tree-folder-component class="w-full" [folders]="folder" [floor]="floor() + 1"/>
-        }
-
-        @for (file of this.folders()?.files; track $index) {
-        <div
-        (click)="open_file(file)"
-        (contextmenu)="show_options($event, $index); $event.stopPropagation()"
-        [style.padding-left.rem]="floor() * 0.75"
-        [class.file-selected]="folder_services.current_note() == file"
-        class="cursor-pointer w-full hover:bg-gray-200 dark:hover:bg-gray-700 flex"
-        >
-            <span class="text-blue-600 dark:text-blue-400">
-                <ng-icon name="txt" />
-            </span>
-            @if (folder_services.file_to_rename() == file) {
-                <input type="text" appFocusOnCreate #rename_input
-                [value]="file.title" 
-                (blur)="finish_to_rename()"
-                (keydown)="handler_rename_input($event)"
-                class="hover:bg-gray-200 dark:hover:bg-gray-700 ml-1 pl-1 outline outline-gray-600 
-                outline-1 border-r-transparent dark:bg-gray-700 w-10/12"
-                />
-            } 
-            
-            @else if (folder_services.file_to_create() == file) {
-                <input type="text" appFocusOnCreate #create_input
-                [value]=""
-                (blur)="finish_to_create()"
-                (keydown)="handler_create_input($event)"
-                class="hover:bg-gray-200 dark:hover:bg-gray-700 ml-1 pl-1 outline outline-gray-600 
-                outline-1 border-r-transparent dark:bg-gray-700 w-10/12"
-                />
-            }
-            
-            @else {
-                <p class="w-full text-nowrap overflow-x-hidden text-ellipsis pl-1">
-                    {{file.title}}
-                </p>
-            }
-        </div> 
-        }
-    }
+  </div>
+  } }
 </div>
 
 <style>
-    .file-selected {
-        @apply bg-gray-300 dark:bg-gray-700;
+  .file-selected {
+    @apply bg-gray-300 dark:bg-gray-700;
 
-        input {
-            @apply bg-gray-300 dark:bg-gray-700 ;
-        }
+    input {
+      @apply bg-gray-300 dark:bg-gray-700;
     }
+  }
 </style>

@@ -1,23 +1,20 @@
-import { Routes } from "@angular/router";
-import { MainPage } from "./pages/main-page/main-page";
-import { NotesPage } from "./pages/notes-page/notes-page";
-import { SettingsPage } from "./pages/settings-page/settings-page";
+import { Routes } from '@angular/router';
 
 export const routes: Routes = [
-    {
-        path:'',
-        component: MainPage
-    },
-    {
-        path:'notes',
-        component: NotesPage
-    },
-    {
-        path:'settings',
-        component: SettingsPage,
-    },
-    {
-        path:"**",
-        redirectTo: ""
-    }
+  {
+    path: '',
+    loadComponent: () => import('./pages/main-page/main-page').then((m) => m.MainPage),
+  },
+  {
+    path: 'notes',
+    loadComponent: () => import('./pages/notes-page/notes-page').then((m) => m.NotesPage),
+  },
+  {
+    path: 'settings',
+    loadComponent: () => import('./pages/settings-page/settings-page').then((m) => m.SettingsPage),
+  },
+  {
+    path: '**',
+    redirectTo: '',
+  },
 ];

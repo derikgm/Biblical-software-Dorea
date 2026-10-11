@@ -12,13 +12,13 @@
   "app": {
     "windows": [
       {
-        "title": "dorea",
+        "title": "Dorea",
         "width": 800,
         "height": 600
       }
     ],
     "security": {
-      "csp": null
+      "csp": "default-src 'self'; connect-src ipc: http://ipc.localhost https://api.getbible.net; style-src 'self' 'unsafe-inline'; img-src 'self' data:; font-src 'self' data:"
     }
   },
   "bundle": {

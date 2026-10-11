@@ -10,7 +10,9 @@
 /node_modules
 npm-debug.log
 yarn-error.log
-pnpm-lock.yaml
+# Gestor de paquetes unificado: pnpm (pnpm-lock.yaml SÍ se versiona)
+package-lock.json
+yarn.lock
 src-tauri/Data/
 
 # IDEs and editors

@@ -7,16 +7,15 @@ import { invoke } from '@tauri-apps/api/core';
 })
 export class LanguageServices {
   data = signal<LanguageSettings | undefined>(undefined);
-  current_language = signal<string>("en");
+  current_language = signal<string>('en');
 
-  async init(){
-    
+  async init() {
     await invoke('get_language', {})
-    .then((v) => {
-      this.data.set(v as unknown as LanguageSettings)
-    })
-    .catch((e) => {
-      console.log(e);
-    });
+      .then((v) => {
+        this.data.set(v as unknown as LanguageSettings);
+      })
+      .catch((e) => {
+        console.error(e);
+      });
   }
 }

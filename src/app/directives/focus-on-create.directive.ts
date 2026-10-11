@@ -1,15 +1,15 @@
 // focus-on-create.directive.ts
-import { Directive, ElementRef, AfterViewInit } from '@angular/core';
+import { Directive, ElementRef, AfterViewInit, inject } from '@angular/core';
 
 @Directive({
-  selector: '[appFocusOnCreate]'
+  selector: '[appFocusOnCreate]',
 })
 export class FocusOnCreateDirective implements AfterViewInit {
-  constructor(private el: ElementRef) {}
+  private el = inject(ElementRef);
 
   ngAfterViewInit() {
     setTimeout(() => {
-        this.el.nativeElement.focus();
+      this.el.nativeElement.focus();
     }, 0);
   }
 }

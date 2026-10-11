@@ -1,14 +1,26 @@
 {
   "name": "dorea",
   "version": "0.1.0",
+  "description": "App de escritorio de lectura bíblica y notas (Angular 20 + Tauri 2 + Rust).",
+  "private": true,
+  "packageManager": "pnpm@10.34.5",
   "scripts": {
     "ng": "ng",
     "start": "ng serve",
     "build": "ng build",
+    "build:dev": "ng build --configuration development",
     "watch": "ng build --watch --configuration development",
-    "tauri": "tauri"
+    "tauri": "tauri",
+    "tauri:dev": "tauri dev",
+    "tauri:build": "tauri build",
+    "check": "tsc -p tsconfig.app.json --noEmit",
+    "lint": "eslint \"src/**/*.{ts,html}\"",
+    "lint:fix": "eslint \"src/**/*.{ts,html}\" --fix",
+    "format": "prettier --write \"src/**/*.{ts,html,css,json}\"",
+    "format:check": "prettier --check \"src/**/*.{ts,html,css,json}\"",
+    "rust:fmt": "cargo fmt --manifest-path src-tauri/Cargo.toml",
+    "rust:clippy": "cargo clippy --manifest-path src-tauri/Cargo.toml -- -D warnings"
   },
-  "private": true,
   "dependencies": {
     "@angular/common": "^20.1.4",
     "@angular/compiler": "^20.1.4",
@@ -31,10 +43,16 @@
     "@angular/build": "^20.1.4",
     "@angular/cli": "^20.1.4",
     "@angular/compiler-cli": "^20.1.4",
+    "@eslint/js": "^9",
     "@tauri-apps/cli": "^2",
+    "angular-eslint": "^20",
     "autoprefixer": "^10.5.2",
+    "eslint": "^9",
+    "eslint-config-prettier": "^10",
     "postcss": "^8.5.16",
+    "prettier": "^3",
     "tailwindcss": "^3.4.19",
-    "typescript": "~5.8.3"
+    "typescript": "~5.8.3",
+    "typescript-eslint": "^8"
   }
 }

@@ -1,0 +1,8 @@
+node_modules
+dist
+.angular
+src-tauri/target
+src-tauri/Data
+pnpm-lock.yaml
+package-lock.json
+*.md

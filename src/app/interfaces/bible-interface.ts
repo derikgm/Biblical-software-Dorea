@@ -34,25 +34,25 @@ export interface Chapter {
 }
 
 export interface Verse {
-  chapter: number;     
-  verse: number;       
-  name: string;        
+  chapter: number;
+  verse: number;
+  name: string;
   text: string;
 }
 
 export interface IndexedVerse {
-    book_number: number,
-    chapter_number: number,
-    verse_number: number,
-    verse_string: string,
+  book_number: number;
+  chapter_number: number;
+  verse_number: number;
+  verse_string: string;
 }
 
 export interface Mark {
-    style: number,
-    start: number,
-    end: number,
-    book: number,
-    chapter: number,
-    start_verse: number,
-    end_verse: number,
+  style: number;
+  start: number;
+  end: number;
+  book: number;
+  chapter: number;
+  start_verse: number;
+  end_verse: number;
 }

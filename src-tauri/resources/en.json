@@ -11,7 +11,9 @@
         "delete": "Delete"
     },
     "notes": {
-        "file_empty": "This file is empty"
+        "file_empty": "This file is empty",
+        "no_linked_verse": "No linked verses to this note",
+        "add_new_note": "Add new note"
     },
     "close": "close",
     "bible_empty": "There is no Bible available; please download one from the options panel."

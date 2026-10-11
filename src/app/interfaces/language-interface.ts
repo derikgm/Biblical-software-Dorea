@@ -1,18 +1,20 @@
 export interface LanguageSettings {
-    change_to: {
-        option_name: string,
-        row: string,
-        lineal: string,
-    },
-    folder: {
-        create_new_folder: string,
-        create_new_note: string,
-        change_name: string,
-        delete: string,
-    }
-    notes: {
-        file_empty: string
-    },
-    close: string,
-    bible_empty: string,
+  change_to: {
+    option_name: string;
+    row: string;
+    lineal: string;
+  };
+  folder: {
+    create_new_folder: string;
+    create_new_note: string;
+    change_name: string;
+    delete: string;
+  };
+  notes: {
+    file_empty: string;
+    no_linked_verse?: string;
+    add_new_note?: string;
+  };
+  close: string;
+  bible_empty: string;
 }

@@ -1,127 +1,117 @@
 <div class="flex h-full overflow-x-visible">
-    <aside class="dark-bg light-bg w-12 h-full flex flex-col box-border dark-bg">
-        <div class="flex flex-col h-full text-center text-3xl">
-            <nav class="flex flex-col">
-                <a 
-                [routerLink]='["/"]'
-                [routerLinkActive]='["active"]' 
-                [routerLinkActiveOptions]="{exact: true}"
-                (click)="ancor_handler(0)"
-                > 
-                    <ng-icon name="bible" class=""></ng-icon>
-                </a>
-            
-                <a 
-                [routerLink]='["/notes"]'
-                [routerLinkActive]='["active"]' 
-                [routerLinkActiveOptions]="{exact: true}"
-                (click)="ancor_handler(1)"
-                > 
-                    <ng-icon name="notes" class=""></ng-icon>
-                </a>
-                
-                <a 
-                [routerLink]='["/settings"]'
-                [routerLinkActive]='["active"]' 
-                [routerLinkActiveOptions]="{exact: true}"
-                (click)="ancor_handler(-1)"
-                > 
-                    <ng-icon name="settings" class=""></ng-icon>
-                </a>
-            </nav>
-
-            <div class="h-full border-r-2"></div>
-
-            <div class="pb-1 border-r-2">
-                <button 
-                class="text-center w-full"
-                (click)="this.theme_services.changeTheme()"
-                >
-                <ng-icon 
-                [name] = "this.theme_services.theme() ? 'dark' : 'light'" 
-                class=""></ng-icon> 
-            </button>
-            </div>
-        </div>
-    </aside>
-
-    @if (sidebar_settings_services.extended_sidebar_open()) {
-        <!-- Para navegar -->
-        <div 
-        class="flex bg-white dark:bg-gray-800 dark:text-white"
-        [style.width.rem]="sidebar_settings_services.sidebar_extended_size()"
+  <aside class="dark-bg light-bg w-12 h-full flex flex-col box-border">
+    <div class="flex flex-col h-full text-center text-3xl">
+      <nav class="flex flex-col">
+        <a
+          [routerLink]='["/"]'
+          [routerLinkActive]='["active"]'
+          [routerLinkActiveOptions]="{exact: true}"
+          (click)="ancor_handler(0)"
+          aria-label="Biblia"
         >
+          <ng-icon name="bible" class=""></ng-icon>
+        </a>
 
-            @if (sidebar_settings_services.current_path() == 0) {
-                <verse-navigation-component 
-                class="w-full overflow-y-auto scrollbar-hidden"
-                />
-            }   
+        <a
+          [routerLink]='["/notes"]'
+          [routerLinkActive]='["active"]'
+          [routerLinkActiveOptions]="{exact: true}"
+          (click)="ancor_handler(1)"
+          aria-label="Notas"
+        >
+          <ng-icon name="notes" class=""></ng-icon>
+        </a>
 
-            @if (sidebar_settings_services.current_path() == 1) {
-                <tree-folder-component 
-                class="w-full h-full overflow-y-auto scrollbar-hidden"
-                [folders]="folder_services.folder_root()"
-                [floor]="1"
-                (contextmenu)="
+        <a
+          [routerLink]='["/settings"]'
+          [routerLinkActive]='["active"]'
+          [routerLinkActiveOptions]="{exact: true}"
+          (click)="ancor_handler(-1)"
+          aria-label="Ajustes"
+        >
+          <ng-icon name="settings" class=""></ng-icon>
+        </a>
+      </nav>
+
+      <div class="h-full border-r-2"></div>
+
+      <div class="pb-1 border-r-2">
+        <button
+          type="button"
+          class="text-center w-full"
+          (click)="this.theme_services.changeTheme()"
+          aria-label="Cambiar tema"
+        >
+          <ng-icon [name]="this.theme_services.theme() ? 'dark' : 'light'" class=""></ng-icon>
+        </button>
+      </div>
+    </div>
+  </aside>
+
+  @if (sidebar_settings_services.extended_sidebar_open()) {
+  <!-- Para navegar -->
+  <div
+    class="flex bg-white dark:bg-gray-800 dark:text-white"
+    [style.width.rem]="sidebar_settings_services.sidebar_extended_size()"
+  >
+    @if (sidebar_settings_services.current_path() === 0) {
+    <verse-navigation-component class="w-full overflow-y-auto scrollbar-hidden" />
+    } @if (sidebar_settings_services.current_path() === 1) {
+    <tree-folder-component
+      class="w-full h-full overflow-y-auto scrollbar-hidden"
+      [folders]="folder_services.folder_root()"
+      [floor]="1"
+      (contextmenu)="
                     $event.preventDefault();
                     this.folder_services.show_folder_option_from_extended_sidebar($event.x, $event.y);
                 "
-                />
-            }
-
-            <div 
-            (mousedown)="sidebar_settings_services.enabled_resizing($event)"
-            class="resize-border"
-            >
-                <div>
-                    <div></div>
-                </div>
-            </div>
-        </div>
+    />
     }
 
-
+    <div (mousedown)="sidebar_settings_services.enabled_resizing($event)" class="resize-border">
+      <div>
+        <div></div>
+      </div>
+    </div>
+  </div>
+  }
 </div>
 
 <style>
+  .resize-border {
+    @apply flex justify-center bg-transparent;
+    div {
+      @apply bg-transparent flex justify-center;
+      width: 0.3rem;
+      margin-left: -0.15rem;
 
-        .resize-border{
-        @apply flex justify-center bg-transparent;
-        div {
-            @apply bg-transparent flex justify-center;
-            width: 0.30rem;
-            margin-left: -0.15rem;
-
-            div {
-                @apply bg-gray-200;
-                width: 0.125rem;
-            }
-        }
+      div {
+        @apply bg-gray-200;
+        width: 0.125rem;
+      }
     }
+  }
 
-    .resize-border:hover {
-        display: flex;
-        div {
-                    @apply bg-blue-500 cursor-col-resize;
+  .resize-border:hover {
+    display: flex;
+    div {
+      @apply bg-blue-500 cursor-col-resize;
 
-        div {
-            @apply bg-blue-500; 
-        }
-        }
+      div {
+        @apply bg-blue-500;
+      }
     }
+  }
 
-    .active {
-    @apply text-blue-400 border-l-2 border-l-blue-400 
-    }
+  .active {
+    @apply text-blue-400 border-l-2 border-l-blue-400;
+  }
 
-    .top-active {
-    @apply text-blue-400 bg-white dark:bg-gray-800 rounded-l-lg border-r-0 border-b-2
-    }
+  .top-active {
+    @apply text-blue-400 bg-white dark:bg-gray-800 rounded-l-lg border-r-0 border-b-2;
+  }
 
-    a {
-        @apply py-3 font-bold hover:dark:bg-gray-500/20 border-r-2 border-l-transparent border-l-2;
-    }
+  a {
+    @apply py-3 font-bold hover:dark:bg-gray-500/20 border-r-2 border-l-transparent border-l-2;
+  }
 </style>
-
-

@@ -1,43 +1,40 @@
 <main class="h-screen flex flex-col">
-
   @if (global_settings_services.is_loading_the_app()) {
-    <spin-component class="absolute inset-0 z-50"/>
+    <spin-component class="absolute inset-0 z-50" />
   } @else {
     <div class="flex flex-col h-full">
-      <topbar-component class="sticky top-0 z-10"/>
-      
+      <topbar-component class="sticky top-0 z-10" />
+
       <div class="flex flex-row flex-1 overflow-hidden">
-        <sidebar-component class="sticky top-0 h-full overflow-y-visible"/>
+        <sidebar-component class="sticky top-0 h-full overflow-y-visible" />
 
         <div class="flex-1 relative overflow-hidden">
-          
-          <div class="overflow-y-auto dark:bg-gray-800 dark:border-black/0 dark:text-white w-full h-full 
-          scrollbar-hidden">
+          <div
+            class="overflow-y-auto dark:bg-gray-800 dark:border-black/0 dark:text-white w-full h-full scrollbar-hidden"
+          >
             <div class="px-4 xl:px-16 w-full h-full">
               <router-outlet />
             </div>
           </div>
-          
+
           <!-- Spin -->
           @if (global_settings_services.is_loading()) {
-            <spin-component class="absolute "/>
+            <spin-component class="absolute" />
           }
 
           @if (bible_services.open_search_result()) {
-            <search-result-component class="absolute inset-0 z-50"/>
+            <search-result-component class="absolute inset-0 z-50" />
           }
 
-          @if(this.folder_services.show_notes_searcher()){
-            <search-note-component class="absolute inset-0 z-50"/>
+          @if (this.folder_services.show_notes_searcher()) {
+            <search-note-component class="absolute inset-0 z-50" />
           }
-
         </div>
       </div>
     </div>
-
   }
 </main>
 
-@if(folder_services.show_file_and_folder_options()){
-    <folder-options-component/>
+@if (folder_services.show_file_and_folder_options()) {
+  <folder-options-component />
 }
