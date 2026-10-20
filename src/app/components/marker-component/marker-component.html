@@ -1,28 +1,38 @@
 <div
   #menu_container
-  class="w-full h-full dark-bg light-bg rounded border-2 justify-around shadow-md flex items-center absolute"
+  class="dark-bg light-bg absolute flex h-full w-full items-center justify-around rounded border-2 shadow-md"
   [style.z-index]="10"
 >
-  <div
+  <button
+    type="button"
+    aria-label="Rojo"
     (click)="this.colorMark.emit(0)"
-    class="cursor-pointer w-6 h-6 bg-red-700 rounded-full border border-gray-500"
-  ></div>
-  <div
+    class="reset-button h-6 w-6 rounded-full border border-gray-500 bg-red-700"
+  ></button>
+  <button
+    type="button"
+    aria-label="Azul"
     (click)="this.colorMark.emit(1)"
-    class="cursor-pointer w-6 h-6 bg-blue-700 rounded-full border border-gray-500"
-  ></div>
-  <div
+    class="reset-button h-6 w-6 rounded-full border border-gray-500 bg-blue-700"
+  ></button>
+  <button
+    type="button"
+    aria-label="Verde"
     (click)="this.colorMark.emit(2)"
-    class="cursor-pointer w-6 h-6 bg-green-700 rounded-full border border-gray-500"
-  ></div>
-  <div
+    class="reset-button h-6 w-6 rounded-full border border-gray-500 bg-green-700"
+  ></button>
+  <button
+    type="button"
+    aria-label="Violeta"
     (click)="this.colorMark.emit(3)"
-    class="cursor-pointer w-6 h-6 bg-violet-700 rounded-full border border-gray-500"
-  ></div>
-  <div
+    class="reset-button h-6 w-6 rounded-full border border-gray-500 bg-violet-700"
+  ></button>
+  <button
+    type="button"
+    aria-label="Quitar marca"
     (click)="this.colorMark.emit(4)"
-    class="cursor-pointer w-6 h-6 rounded-full border border-black items-center justify-center flex"
+    class="reset-button flex h-6 w-6 items-center justify-center rounded-full border border-black"
   >
-    <ng-icon name="cruz"></ng-icon>
-  </div>
+    <ng-icon name="cruz" />
+  </button>
 </div>

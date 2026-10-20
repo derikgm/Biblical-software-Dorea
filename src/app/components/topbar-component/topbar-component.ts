@@ -1,12 +1,12 @@
 import { Component, ElementRef, inject, ViewChild } from '@angular/core';
 import { provideIcons, NgIcon } from '@ng-icons/core';
 import { heroMagnifyingGlass, heroMinus, heroPlus } from '@ng-icons/heroicons/outline';
-import { FontSettingsServices } from '../../services/font_settings-services';
+import { FontSettingsServices } from '../../services/font-settings-services';
 import { BibleServices } from '../../services/bible-services';
-import { GlobalSettingsServices } from '../../services/global_settings-services';
+import { GlobalSettingsServices } from '../../services/global-settings-services';
 
 @Component({
-  selector: 'topbar-component',
+  selector: 'app-topbar',
   imports: [NgIcon],
   templateUrl: './topbar-component.html',
   styleUrl: './topbar-component.css',

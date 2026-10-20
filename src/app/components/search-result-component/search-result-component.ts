@@ -21,10 +21,10 @@ import {
 import { coolDoubleQuotesR, coolSingleQuotesR } from '@ng-icons/coolicons';
 import { IndexedVerse } from '../../interfaces/bible-interface';
 import { RouterLink } from '@angular/router';
-import { SidebarSettingsServices } from '../../services/sidebar_settings-services';
+import { SidebarSettingsServices } from '../../services/sidebar-settings-services';
 
 @Component({
-  selector: 'search-result-component',
+  selector: 'app-search-result',
   imports: [NgIcon, RouterLink],
   providers: [
     provideIcons({

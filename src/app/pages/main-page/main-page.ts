@@ -13,20 +13,20 @@ import {
   ViewChildren,
 } from '@angular/core';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
-import { FontSettingsServices } from '../../services/font_settings-services';
+import { FontSettingsServices } from '../../services/font-settings-services';
 import { MarkerComponent } from '../../components/marker-component/marker-component';
 import { BibleServices } from '../../services/bible-services';
 import { VisibleDirective } from '../../directives/visible-directive';
 import { provideIcons } from '@ng-icons/core';
 import { heroBars3, heroBars3CenterLeft, heroEquals, heroPause } from '@ng-icons/heroicons/outline';
-import { BibleOptionComponent } from '../../components/bible_option-component/bible_option-component';
-import { GlobalSettingsServices } from '../../services/global_settings-services';
+import { BibleOptionComponent } from '../../components/bible-option-component/bible-option-component';
+import { GlobalSettingsServices } from '../../services/global-settings-services';
 import { LanguageServices } from '../../services/language-services';
-import { MarkerServices } from '../../services/marker_services';
-import { MarkOptionsComponent } from '../../components/mark_options-component/mark_options-component';
+import { MarkerServices } from '../../services/marker-services';
+import { MarkOptionsComponent } from '../../components/mark-options-component/mark-options-component';
 
 @Component({
-  selector: 'main-page',
+  selector: 'app-main-page',
   imports: [MarkerComponent, VisibleDirective, BibleOptionComponent, MarkOptionsComponent],
   providers: [
     provideIcons({

@@ -55,9 +55,9 @@
     [style.width.rem]="sidebar_settings_services.sidebar_extended_size()"
   >
     @if (sidebar_settings_services.current_path() === 0) {
-    <verse-navigation-component class="w-full overflow-y-auto scrollbar-hidden" />
+    <app-verse-navigation class="w-full overflow-y-auto scrollbar-hidden" />
     } @if (sidebar_settings_services.current_path() === 1) {
-    <tree-folder-component
+    <app-tree-folder
       class="w-full h-full overflow-y-auto scrollbar-hidden"
       [folders]="folder_services.folder_root()"
       [floor]="1"

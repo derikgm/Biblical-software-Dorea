@@ -10,7 +10,7 @@ Lista de tareas de mejora del proyecto (errores, correcciones, limpieza, organiz
 > - `cargo check` / `cargo check --release`: **OK**.
 > - `cargo fmt --check` / `cargo clippy`: **OK** (sin avisos).
 > - `cargo test --lib`: **OK** (5/5).
-> - `pnpm run lint` / `pnpm run format:check`: **OK**.
+> - `pnpm run lint` / `pnpm run format:check`: **OK** (0 errores, 0 avisos; accesibilidad de plantillas exigida como error).
 
 Prioridades: 🔴 Crítico · 🟠 Alto · 🟡 Medio · 🟢 Bajo
 
@@ -24,7 +24,7 @@ Leyenda: `[x]` cumplido · `[ ]` pendiente.
 - **Sección 2 (lógica):** 14/16 completados.
 - **Sección 3 (Rust):** 10/15 completados.
 - **Sección 4 (limpieza):** 5/7 completados.
-- **Sección 5 (organización):** 7/15 completados.
+- **Sección 5 (organización):** 9/15 completados.
 - **Sección 6 (diseño):** 4/14 completados.
 - **Sección 7 (accesibilidad):** 3/6 completados.
 - **Sección 8 (rendimiento):** 5/8 completados.
@@ -100,12 +100,12 @@ Leyenda: `[x]` cumplido · `[ ]` pendiente.
 
 ## 5. Organización y buenas prácticas
 
-- [ ] 🟠 **Nombres de archivos inconsistentes.** Mezcla `_` y `-`: `bible_option-component.ts`, `folder_options-component.ts`, `mark_options-component.ts`, `search_note-component.ts`, `search_result-component.ts`, `tree_folder-component.ts`, `verse_navigation-component.ts`. Estandarizar.
+- [x] 🟠 **Nombres de archivos inconsistentes.** Mezcla `_` y `-`: `bible_option-component.ts`, `folder_options-component.ts`, `mark_options-component.ts`, `search_note-component.ts`, `search_result-component.ts`, `tree_folder-component.ts`, `verse_navigation-component.ts`. Estandarizar. Todos renombrados a kebab-case con `git mv` (componentes, `tree-folder-interfaces.ts`, `font-settings-services.ts`, `global-settings-services.ts`, `marker-services.ts`, `sidebar-settings-services.ts`); imports y `templateUrl`/`styleUrl` actualizados. ✅
 - [x] 🟠 **Carpeta mal escrita `src/app/stratergies/`.** Eliminada junto al `CustomRouteReuseStrategy` (código muerto, no estaba cableado). ✅
-- [ ] 🟠 **Prefijo de selectores incoherente.** `angular.json` define `prefix: "app"`, pero los selectores son `main-page`, `notes-page`, etc. sin prefijo.
+- [x] 🟠 **Prefijo de selectores incoherente.** `angular.json` define `prefix: "app"`, pero los selectores son `main-page`, `notes-page`, etc. sin prefijo. Todos los selectores de componentes y directivas usan ahora `app-`/`appX` (`app-bible-option`, `app-sidebar`, `app-tree-folder`, `appElementVisible`, etc.) y las plantillas se actualizaron. ESLint lo exige como error. ✅
 - [ ] 🟠 **Idioma de nombres mezclado** (español/inglés y snake_case/camelCase). Adoptar una convención única.
 - [x] 🟠 **`current_path_enum` en minúsculas.** Renombrado a `CurrentPath`. ✅
-- [x] 🟡 **`NoteFSOptions` definido y sin usar.** Eliminado de `tree_folder-interfaces.ts`. ✅
+- [x] 🟡 **`NoteFSOptions` definido y sin usar.** Eliminado de `tree-folder-interfaces.ts`. ✅
 - [x] 🟡 **`README.md` era la plantilla por defecto.** Reemplazado por documentación real (descripción, requisitos, scripts, estructura, estado). ✅
 - [x] 🟡 **`package.json` sin descripción y scripts mínimos.** Añadidos `description` y scripts `build:dev`, `tauri:dev`, `tauri:build`, `check`. ✅
 - [x] 🟡 **`index.html` `<title>Tauri + Angular</title>` y `lang="en"`.** Corregido a `<title>Dorea</title>` y `lang="es"`. ✅
@@ -142,8 +142,8 @@ Leyenda: `[x]` cumplido · `[ ]` pendiente.
 - [x] 🟠 **Navegación invisible/ambigua**: los `<a href="#">` de `bible_option-component` ahora son `<button>`; los enlaces del sidebar tienen `aria-label`. ✅
 - [x] 🟠 **Botones solo con icono sin `aria-label`.** Añadidos en topbar (+, −, buscar), sidebar (biblia, notas, ajustes, tema), notes-page (toggle de versículos) y `search-result` (copiar/citar/ir/cerrar). ✅
 - [ ] 🟡 **Contraste**: `text-black/10`, `bg-gray-200/10`, `text-gray-400` pueden incumplir WCAG AA. Revisar paleta.
-- [x] 🟡 **Foco**: varios controles eran `<div (click)>`; convertidos a `<button>` nativo. ✅
-- [ ] 🟡 **Menús contextuales y modales** no atrapan el foco ni cierran con `Escape`.
+- [x] 🟡 **Foco**: varios controles eran `<div (click)>`/`<span (click)>`; convertidos a `<button>` nativo con clase `.reset-button` (ítems de menú contextual, muestras de color de marcas, resultados del buscador de notas, navegación por libros y toggle de carpetas). Las filas con inputs anidados usan `tabindex="0"` + `(keydown.enter)`. ESLint exige ahora estas reglas como **error**. ✅
+- [ ] 🟡 **Menús contextuales y modales** no atrapan el foco ni cierran con `Escape`. (Hecho: ambos cierran con `Escape` vía `@HostListener('document:keydown.escape')` en `folder-options` y `search-note`. Pendiente: atrapar el foco dentro del modal/menú.)
 - [ ] 🟢 **`@HostListener('wheel')`** para zoom con Ctrl no es accesible sin ratón; añadir atajos de teclado.
 
 ---
@@ -226,7 +226,7 @@ Leyenda: `[x]` cumplido · `[ ]` pendiente.
 6. [x] Arreglar spinners en `settings-page`.
 7. [x] Corregir `get_clean_word` (acentos) y `create_new_folder`.
 8. [x] Quitar `console.log` y código muerto.
-9. [ ] Renombrar archivos/carpetas (`stratergies` ya eliminada) y unificar i18n.
+9. [x] Renombrar archivos/carpetas a kebab-case y unificar selectores con prefijo `app-`.
 10. [x] Añadir ESLint + Prettier + `cargo clippy` y un test base (Rust).
 11. [x] Fusionar `linked_notes.json` con el árbol de notas (marcas al reabrir).
 12. [x] Activar `noUnusedLocals`/`noUnusedParameters`.

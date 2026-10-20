@@ -9,13 +9,13 @@ import {
 } from '@ng-icons/heroicons/outline';
 import { ThemeServices } from '../../services/theme-services';
 import { RouterLink, RouterLinkActive } from '@angular/router';
-import { TreeFolderComponent } from '../tree_folder-component/tree_folder-component';
+import { TreeFolderComponent } from '../tree-folder-component/tree-folder-component';
 import { FolderServices } from '../../services/folder-services';
-import { SidebarSettingsServices } from '../../services/sidebar_settings-services';
-import { VerseNavigationComponent } from '../verse_navigation-component/verse_navigation-component';
+import { SidebarSettingsServices } from '../../services/sidebar-settings-services';
+import { VerseNavigationComponent } from '../verse-navigation-component/verse-navigation-component';
 
 @Component({
-  selector: 'sidebar-component',
+  selector: 'app-sidebar',
   imports: [
     NgIconComponent,
     RouterLink,

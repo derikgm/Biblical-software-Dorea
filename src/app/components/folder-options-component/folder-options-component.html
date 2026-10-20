@@ -1,0 +1,47 @@
+<div class="fixed inset-0 z-50">
+  <button
+    type="button"
+    aria-label="Cerrar menú"
+    class="reset-button absolute inset-0 h-full w-full cursor-default"
+    (click)="this.folder_services.close_folder_option()"
+  ></button>
+
+  <div
+    #menu_container
+    class="dark-bg light-bg absolute z-50 overflow-visible rounded-lg border whitespace-nowrap shadow-md"
+    [style.left.px]="x_position()"
+    [style.top.px]="y_position()"
+  >
+    <button
+      type="button"
+      class="reset-button block w-full rounded-t-lg px-2 py-2 hover:bg-gray-300 hover:dark:bg-gray-700"
+      (click)="create_new_folder()"
+    >
+      {{ folder_lang?.create_new_folder }}
+    </button>
+    <button
+      type="button"
+      class="reset-button block w-full px-2 py-2 hover:bg-gray-300 hover:dark:bg-gray-700"
+      (click)="create_new_note()"
+    >
+      {{ folder_lang?.create_new_note }}
+    </button>
+
+    @if (!is_from_extended_sidebar()) {
+    <button
+      type="button"
+      class="reset-button block w-full px-2 py-2 hover:bg-gray-300 hover:dark:bg-gray-700"
+      (click)="rename_file_or_folder()"
+    >
+      {{ folder_lang?.change_name }}
+    </button>
+    <button
+      type="button"
+      class="reset-button block w-full rounded-b-lg px-2 py-2 hover:bg-gray-300 hover:dark:bg-gray-700"
+      (click)="delete_file_or_folder()"
+    >
+      {{ folder_lang?.delete }}
+    </button>
+    }
+  </div>
+</div>

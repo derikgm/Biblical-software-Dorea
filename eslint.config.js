@@ -18,13 +18,12 @@ module.exports = tseslint.config(
     ],
     processor: angular.processInlineTemplates,
     rules: {
-      // Pendiente: renombrar selectores al prefijo `app` (ver pulimiento.md, sección 5).
       '@angular-eslint/component-selector': [
-        'warn',
+        'error',
         { type: 'element', prefix: 'app', style: 'kebab-case' },
       ],
       '@angular-eslint/directive-selector': [
-        'warn',
+        'error',
         { type: 'attribute', prefix: 'app', style: 'camelCase' },
       ],
     },
@@ -32,11 +31,6 @@ module.exports = tseslint.config(
   {
     files: ['**/*.html'],
     extends: [...angular.configs.templateRecommended, ...angular.configs.templateAccessibility],
-    rules: {
-      // Pendiente: migrar los elementos clicables no nativos a <button>/roles con teclado.
-      // Está tracked en pulimiento.md (sección 7, accesibilidad); de momento se avisa sin romper CI.
-      '@angular-eslint/template/click-events-have-key-events': 'warn',
-      '@angular-eslint/template/interactive-supports-focus': 'warn',
-    },
+    rules: {},
   },
 );

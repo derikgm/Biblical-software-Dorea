@@ -10,7 +10,7 @@ import {
 } from '@angular/core';
 
 @Directive({
-  selector: '[elementVisible]',
+  selector: '[appElementVisible]',
 })
 export class VisibleDirective implements OnInit, OnDestroy {
   @Output() visible = new EventEmitter<HTMLElement>();

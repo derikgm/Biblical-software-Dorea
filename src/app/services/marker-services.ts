@@ -2,7 +2,7 @@ import { inject, Injectable, signal } from '@angular/core';
 import { Mark } from '../interfaces/bible-interface';
 import { invoke } from '@tauri-apps/api/core';
 import { BibleServices } from './bible-services';
-import { Note } from '../interfaces/tree_folder-interfaces';
+import { Note } from '../interfaces/tree-folder-interfaces';
 
 @Injectable({
   providedIn: 'root',

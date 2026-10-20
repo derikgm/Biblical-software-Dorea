@@ -6,12 +6,12 @@ import { LanguageServices } from './services/language-services';
 import { BibleServices } from './services/bible-services';
 import { FolderServices } from './services/folder-services';
 import { SpinComponent } from './components/spin-component/spin-component';
-import { GlobalSettingsServices } from './services/global_settings-services';
-import { FontSettingsServices } from './services/font_settings-services';
-import { SearchResultComponent } from './components/search_result-component/search_result-component';
-import { FolderOptionsComponent } from './components/folder_options-component/folder_options-component';
-import { MarkerServices } from './services/marker_services';
-import { SearchNoteComponent } from './components/search_note-component/search_note-component';
+import { GlobalSettingsServices } from './services/global-settings-services';
+import { FontSettingsServices } from './services/font-settings-services';
+import { SearchResultComponent } from './components/search-result-component/search-result-component';
+import { FolderOptionsComponent } from './components/folder-options-component/folder-options-component';
+import { MarkerServices } from './services/marker-services';
+import { SearchNoteComponent } from './components/search-note-component/search-note-component';
 
 @Component({
   selector: 'app-root',

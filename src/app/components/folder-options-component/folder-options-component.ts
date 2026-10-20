@@ -1,12 +1,20 @@
-import { AfterViewInit, Component, ElementRef, inject, signal, ViewChild } from '@angular/core';
+import {
+  AfterViewInit,
+  Component,
+  ElementRef,
+  HostListener,
+  inject,
+  signal,
+  ViewChild,
+} from '@angular/core';
 import { FolderServices } from '../../services/folder-services';
 import { LanguageServices } from '../../services/language-services';
 
 @Component({
-  selector: 'folder-options-component',
+  selector: 'app-folder-options',
   imports: [],
-  templateUrl: './folder_options-component.html',
-  styleUrl: './folder_options-component.css',
+  templateUrl: './folder-options-component.html',
+  styleUrl: './folder-options-component.css',
 })
 export class FolderOptionsComponent implements AfterViewInit {
   @ViewChild('menu_container') menu_container!: ElementRef<HTMLDivElement>;
@@ -43,5 +51,10 @@ export class FolderOptionsComponent implements AfterViewInit {
 
   delete_file_or_folder() {
     this.folder_services.delete_folder_or_file();
+  }
+
+  @HostListener('document:keydown.escape')
+  close() {
+    this.folder_services.close_folder_option();
   }
 }

@@ -1,14 +1,14 @@
 import { Component, ElementRef, inject, input, signal, ViewChild } from '@angular/core';
-import { Folder, Note } from '../../interfaces/tree_folder-interfaces';
+import { Folder, Note } from '../../interfaces/tree-folder-interfaces';
 import { FolderServices } from '../../services/folder-services';
 import { provideIcons, NgIcon } from '@ng-icons/core';
 import { heroChevronRight, heroChevronDown, heroDocumentText } from '@ng-icons/heroicons/outline';
 import { FocusOnCreateDirective } from '../../directives/focus-on-create.directive';
 
 @Component({
-  selector: 'tree-folder-component',
+  selector: 'app-tree-folder',
   imports: [NgIcon, FocusOnCreateDirective],
-  templateUrl: './tree_folder-component.html',
+  templateUrl: './tree-folder-component.html',
   providers: [
     provideIcons({
       close: heroChevronRight,
@@ -55,6 +55,8 @@ export class TreeFolderComponent {
   handler_rename_input(event: KeyboardEvent, is_dir = false) {
     const el = event.target as HTMLInputElement;
 
+    if (event.key == 'Enter') event.stopPropagation();
+
     if (FORBIDDEN_CHARACTERS.has(event.key)) {
       setTimeout(() => {
         el.value = el.value.slice(0, -1);
@@ -72,6 +74,8 @@ export class TreeFolderComponent {
 
   handler_create_input(event: KeyboardEvent, is_dir: boolean = false) {
     const el = event.target as HTMLInputElement;
+
+    if (event.key == 'Enter') event.stopPropagation();
 
     if (FORBIDDEN_CHARACTERS.has(event.key)) {
       setTimeout(() => {

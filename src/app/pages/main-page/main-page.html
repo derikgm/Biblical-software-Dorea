@@ -5,7 +5,7 @@
     [style.top.px]="y_marker_position()"
     [style.left.px]="x_marker_position()"
   >
-    <marker-component class="w-full h-full" (colorMark)="handlerSelected($event)" />
+    <app-marker class="w-full h-full" (colorMark)="handlerSelected($event)" />
   </div>
 
   <div
@@ -14,11 +14,11 @@
     [style.top.px]="y_mark_options_position()"
     [style.left.px]="x_mark_options_position()"
   >
-    <mark-options-component class="w-full h-full flex justify-around items-center" />
+    <app-mark-options class="w-full h-full flex justify-around items-center" />
   </div>
 
   <div class="flex flex-col" #text_option>
-    <bible-option-component [text_option]="text_option" />
+    <app-bible-option [text_option]="text_option" />
 
     <div>
       @if (current_book() === undefined) {
@@ -26,7 +26,7 @@
       } @else { @for (chapter of current_book()?.chapters; track $index) {
       <div
         class=""
-        elementVisible
+        appElementVisible
         #div_chapter
         [id]="$index"
         (visible)="handler_chapter_visibility($index + 1, true)"

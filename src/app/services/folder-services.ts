@@ -1,5 +1,5 @@
 import { Injectable, signal } from '@angular/core';
-import { Folder, Note } from '../interfaces/tree_folder-interfaces';
+import { Folder, Note } from '../interfaces/tree-folder-interfaces';
 import { invoke } from '@tauri-apps/api/core';
 
 @Injectable({

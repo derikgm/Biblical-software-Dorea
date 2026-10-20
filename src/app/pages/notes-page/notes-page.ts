@@ -8,7 +8,7 @@ import { BibleServices } from '../../services/bible-services';
 import { Mark } from '../../interfaces/bible-interface';
 
 @Component({
-  selector: 'notes-page',
+  selector: 'app-notes-page',
   templateUrl: './notes-page.html',
   providers: [
     provideIcons({

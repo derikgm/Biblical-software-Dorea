@@ -3,7 +3,7 @@ import { provideIcons, NgIcon } from '@ng-icons/core';
 import { heroXMark } from '@ng-icons/heroicons/outline';
 
 @Component({
-  selector: 'marker-component',
+  selector: 'app-marker',
   imports: [NgIcon],
   templateUrl: './marker-component.html',
   styleUrl: './marker-component.css',

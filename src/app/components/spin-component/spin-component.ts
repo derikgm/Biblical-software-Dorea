@@ -1,7 +1,7 @@
 import { Component } from '@angular/core';
 
 @Component({
-  selector: 'spin-component',
+  selector: 'app-spin',
   imports: [],
   template: `
     <div

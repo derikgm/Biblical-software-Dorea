@@ -1,13 +1,14 @@
 <div class="select-none">
   @for (book of bible_services.bible()?.books; track $index) {
   <div class="">
-    <p
+    <button
+      type="button"
       (click)="open_caps($index, $event)"
-      class="py-1 px-2 cursor-pointer text-center hover:bg-gray-200 dark:hover:bg-gray-700"
+      class="reset-button block w-full cursor-pointer px-2 py-1 text-center hover:bg-gray-200 dark:hover:bg-gray-700"
       [class.border-b]="show_chaps() !== $index"
     >
       {{book.name}}
-    </p>
+    </button>
 
     @if (show_chaps() === $index) {
 

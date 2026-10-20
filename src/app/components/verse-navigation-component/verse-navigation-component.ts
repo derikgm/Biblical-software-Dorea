@@ -3,9 +3,9 @@ import { BibleServices } from '../../services/bible-services';
 import { Chapter } from '../../interfaces/bible-interface';
 
 @Component({
-  selector: 'verse-navigation-component',
-  templateUrl: './verse_navigation-component.html',
-  styleUrl: './verse_navigation-component.css',
+  selector: 'app-verse-navigation',
+  templateUrl: './verse-navigation-component.html',
+  styleUrl: './verse-navigation-component.css',
 })
 export class VerseNavigationComponent {
   show_chaps = signal<number>(-1);

@@ -1,7 +1,7 @@
 import { inject, Injectable, signal } from '@angular/core';
 import { Bible, Book, IndexedVerse } from '../interfaces/bible-interface';
 import { invoke } from '@tauri-apps/api/core';
-import { GlobalSettingsServices } from './global_settings-services';
+import { GlobalSettingsServices } from './global-settings-services';
 import { Subject } from 'rxjs';
 
 @Injectable({

@@ -1,5 +1,5 @@
 import { inject, Injectable, signal } from '@angular/core';
-import { GlobalSettingsServices } from './global_settings-services';
+import { GlobalSettingsServices } from './global-settings-services';
 
 @Injectable({
   providedIn: 'root',

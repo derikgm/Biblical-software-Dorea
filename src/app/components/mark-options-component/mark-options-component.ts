@@ -4,7 +4,7 @@ import { matAddLinkOutline, matDeleteOutline } from '@ng-icons/material-icons/ou
 import { FolderServices } from '../../services/folder-services';
 
 @Component({
-  selector: 'mark-options-component',
+  selector: 'app-mark-options',
   imports: [NgIcon],
   providers: [
     provideIcons({

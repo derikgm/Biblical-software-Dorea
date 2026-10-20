@@ -2,6 +2,7 @@ import {
   AfterViewInit,
   Component,
   ElementRef,
+  HostListener,
   inject,
   QueryList,
   signal,
@@ -9,16 +10,16 @@ import {
   ViewChildren,
 } from '@angular/core';
 import { FolderServices } from '../../services/folder-services';
-import { Note } from '../../interfaces/tree_folder-interfaces';
+import { Note } from '../../interfaces/tree-folder-interfaces';
 import { Router } from '@angular/router';
-import { SidebarSettingsServices } from '../../services/sidebar_settings-services';
+import { SidebarSettingsServices } from '../../services/sidebar-settings-services';
 import { FocusOnCreateDirective } from '../../directives/focus-on-create.directive';
-import { MarkerServices } from '../../services/marker_services';
+import { MarkerServices } from '../../services/marker-services';
 
 @Component({
-  selector: 'search-note-component',
+  selector: 'app-search-note',
   imports: [FocusOnCreateDirective],
-  templateUrl: 'search_note-component.html',
+  templateUrl: 'search-note-component.html',
 })
 export class SearchNoteComponent implements AfterViewInit {
   @ViewChild('filter_input') filter_input!: ElementRef<HTMLInputElement>;
@@ -151,6 +152,7 @@ export class SearchNoteComponent implements AfterViewInit {
     this.close();
   }
 
+  @HostListener('document:keydown.escape')
   close() {
     this.folder_and_notes_services.show_notes_searcher.set(false);
   }

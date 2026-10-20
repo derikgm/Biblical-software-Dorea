@@ -29,17 +29,19 @@
     (contextmenu)="$event.stopPropagation(); show_options($event);"
     [style.padding-left.rem]="floor() * 0.5"
   >
-    <span class="cursor-pointer" (click)="open_folder()">
+    <button type="button" class="reset-button cursor-pointer" (click)="open_folder()">
       <ng-icon [name]="this.is_open() ? 'open' : 'close'" />
       {{this.folders()?.folder_name}}
-    </span>
+    </button>
   </p>
   } } @if (this.is_open()) { @for (folder of this.folders()?.folders; track $index) {
-  <tree-folder-component class="w-full" [folders]="folder" [floor]="floor() + 1" />
+  <app-tree-folder class="w-full" [folders]="folder" [floor]="floor() + 1" />
   } @for (file of this.folders()?.files; track $index) {
   <div
     (click)="open_file(file)"
+    (keydown.enter)="open_file(file)"
     (contextmenu)="show_options($event, $index); $event.stopPropagation()"
+    tabindex="0"
     [style.padding-left.rem]="floor() * 0.75"
     [class.file-selected]="folder_services.current_note() === file"
     class="cursor-pointer w-full hover:bg-gray-200 dark:hover:bg-gray-700 flex"

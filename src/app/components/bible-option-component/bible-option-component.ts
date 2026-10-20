@@ -9,10 +9,10 @@ import {
 } from '@angular/core';
 import { NgIcon, provideIcons } from '@ng-icons/core';
 import { heroBars3, heroBars3CenterLeft, heroEquals, heroPause } from '@ng-icons/heroicons/outline';
-import { FontSettingsServices } from '../../services/font_settings-services';
+import { FontSettingsServices } from '../../services/font-settings-services';
 
 @Component({
-  selector: 'bible-option-component',
+  selector: 'app-bible-option',
   imports: [NgIcon],
   providers: [
     provideIcons({

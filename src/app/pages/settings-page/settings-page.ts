@@ -1,13 +1,13 @@
 import { HttpClient } from '@angular/common/http';
 import { AfterViewInit, Component, ElementRef, inject, signal, ViewChild } from '@angular/core';
-import { GlobalSettingsServices } from '../../services/global_settings-services';
+import { GlobalSettingsServices } from '../../services/global-settings-services';
 import { invoke } from '@tauri-apps/api/core';
 import { BibleServices } from '../../services/bible-services';
 import { Bible } from '../../interfaces/bible-interface';
-import { MarkerServices } from '../../services/marker_services';
+import { MarkerServices } from '../../services/marker-services';
 
 @Component({
-  selector: 'settings-page',
+  selector: 'app-settings-page',
   imports: [],
   templateUrl: 'settings-page.html',
 })

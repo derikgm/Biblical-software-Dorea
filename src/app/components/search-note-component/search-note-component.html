@@ -1,0 +1,48 @@
+<div class="relative flex h-full w-full items-center justify-center bg-gray-200/50">
+  <button
+    type="button"
+    aria-label="Cerrar búsqueda"
+    class="reset-button absolute inset-0 h-full w-full cursor-default"
+    (click)="close()"
+  ></button>
+
+  <div class="relative z-10 h-4/5 w-4/5">
+    <input
+      type="text"
+      #filter_input
+      appFocusOnCreate
+      (keydown)="handler_filter($event)"
+      class="w-full rounded border-2 p-1 outline outline-none dark:border-gray-400 dark:bg-gray-900 dark:text-white"
+    />
+
+    <div
+      #container
+      class="scrollbar-hidden relative mt-1 flex h-4/5 w-full flex-row overflow-scroll rounded border-2 bg-white select-none dark:border-gray-400 dark:bg-gray-900"
+    >
+      <div
+        #scroll_bar
+        class="scroll-bar absolute top-0 right-0 z-10 w-4 border bg-gray-500/50"
+      ></div>
+
+      <div class="w-full">
+        @for ( note of notes(); track $index) {
+        <button
+          type="button"
+          #note
+          (click)="jump_to_note_page($index, $event)"
+          class="reset-button inline-flex w-full cursor-pointer truncate overflow-ellipsis text-left text-nowrap px-2 hover:bg-gray-200 dark:text-white dark:hover:bg-gray-700"
+        >
+          <span class="inline pr-2">{{ note.title }}</span>
+          <span class="inline text-gray-400 italic">{{ note.dir }}</span>
+        </button>
+        }
+      </div>
+    </div>
+  </div>
+</div>
+
+<style>
+  .bg-note {
+    @apply bg-gray-200 dark:bg-gray-700;
+  }
+</style>
